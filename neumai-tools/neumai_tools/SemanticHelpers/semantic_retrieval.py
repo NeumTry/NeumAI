@@ -3,7 +3,7 @@ from typing import (
 )
 import openai
 import json
-from SemanticHelpers.file_prep import read_file_and_prepare_input
+from .file_prep import read_file_and_prepare_input
 
 def llm_based_metadata_retrieval(file_path:str, loader_choice:str):
     text = read_file_and_prepare_input(file_path, loader_choice)

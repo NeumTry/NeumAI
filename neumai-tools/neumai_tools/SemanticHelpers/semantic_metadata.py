@@ -1,7 +1,7 @@
 import openai
 import json
 import pandas as pd
-from SemanticHelpers.file_prep import read_file_and_prepare_input
+from .file_prep import read_file_and_prepare_input
 
 def get_all_columns(file_path:str, loader_choice:str):
     if loader_choice == "JSONLoader":
@@ -26,7 +26,7 @@ def llm_based_embeds(file_path, loader_choice):
         return "Failed to prepare input text"
     
     messages = [
-        {"role": "system", "content": "You are a helpful assistant. Based on the given properties and examples from a data file, please identify and output an array of the properties that hold the most semantic meaning and should be embedded in an application. These are properties that carry nuanced, contextual information rather than simple numerical data. The output should be an array."},
+        {"role": "system", "content": "You are a helpful assistant. Based on the given properties and examples from a CSV file, please identify and return an array of the properties that hold semantic meaning and should turned into vector embeddings. These are properties that carry nuanced, contextual information that would be useful for semantic search. Do not include any columns that should be used as filters instead.\n [<column>,<column>,<column>...]"},
         {"role": "user", "content": text}
     ]
     
