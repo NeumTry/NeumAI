@@ -4,7 +4,7 @@ from typing import (
     List,
 )
 
-def llm_based_chunking_strategy(text:str) -> str:
+def semantic_chunking_strategy(text:str) -> str:
     messages = []
     messages = [
         {"role": "system", "content": ('You are helpful assistant' + 
@@ -26,7 +26,7 @@ def llm_based_chunking_strategy(text:str) -> str:
     response_message = response["choices"][0]["message"]
     return response_message
 
-def llm_based_chunking_code(text:str, chunking_strategy:str) -> str:
+def semantic_chunking_strategy_code(text:str, chunking_strategy:str) -> str:
     messages = []
     messages = [
         {"role": "system", "content": ('You are helpful developer that writes python code.' + 
@@ -43,14 +43,14 @@ def llm_based_chunking_code(text:str, chunking_strategy:str) -> str:
     response_message = response["choices"][0]["message"]
     return response_message
 
-def llm_based_chunking_prep(text:str) -> str:
+def semantic_chunking_code(text:str) -> str:
     fixed_text = cut_text(text)
-    chunking_strategy = llm_based_chunking_strategy(text=fixed_text)['content']
-    chunking_code = llm_based_chunking_code(text=fixed_text, chunking_strategy=chunking_strategy)['content']
+    chunking_strategy = semantic_chunking_strategy(text=fixed_text)['content']
+    chunking_code = semantic_chunking_strategy_code(text=fixed_text, chunking_strategy=chunking_strategy)['content']
     chunking_code_exec = chunking_code.split("```python")[1].split("```")[0]
     return chunking_code_exec
 
-def llm_based_chunking(documents:List[Document], chunking_code_exec: str) -> List[Document]:
+def semantic_chunking(documents:List[Document], chunking_code_exec: str) -> List[Document]:
     exec(chunking_code_exec, globals())
     result_doc = []
     for doc in documents:

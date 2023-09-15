@@ -3,7 +3,7 @@ import json
 import pandas as pd
 from .file_prep import read_file_and_prepare_input
 
-def get_all_columns(file_path:str, loader_choice:str):
+def fields_for_metadata(file_path:str, loader_choice:str):
     if loader_choice == "JSONLoader":
         with open(file_path, 'r') as json_file:
             try:
@@ -19,7 +19,7 @@ def get_all_columns(file_path:str, loader_choice:str):
         columns = df.columns.tolist()
         return columns
 
-def llm_based_embeds(file_path, loader_choice):
+def fields_to_embed(file_path, loader_choice):
     text = read_file_and_prepare_input(file_path, loader_choice)
     
     if text is None:

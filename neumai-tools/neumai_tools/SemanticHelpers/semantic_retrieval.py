@@ -5,7 +5,7 @@ import openai
 import json
 from .file_prep import read_file_and_prepare_input
 
-def llm_based_metadata_retrieval(file_path:str, loader_choice:str):
+def metadata_attributes_for_retrieval(file_path:str, loader_choice:str):
     text = read_file_and_prepare_input(file_path, loader_choice)
     if text is None:
         return "Failed to prepare input text"
