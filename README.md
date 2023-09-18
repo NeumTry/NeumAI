@@ -2,7 +2,7 @@
 
 <div align="center">
   
-  [Homepage](https://www.neum.ai) | [Docs](https://docs.neum.ai) | [Discord](https://discord.gg/mJeNZYRz4m)
+  [Homepage](https://www.neum.ai) | [Docs](https://docs.neum.ai) | [Discord](https://discord.gg/mJeNZYRz4m) | [Twitter](https://twitter.com/neum_ai)
   
   <a href="https://www.ycombinator.com/companies/neum-ai"><img src="https://badgen.net/badge/Y%20Combinator/S23/orange"/></a>
 </div>
