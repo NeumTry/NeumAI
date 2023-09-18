@@ -5,7 +5,6 @@
   [Homepage](https://www.neum.ai) | [Docs](https://docs.neum.ai) | [Discord](https://discord.gg/mJeNZYRz4m)
   
   <a href="https://www.ycombinator.com/companies/neum-ai"><img src="https://badgen.net/badge/Y%20Combinator/S23/orange"/></a>
-  </br></br>
 </div>
 
 
