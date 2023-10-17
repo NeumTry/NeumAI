@@ -1,14 +1,13 @@
-
 import csv
 from typing import Dict, List, Optional
+from abc import ABC
+from Sources.NeumDocument import NeumDocument
 
-from langchain.docstore.document import Document  # Assume this is part of your existing code
-from langchain.document_loaders.base import BaseLoader  # Assume this is part of your existing code
-
-class CSVLoader(BaseLoader):
+class CSVLoader(ABC):
     def __init__(
         self,
         file_path: str,
+        id_key: str,  # Add id_key parameter here
         source_column: Optional[str] = None,
         csv_args: Optional[Dict] = None,
         encoding: Optional[str] = 'utf-8-sig',
@@ -16,25 +15,21 @@ class CSVLoader(BaseLoader):
         metadata_keys: Optional[List[str]] = None
     ):
         self.file_path = file_path
+        self.id_key = id_key  # Store id_key
         self.source_column = source_column
         self.encoding = encoding
         self.csv_args = csv_args or {}
         self.embed_keys = embed_keys
         self.metadata_keys = metadata_keys
 
-    def extract_metadata(self, row: Dict) -> Dict:
-        metadata = {}
-        if self.metadata_keys:
-            for key in self.metadata_keys:
-                if key in row:
-                    metadata[key] = row[key]
-        return metadata
+    # ... rest of your code ...
 
-    def load(self) -> List[Document]:
+    def load(self) -> List[NeumDocument]:
         docs = []
         with open(self.file_path, newline="", encoding=self.encoding) as csvfile:
             csv_reader = csv.DictReader(csvfile, **self.csv_args)  # type: ignore
             for i, row in enumerate(csv_reader):
+                document_id = row.get(self.id_key, "")  # Extract id value using id_key
                 metadata = self.extract_metadata(row)
                 
                 if self.embed_keys is not None:
@@ -58,7 +53,7 @@ class CSVLoader(BaseLoader):
                 metadata["source"] = source
                 metadata["row"] = i
 
-                doc = Document(page_content=content, metadata=metadata)
+                doc = NeumDocument(page_content=content, metadata=metadata, id=document_id)  # Pass the id value to Document
                 docs.append(doc)
 
         return docs

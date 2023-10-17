@@ -1,18 +1,19 @@
 import json
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Union
+from abc import ABC
+from Sources.NeumDocument import NeumDocument
 
-from langchain.docstore.document import Document  # Assume this is part of your existing code
-from langchain.document_loaders.base import BaseLoader  # Assume this is part of your existing code
-
-class JSONLoader(BaseLoader):
+class JSONLoader(ABC):
     def __init__(
         self,
         file_path: Union[str, Path],
+        id_key: str,
         embed_keys: Optional[List[str]] = None,
         metadata_keys: Optional[List[str]] = None
     ):
         self.file_path = file_path
+        self.id_key = id_key
         self.embed_keys = embed_keys
         self.metadata_keys = metadata_keys
 
@@ -21,7 +22,8 @@ class JSONLoader(BaseLoader):
         for processed_data in processed_data_list:
             content = ''.join(processed_data['data'])
             metadata = processed_data['metadata']
-            document = Document(page_content=content, metadata=metadata)
+            document_id = processed_data['id']  # Get the id value from processed_data
+            document = NeumDocument(page_content=content, metadata=metadata, id=document_id)  # Pass the id to NeumDocument
             documents.append(document)
         return documents
 
@@ -37,6 +39,7 @@ class JSONLoader(BaseLoader):
         if isinstance(item, dict):
             new_metadata = self.extract_metadata(item)
             new_metadata.update(metadata)  # Merge existing metadata with new metadata
+            document_id = item.get(self.id_key, "")  # Extract the id value using id_key
             result = []
             for key, value in item.items():
                 new_prefix = f"{prefix}.{key}" if prefix else key
@@ -49,12 +52,12 @@ class JSONLoader(BaseLoader):
                 result.extend(self.process_item(value, prefix, metadata))
             return result
         else:
-            return [{'data': [f"{prefix}: {item}"], 'metadata': metadata}]
+            return [{'data': [f"{prefix}: {item}"], 'metadata': metadata, 'id': document_id}] 
 
     def process_json(self, data):
         return self.process_item(data)
 
-    def load(self) -> List[Document]:
+    def load(self) -> List[NeumDocument]:
         docs = []
         with open(self.file_path, 'r') as json_file:
             try:
