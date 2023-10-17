@@ -1,7 +1,7 @@
 import csv
 from typing import Dict, List, Optional
 from abc import ABC
-from Sources.NeumDocument import NeumDocument
+from .NeumDocument import NeumDocument
 
 class CSVLoader(ABC):
     def __init__(

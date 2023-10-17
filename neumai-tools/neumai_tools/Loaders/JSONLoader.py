@@ -2,16 +2,18 @@ import json
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Union
 from abc import ABC
-from Sources.NeumDocument import NeumDocument
+from  .NeumDocument import NeumDocument
 
 class JSONLoader(ABC):
     def __init__(
         self,
-        file_path: Union[str, Path],
         id_key: str,
+        file_data: dict = None,
+        file_path: Union[str, Path] = None,
         embed_keys: Optional[List[str]] = None,
         metadata_keys: Optional[List[str]] = None
     ):
+        self.file_data = file_data
         self.file_path = file_path
         self.id_key = id_key
         self.embed_keys = embed_keys
@@ -59,15 +61,22 @@ class JSONLoader(ABC):
 
     def load(self) -> List[NeumDocument]:
         docs = []
-        with open(self.file_path, 'r') as json_file:
+        if self.file_path is not None:
+            with open(self.file_path, 'r') as json_file:
+                try:
+                    data = json.load(json_file)
+                    processed_json = self.process_json(data)
+                    docs = self.create_documents(processed_json)
+                except json.JSONDecodeError:
+                    print("Error: Invalid JSON format in the file.")
+            return docs
+        
+        elif self.file_data is not None:
             try:
-                data = json.load(json_file)
+                data = json.loads(self.file_data)
                 processed_json = self.process_json(data)
                 docs = self.create_documents(processed_json)
             except json.JSONDecodeError:
                 print("Error: Invalid JSON format in the file.")
-        return docs
-
-
-
+            return docs
     
