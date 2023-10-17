@@ -1,7 +1,8 @@
 #Loaders
 from neumai_tools.Loaders import (
     CSVLoader, 
-    JSONLoader
+    JSONLoader,
+    NeumDocument
 )
 
 #Semantic Helpers
@@ -11,9 +12,4 @@ from neumai_tools.SemanticHelpers import (
     fields_for_metadata, 
     fields_to_embed, 
     metadata_attributes_for_retrieval
-)
-
-# Sources
-from neumai_tools.Sources.NeumDocument import (
-    NeumDocument
 )
