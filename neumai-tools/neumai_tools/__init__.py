@@ -6,8 +6,9 @@ from neumai_tools.Loaders import (
 
 #Semantic Helpers
 from neumai_tools.SemanticHelpers import (
-    llm_based_chunking_prep, 
-    llm_based_chunking, 
-    llm_based_embeds, 
-    llm_based_metadata_retrieval
+    semantic_chunking_code, 
+    semantic_chunking,
+    fields_for_metadata, 
+    fields_to_embed, 
+    metadata_attributes_for_retrieval
 )
