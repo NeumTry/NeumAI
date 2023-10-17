@@ -22,7 +22,13 @@ class CSVLoader(ABC):
         self.embed_keys = embed_keys
         self.metadata_keys = metadata_keys
 
-    # ... rest of your code ...
+    def extract_metadata(self, row: Dict) -> Dict:
+        metadata = {}
+        if self.metadata_keys:
+            for key in self.metadata_keys:
+                if key in row:
+                    metadata[key] = row[key]
+        return metadata
 
     def load(self) -> List[NeumDocument]:
         docs = []
