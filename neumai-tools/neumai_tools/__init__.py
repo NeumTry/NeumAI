@@ -2,6 +2,7 @@
 from neumai_tools.Loaders import (
     CSVLoader, 
     JSONLoader,
+    Selector,
     NeumDocument
 )
 
