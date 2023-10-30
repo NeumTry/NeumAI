@@ -14,3 +14,11 @@ from neumai_tools.SemanticHelpers import (
     fields_to_embed, 
     metadata_attributes_for_retrieval
 )
+
+#Functions 
+from neumai_tools.Functions import (
+    searchPipeline,
+    getPipeline,
+    createPipeline,
+    triggerPipeline
+)
