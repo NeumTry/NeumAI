@@ -22,7 +22,7 @@ def searchPipeline(pipeline:str, api_key:str, query:str, num_of_results:int = 3)
     import requests
     import json
 
-    url = f"https://api.neum.ai/pipelines/{pipeline}/search"
+    url = f"https://api.neum.ai/v1/pipelines/{pipeline}/search"
 
     payload = {
         "number_of_results": num_of_results,
