@@ -50,6 +50,7 @@ Search
 - [ ]  Retrieval feedback
 - [ ]  Filter support
 - [ ]  Unified Neum AI filters
+- [ ]  Self-Query Retrieval (w/ Metadata attributes generation)
 
 Extensibility
 - [ ]  Langchain / Llama Index Document to Neum Document converter
