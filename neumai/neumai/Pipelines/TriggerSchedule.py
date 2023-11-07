@@ -1,4 +1,4 @@
-from TriggerSyncTypeEnum import TriggerSyncTypeEnum
+from .TriggerSyncTypeEnum import TriggerSyncTypeEnum
 
 class TriggerSchedule(object):
     # Maybe add something like start date

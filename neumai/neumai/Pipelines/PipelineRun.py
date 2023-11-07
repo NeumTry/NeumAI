@@ -1,4 +1,4 @@
-from TriggerSyncTypeEnum import TriggerSyncTypeEnum
+from .TriggerSyncTypeEnum import TriggerSyncTypeEnum
 from fastapi.responses import JSONResponse
 
 class PipelineRunTaskDetails(object):

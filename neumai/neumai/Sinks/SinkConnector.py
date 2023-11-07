@@ -1,12 +1,13 @@
-from starlette.exceptions import HTTPException
-from typing import List, Union, Tuple
+from typing import List
+from Shared.NeumSearch import NeumSearchResult
 from Shared.NeumVector import NeumVector
+from Shared.NeumSinkInfo import NeumSinkInfo
 from abc import ABC, abstractmethod
 
 # Eventually this is an abstract class where specific implementations of it implement from it.
 # Like, PineconeConnector which extends/implements from SinkConnector
 class SinkConnector(ABC):
-    def __init__(self, sink_information: dict):
+    def __init__(self, sink_information: dict = {}):
         self.sink_information = sink_information
     
     @property
@@ -33,8 +34,12 @@ class SinkConnector(ABC):
         """Store vectors with a given service"""
 
     @abstractmethod
-    def search(self, vector:List[float], number_of_results:int, pipeline_id:str) -> List:
+    def search(self, vector:List[float], number_of_results:int, pipeline_id:str) -> List[NeumSearchResult]:
         """Search vectors for a given service"""
+    
+    @abstractmethod
+    def info(self, pipeline_id:str) -> NeumSinkInfo:
+        """Get information about what is stores in the sink"""
 
     def toJson(self):
         """Python does not have built in serialization. We need this logic to be able to respond in our API..
@@ -59,7 +64,7 @@ class SinkConnector(ABC):
         return json_to_return
 
     def config(self):
-        return {
-            "requiredProperties":self.requiredProperties,
-            "optionalProperties":self.optionalProperties,
-        }
+        json_to_return = {}
+        json_to_return['requiredProperties'] = self.requiredProperties
+        json_to_return['optionalProperties'] = self.optionalProperties
+        return json_to_return

@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from .EmbedConnector import EmbedConnector
 import replicate
-from neumai_tools import NeumDocument
+from Shared.NeumDocument import NeumDocument
 
 class ReplicateEmbed(EmbedConnector):
     @property

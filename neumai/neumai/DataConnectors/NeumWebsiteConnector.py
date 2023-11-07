@@ -1,26 +1,17 @@
-from datetime import datetime
-from Connectors.Connector import Connector
+from DataConnector import DataConnector
 from typing import List, Generator
-from abc import abstractmethod
 from Shared.LocalFile import LocalFile
 from Shared.CloudFile import CloudFile
-from Shared.Selector import Selector
-from Loaders.Loader import Loader
-from Loaders import HTMLLoader
 from bs4 import BeautifulSoup
 import tempfile
 import os
 import requests
 
 
-class NeumWebsiteConnector(Connector):
-    """" Neum Website Connector """
-    """" connector_information contains: """
-    """ [url] """
-
-    def __init__(self, connector_information:dict, selector:Selector) -> None:
-        self.connector_information = connector_information
-        self.selector = selector
+class NeumWebsiteConnector(DataConnector):
+    """" Neum Website Connector \n
+    connector_information contains:\n
+    [ url ]"""
   
     @property
     def connector_name(self) -> str:
@@ -51,7 +42,7 @@ class NeumWebsiteConnector(Connector):
         return False
     
     @property
-    def compatible_loaders(self) -> List[Loader]:
+    def compatible_loaders(self) -> List[str]:
         return ["HTMLLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
@@ -80,14 +71,17 @@ class NeumWebsiteConnector(Connector):
                 yield LocalFile(file_path=temp.name, metadata=cloudFile.metadata, id=cloudFile.id)
         
     def validate(self) -> bool:
+        # Check for required properties
         try:
             url:str = str(self.connector_information['url'])
         except:
             raise ValueError("Required properties not set")
         
+        # Check for metadata values
         if not all(x in self.availableMetadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
+        # Check to see that site exists
         try:
             response = requests.get(url)
         except Exception as e:

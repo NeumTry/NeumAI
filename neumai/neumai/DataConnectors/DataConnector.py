@@ -4,10 +4,9 @@ from Shared.LocalFile import LocalFile
 from Shared.CloudFile import CloudFile
 from Shared.Selector import Selector
 from Loaders.Loader import Loader
-from Shared.Selector import Selector
 from datetime import datetime
 
-class Connector(ABC):
+class DataConnector(ABC):
     def __init__(self, connector_information:dict = {}, selector:Selector = Selector(to_embed=[], to_metadata=[])) -> None:
         self.connector_information = connector_information
         self.selector = selector
@@ -96,12 +95,12 @@ class Connector(ABC):
         return json_to_return
 
     def config(self):
-        return {
-            "requiredProperties":self.requiredProperties,
-            "optionalProperties":self.optionalProperties,
-            "availableMetadata":self.availableMetadata,
-            "availableContent":self.availableContent,
-            "compatible_loaders":self.compatible_loaders,
-            "schedule_avaialable":self.schedule_avaialable,
-            "auto_sync_available":self.auto_sync_available
-        }
+        json_to_return = {}
+        json_to_return['requiredProperties'] = self.requiredProperties
+        json_to_return['optionalProperties'] = self.optionalProperties
+        json_to_return['availableMetadata'] = self.availableMetadata
+        json_to_return['availableContent'] = self.availableContent
+        json_to_return['compatible_loaders'] = self.compatible_loaders
+        json_to_return['schedule_avaialable'] = self.schedule_avaialable
+        json_to_return['auto_sync_available'] = self.auto_sync_available
+        return json_to_return

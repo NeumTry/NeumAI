@@ -1,7 +1,8 @@
 from typing import List, Tuple
 from .SinkConnector import SinkConnector
-from NeumVector import NeumVector
-from starlette.exceptions import HTTPException
+from Shared.NeumVector  import NeumVector
+from Shared.NeumSinkInfo import NeumSinkInfo
+from Shared.NeumSearch import NeumSearchResult
 
 class WeaviateSink(SinkConnector):
     @property
@@ -37,7 +38,7 @@ class WeaviateSink(SinkConnector):
                     auth_client_secret=weaviate.AuthApiKey(api_key=api_key),
                 )
         except Exception as e:
-            raise ValueError(f"OpenAI couldn't be initialized. See exception: {e}")
+            raise ValueError(f"Weaviate couldn't be initialized. See exception: {e}")
         return True 
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> Tuple[List, dict]:
@@ -105,26 +106,22 @@ class WeaviateSink(SinkConnector):
                         partial_failure['latest_failure'] = result["result"]["errors"]["error"]
                         partial_failure['number_of_failures'] += 1
 
-    def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List:
+    def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List[NeumSearchResult]:
         import weaviate
         from weaviate.util import _capitalize_first_letter
         api_key = self.sink_information["api_key"]
         url = self.sink_information['url']
-        
-        # should store this in the db at creation...
-        class_name = self.sink_information.get('class_name', f"pipeline_{pipeline_id.replace('-', '_')}")
+        # Weaviate requires first letter to be capitalized
+        class_name = _capitalize_first_letter(self.sink_information.get('class_name', f"Pipeline_{pipeline_id.replace('-', '_')}"))
         client = weaviate.Client(
             url=url,
             auth_client_secret=weaviate.AuthApiKey(api_key=api_key),
         )
 
-        # Allow user to specify which properties to return. 
-        # If none, get all by calling the schema
-        class_schema = {}
         try:
             class_schema = client.schema.get(class_name)
         except Exception as e:
-            return None
+            raise Exception(f"There was an error retrieving the class schema from weaviate")
 
         full_class_schema_properties = [property['name'] for property in class_schema['properties']]
         matches = []
@@ -136,16 +133,36 @@ class WeaviateSink(SinkConnector):
                     'vector' : vector
                 })
                 .with_limit(number_of_results)
+                .with_additional(['id','certainty'])
                 .do()
             )
 
-            # Weaviate requires first letter to be capitalized...
-            class_name = _capitalize_first_letter(class_name)
             for result in search_result["data"]["Get"][class_name]:
                 # unify our api with the metadata.. or just return whatever metadata we have. (?)
-                matches.append(result)
+                matches.append(NeumSearchResult(id=result['_additional']['id'], score=result['_additional']['certainty'], metadata= {k: v for k, v in result.items() if k != "_additional"}))
         except Exception as e:
-            print(f"There was an error querying weaviate")
-            return None
-        
+            raise Exception(f"There was an error querying weaviate")
         return matches
+
+    def info(self, pipeline_id:str) -> NeumSinkInfo:
+        import weaviate
+        from weaviate.util import _capitalize_first_letter
+        api_key = self.sink_information["api_key"]
+        url = self.sink_information['url']
+        
+        class_name = _capitalize_first_letter(self.sink_information.get('class_name', f"Pipeline_{pipeline_id.replace('-', '_')}"))
+        client = weaviate.Client(
+            url=url,
+            auth_client_secret=weaviate.AuthApiKey(api_key=api_key),
+        )
+        try:
+            response = (
+                client.query
+                .aggregate(class_name=class_name)
+                .with_meta_count()
+                .do()
+            )
+            vectors_stored_in_class = response["data"]["Aggregate"][class_name]["meta"]["count"]
+            return NeumSinkInfo(number_vectors_stored=vectors_stored_in_class)
+        except Exception as e:
+            raise Exception(f"There was an error querying weaviate")

@@ -1,16 +1,16 @@
 from abc import abstractmethod, ABC, abstractproperty
 from Chunkers.Chunker import Chunker
 from starlette.exceptions import HTTPException
-from neumai_tools import NeumDocument
+from Shared.NeumDocument import NeumDocument
 from typing import List, Generator
 from neumai_tools import semantic_chunking
 
 class CustomChunker(Chunker):
-    """" Custom Chunker """
-    
-    # Might be worth re-writing the init to explictly pass values?
-    def __init__(self, chunker_information:dict) -> None:
-        self.chunker_information = chunker_information
+    """" Custom Chunker \n
+    chunker_information requires: \n
+    [ code ] \n
+    chunker_information optional: \n
+    [ batch_size ]"""
     
     @property
     def chunker_name(self) -> str:

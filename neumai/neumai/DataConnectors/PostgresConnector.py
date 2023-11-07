@@ -1,19 +1,16 @@
 from psycopg2.extras import DictCursor
 from datetime import datetime
-from Connectors.Connector import Connector
+from DataConnector import DataConnector
 from typing import List, Generator
 from Shared.LocalFile import LocalFile
 from Shared.CloudFile import CloudFile
-from Shared.Selector import Selector
-from Loaders import Loader, NeumJSONLoader
-import tempfile
 import psycopg2
 import json
 
 
-class PostgresConnector(Connector):
+class PostgresConnector(DataConnector):
     """Postgres Connector \n
-    connector_information contains:\n
+    connector_information requires:\n
     [ connection_string, query, batch_size]"""
     
     @property

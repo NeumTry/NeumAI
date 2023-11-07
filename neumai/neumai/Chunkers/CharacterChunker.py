@@ -1,15 +1,14 @@
 from abc import abstractmethod, ABC, abstractproperty
 from Chunkers.Chunker import Chunker
 from starlette.exceptions import HTTPException
-from neumai_tools import NeumDocument
+from Shared.NeumDocument import NeumDocument
 from typing import List, Generator
 from langchain.text_splitter import (CharacterTextSplitter)
 
 class CharacterChunker(Chunker):
-    """" Character Chunker """
-
-    def __init__(self, chunker_information:dict) -> None:
-        self.chunker_information = chunker_information
+    """" Character Chunker \n
+    chunker_information optional: \n
+    [ chunk_size, chunk_overlap, batch_size ]"""
     
     @property
     def chunker_name(self) -> str:

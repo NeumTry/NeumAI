@@ -1,12 +1,14 @@
-from PipelineRun import PipelineRun
-from TriggerSchedule import TriggerSchedule
+from .PipelineRun import PipelineRun
+from .TriggerSchedule import TriggerSchedule
 from Sinks.SinkConnector import SinkConnector
 from Embeds.EmbedConnector import EmbedConnector
 from Sources.SourceConnector import SourceConnector
 from Embeds import as_embed
 from Sinks import as_sink
-
-from typing import List, Tuple
+from Shared.NeumVector import NeumVector
+from Shared.NeumSearch import NeumSearchResult
+from typing import List
+import uuid
 
 accepted_trigger_sync_types: List = []
 class Pipeline(object):
@@ -16,7 +18,6 @@ class Pipeline(object):
                 sink: SinkConnector, 
                 name:str = None,
                 id: str = None, 
-                version: str = "v2",
                 created: float = None, 
                 updated: float = None,
                 trigger_schedule: TriggerSchedule = None, 
@@ -25,7 +26,6 @@ class Pipeline(object):
                 is_deleted: bool = False):
         self.id = id
         self.name = name
-        self.version = version
         self.created = created
         self.updated = updated
         self.source = source
@@ -42,15 +42,36 @@ class Pipeline(object):
             for source in self.source:
                 source.validation()
             self.embed.validation()
-            # Missing sink validation
+            self.sink.validation()
         except Exception as e:
             raise e
-                 
+        
+    def runPipeline(self) -> int:
+        # This method is meant for local development only. Not to be used in production.
+        # The Neum AI framework provides parallelization constructs through yielding
+        # These should be used to run pipelines at scale.
+
+        total_vectors_stored = 0
+        for source in self.source:
+            for cloudFile in source.list_files_full():
+                for localFile in source.download_files(cloudFile=cloudFile):
+                    for document in source.load_data(file=localFile):
+                        for chunks in source.chunk_data(document=document):
+                            embeddings, embeddings_info = self.embed.embed(documents=chunks)
+                            vectors_to_store = [NeumVector(id=str(uuid.uuid4()), vector=vector, metadata=document.metadata) for vector in embeddings]
+                            total_vectors_stored += self.sink.store(vectors_to_store=vectors_to_store, pipeline_id=pipeline.id)
+
+        return total_vectors_stored
+    
+    def searchPipeline(self, query:str, number_of_results:int) -> List[NeumSearchResult]:
+        vector_for_query = self.embed.embed_query(query=query)
+        matches =  self.sink.search(vector=vector_for_query, number_of_results=number_of_results, pipeline_id=self.id)
+        return matches
+
     def toPipelineModel(self):
         content_to_return = {}
         content_to_return['id'] = self.id
         content_to_return['name'] = self.name
-        content_to_return['version'] = "v2"
         content = []
         for source in self.source:
             content.append(source.to_model())
@@ -65,8 +86,10 @@ class Pipeline(object):
             content_to_return['trigger_schedule'] = self.trigger_schedule.to_model()
 
         content_to_return['latest_run'] = self.latest_run.toJson()
+        content_to_return['available_metadata'] = self.available_metadata()
 
         return content_to_return
+    
     def toJson(self):
         """Python does not have built in serialization. We need this logic to be able to respond in our API..
 
@@ -76,7 +99,6 @@ class Pipeline(object):
         json_to_return = {}
         json_to_return['id'] = self.id
         json_to_return['name'] = self.name
-        json_to_return['version'] = "v2"
         json_source = []
         for source in self.source:
             json_source.append(source.toJson())
@@ -94,6 +116,7 @@ class Pipeline(object):
             json_to_return['trigger_schedule'] = self.trigger_schedule.toJson()
 
         json_to_return['latest_run'] = self.latest_run.toJson()
+        json_to_return['available_metadata'] = self.available_metadata()
         return json_to_return
 
     def as_request(self):
@@ -121,6 +144,14 @@ class Pipeline(object):
     def set_owner(self, owner: str):
         self.owner = owner
     
+    def available_metadata(self) -> List[str]:
+        available_metadata = []
+        for source in self.source:
+            available_metadata += source.customMetadata.keys()
+            available_metadata += source.connector.selector.to_metadata
+            available_metadata += source.loader.selector.to_metadata
+        return available_metadata
+
     def as_pipeline(dct:dict):
         if dct == None:
             return None

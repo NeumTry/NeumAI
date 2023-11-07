@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from .EmbedConnector import EmbedConnector
-from neumai_tools import NeumDocument
+from Shared.NeumDocument import NeumDocument
 
 class AzureOpenAIEmbed(EmbedConnector):
     @property

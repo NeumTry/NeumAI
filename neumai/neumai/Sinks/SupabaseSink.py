@@ -1,7 +1,8 @@
-from typing import List, Tuple
+from typing import List
 from .SinkConnector import SinkConnector
-from NeumVector import NeumVector
-from starlette.exceptions import HTTPException
+from Shared.NeumSinkInfo import NeumSinkInfo
+from Shared.NeumVector  import NeumVector
+from Shared.NeumSearch import NeumSearchResult
 
 class SupabaseSink(SinkConnector):
     @property
@@ -50,22 +51,51 @@ class SupabaseSink(SinkConnector):
         # do we need to re index every time? this might be super costly. Can we check if there's an index and if not index otherwise don't?
         # db.create_index()
         # need to figure out how to do this only once. 
+        vx.disconnect()
         return len(vectors_to_store)
     
     def search(self, vector: List[float], number_of_results:int, pipeline_id:str) -> List:
         import vecs
         DB_CONNECTION = self.sink_information['database_connection']
         vx = vecs.create_client(DB_CONNECTION)
-        collection_name = f"pipeline_{pipeline_id}"
-        if(self.sink_information["collection_name"] != None):
-            collection_name = self.sink_information["collection_name"]
-        db = vx.get_or_create_collection(name=collection_name, dimension=len(vector[0]))
-        results = db.query(
-            data=vector,           # required
-            include_metadata=True,
-            limit=number_of_results,  # number of records to return
-        )
+        collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
+        try:
+            db = vx.get_collection(name=collection_name)
+        except:
+            raise Exception(f"Collection {collection_name} does not exist")
+        
+        try:
+            results = db.query(
+                data=vector,           # required
+                include_metadata=True,
+                include_value=True,
+                limit=number_of_results,  # number of records to return
+            )
+        except Exception as e:
+            raise Exception(f"Error querying vectors from Supabase. Exception: {e}")
+        
         matches = []
         for result in results:
-            matches.append(str(result[1]))
+            matches.append(NeumSearchResult(
+                id= str(result[0]),
+                metadata=result[2],
+                score=result[1]
+            ))
+        
+        vx.disconnect()
         return matches
+    
+    def info(self, pipeline_id: str) -> NeumSinkInfo:
+        import vecs
+        DB_CONNECTION = self.sink_information['database_connection']
+        vx = vecs.create_client(DB_CONNECTION)
+        collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
+        try:
+            db = vx.get_collection(name=collection_name)
+        except:
+            raise Exception(f"Collection {collection_name} does not exist")
+        
+        number_of_vectors = db.table.select('count(*)')[0].count
+
+        vx.disconnect()
+        return NeumSinkInfo(number_vectors_stored=number_of_vectors)

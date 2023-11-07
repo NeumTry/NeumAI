@@ -1,9 +1,9 @@
 from abc import abstractmethod, ABC
-from langchain.docstore.document import Document
+from Shared.NeumDocument import NeumDocument
 from typing import List, Generator
 
 class Chunker(ABC):
-    def __init__(self, chunker_information:dict) -> None:
+    def __init__(self, chunker_information:dict = {}) -> None:
         self.chunker_information = chunker_information
     
     @property
@@ -22,7 +22,7 @@ class Chunker(ABC):
         pass
 
     @abstractmethod
-    def chunk(self, documents:List[Document]) -> Generator[List[Document], None, None]:
+    def chunk(self, documents:List[NeumDocument]) -> Generator[List[NeumDocument], None, None]:
         """Chunk documents into more documents"""
 
     @abstractmethod
@@ -50,9 +50,9 @@ class Chunker(ABC):
         json_to_return['chunker_name'] = self.chunker_name
         json_to_return['chunker_information'] = self.chunker_information
         return json_to_return
-    
+
     def config(self):
-        return {
-            "requiredProperties":self.requiredProperties,
-            "optionalProperties":self.optionalProperties,
-        }
+        json_to_return = {}
+        json_to_return['requiredProperties'] = self.requiredProperties
+        json_to_return['optionalProperties'] = self.optionalProperties
+        return json_to_return

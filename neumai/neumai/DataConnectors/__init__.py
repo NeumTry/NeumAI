@@ -1,4 +1,4 @@
-from .Connector import Connector
+from .DataConnector import DataConnector
 from .AzureBlobConnector import AzureBlobConnector
 from .NeumWebsiteConnector import NeumWebsiteConnector
 from .S3Connector import S3Connector

@@ -1,18 +1,12 @@
-from abc import abstractmethod, ABC, abstractproperty
 from Chunkers.Chunker import Chunker
-from starlette.exceptions import HTTPException
-from neumai_tools import NeumDocument
+from Shared.NeumDocument import NeumDocument
 from typing import List, Generator
 from langchain.text_splitter import (RecursiveCharacterTextSplitter)
 
 class RecursiveChunker(Chunker):
-    """" Recursive Chunker """
-    """" chunker_information contains: """
-    """ [chunk_size, chunk_overlap, batch_size]"""
-
-    # Might be worth re-writing the init to explictly pass values?
-    def __init__(self, chunker_information:dict) -> None:
-        self.chunker_information = chunker_information
+    """" Recursive Chunker \n
+    chunker_information optional: \n
+    [chunk_size, chunk_overlap, batch_size]"""
     
     @property
     def chunker_name(self) -> str:

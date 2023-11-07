@@ -1,7 +1,6 @@
-from Connectors.Connector import Connector
-from Connectors import (
+from DataConnector import DataConnector
+from DataConnectors import (
     S3Connector,
-    NeumFileConnector,
     NeumWebsiteConnector,
     AzureBlobConnector,
     SupabaseConnector,
@@ -11,6 +10,8 @@ from Connectors import (
 from Shared.Selector import Selector
 from starlette.exceptions import HTTPException
 
+# Helper function to map connector configuration to object type
+
 def as_connector(dct:dict):
     if dct == None:
         raise HTTPException(status_code=500, detail="[x001] An error occured on our end, please email kevin@tryneum.com to unblock you!")
@@ -19,8 +20,6 @@ def as_connector(dct:dict):
     selector = Selector.as_selector(dct.get("selector", None))
     if connector_name == "AzureBlobConnector":
         return AzureBlobConnector(connector_information=connector_information, selector=selector)
-    elif connector_name == "NeumFileConnector":
-        return NeumFileConnector(connector_information=connector_information, selector=selector)
     elif connector_name == "NeumWebsiteConnector":
         return NeumWebsiteConnector(connector_information=connector_information, selector=selector)
     elif connector_name == "S3Connector":

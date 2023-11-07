@@ -1,7 +1,7 @@
 from typing import List, Tuple
-from langchain.embeddings.openai import OpenAIEmbeddings
 from .EmbedConnector import EmbedConnector
-from neumai_tools import NeumDocument
+from langchain.embeddings.openai import OpenAIEmbeddings
+from Shared.NeumDocument import NeumDocument
 
 class OpenAIEmbed(EmbedConnector):
     @property
@@ -31,7 +31,6 @@ class OpenAIEmbed(EmbedConnector):
 
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:
         """Generate embeddings with OpenAI"""
-        cost_per_token = 0.000000001 # ADA-002 as of Sept 2023
         max_retries = self.embed_information.get('max_retries', 20)
         chunk_size = self.embed_information.get('chunk_size', 1000)
         organization = self.embed_information.get('organization', None)
@@ -40,11 +39,12 @@ class OpenAIEmbed(EmbedConnector):
         embeddings = []
         texts = [x.content for x in documents]
         # do we want to persist some embeddings if they were able to be wrriten but not another "batch" of them? or should we treat all texts as an atomic operation
-        embeddings, embedding_info = embedding.embed_documents(texts=texts)
+        embeddings  = embedding.embed_documents(texts=texts)
+        #cost_per_token = 0.000000001 # ADA-002 as of Sept 2023
         info = {
-            "estimated_cost":str(embedding_info['tokens_used'] * cost_per_token),
-            "total_tokens":str(embedding_info['tokens_used']),
-            "attempts_used":str(embedding_info['attempts_per_chunk'])
+            "estimated_cost":str("Not implemented"),
+            "total_tokens":str("Not implemented"),
+            "attempts_used":str("Not implemented")
         }
         return embeddings,info
 

@@ -4,7 +4,6 @@ from .Pipeline import (
 from .PipelineShared import (
     PipelineModel,
     PipelinesModel,
-    PipelineSearchResultsModel
 )
 from .PipelineRun import (
     PipelineRun, 

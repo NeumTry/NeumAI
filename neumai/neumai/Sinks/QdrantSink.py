@@ -1,7 +1,8 @@
-from typing import List, Tuple
+from typing import List
+from Shared.NeumSinkInfo import NeumSinkInfo
 from .SinkConnector import SinkConnector
-from NeumVector import NeumVector
-from starlette.exceptions import HTTPException
+from Shared.NeumVector  import NeumVector
+from Shared.NeumSearch import NeumSearchResult
 
 class QdrantSink(SinkConnector):
     @property
@@ -38,7 +39,7 @@ class QdrantSink(SinkConnector):
         from qdrant_client.http.models import PointStruct
         from qdrant_client.http.models import UpdateStatus
         from qdrant_client import QdrantClient
-        # metadata: url, api_key, cluster namme, collection name
+
         url = self.sink_information["url"]
         api_key = self.sink_information["api_key"]
         collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
@@ -58,24 +59,49 @@ class QdrantSink(SinkConnector):
         )
         if(operation_info.status == UpdateStatus.COMPLETED):
             return  len(points)
-        raise HTTPException(status_code=500, detail="Qdrant storing failed. Try again later.")
+        raise Exception("Qdrant storing failed. Try again later.")
     
     def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List:
         from qdrant_client import QdrantClient
         api_key = self.sink_information["api_key"]
         url = self.sink_information['url']
         collection_name = self.sink_information['collection_name']
-        qdrant_client = QdrantClient(
-            url=url, 
-            api_key=api_key,
-        )
-        search_result = qdrant_client.search(
-            collection_name=collection_name,
-            query_vector=vector, 
-            with_payload= True,
-            limit=number_of_results
-        )
+        try:
+            qdrant_client = QdrantClient(
+                url=url, 
+                api_key=api_key,
+            )
+            search_result = qdrant_client.search(
+                collection_name=collection_name,
+                query_vector=vector, 
+                with_payload= True,
+                limit=number_of_results
+            )
+        except Exception as e:
+            raise(f"Failed to query Qdrant. Exception - {e}")
+        
         matches = []
         for result in search_result:
-            matches.append(str(result.payload))
+            matches.append(
+                NeumSearchResult(
+                    id=result.id,
+                    metadata=result.payload,
+                    score=result.score
+                )
+            )
         return matches
+    
+    def info(self, pipeline_id: str) -> NeumSinkInfo:
+        from qdrant_client import QdrantClient
+        api_key = self.sink_information["api_key"]
+        url = self.sink_information['url']
+        collection_name = self.sink_information['collection_name']
+        try:
+            qdrant_client = QdrantClient(
+                url=url, 
+                api_key=api_key,
+            )
+            collection_info = qdrant_client.get_collection(collection_name=collection_name)
+            return(NeumSinkInfo(number_vectors_stored=collection_info.indexed_vectors_count))
+        except Exception as e:
+            raise(f"Failed to get information from Qdrant. Exception - {e}")

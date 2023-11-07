@@ -1,19 +1,17 @@
 from psycopg2.extras import DictCursor
 from datetime import datetime
-from Connectors.Connector import Connector
+from DataConnector import DataConnector
 from typing import List, Generator
 from Shared.LocalFile import LocalFile
 from Shared.CloudFile import CloudFile
-from Shared.Selector import Selector
-from Loaders import Loader, NeumJSONLoader
 import singlestoredb as s2
-import tempfile
-import psycopg2
 import json
 
 
-class SingleStoreConnector(Connector):
-    """SingleStore Connector """
+class SingleStoreConnector(DataConnector):
+    """SingleStore Connector \n
+    connector_information requires:\n
+    [ url, query ]"""
     
     @property
     def connector_name(self) -> str:
@@ -44,7 +42,7 @@ class SingleStoreConnector(Connector):
         return False
     
     @property
-    def compatible_loaders(self) -> List[Loader]:
+    def compatible_loaders(self) -> List[str]:
         return ["NeumJSONLoader"]
     
     def datetime_serializer(self, obj):

@@ -1,7 +1,8 @@
-from typing import List, Tuple
+from typing import List
+from Shared.NeumSinkInfo import NeumSinkInfo
 from .SinkConnector import SinkConnector
-from Shared.NeumVector import NeumVector
-from starlette.exceptions import HTTPException
+from Shared.NeumVector  import NeumVector
+from Shared.NeumSearch import NeumSearchResult
 
 class SingleStoreSink(SinkConnector):
     @property
@@ -73,3 +74,41 @@ class SingleStoreSink(SinkConnector):
                     cur.execute(insert_query)
         
         return len(vectors_to_store), None
+    
+    def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List[NeumSearchResult]:
+        import singlestoredb as s2
+        url = self.sink_information['url']
+        table = self.sink_information['table']
+
+        query = f"""SELECT id, text, dot_product(vector, json_array_pack('{vector}')) AS score
+        FROM {table}
+        ORDER BY score DESC
+        LIMIT {number_of_results}"""
+        
+        try:
+            with s2.connect(url, results_type="dict") as conn:
+                with conn.cursor() as cur:
+                    matches:List[NeumSearchResult] = []
+                    cur.execute(query)
+                    for row in cur.fetchall():
+                        matches.append(NeumSearchResult(id = str(dict(row)['id']), metadata={"text": str(dict(row)['text'])}, score=dict(row)['score']))
+                    return matches
+        except Exception as e:
+            raise Exception(f"Failed to query single store. Exception - {e}")
+
+    def info(self, pipeline_id: str) -> NeumSinkInfo:
+        import singlestoredb as s2
+        url = self.sink_information['url']
+        table = self.sink_information['table']
+
+        query = f"""SELECT Count(*) as count
+        FROM {table}"""
+        
+        try:
+            with s2.connect(url, results_type="dict") as conn:
+                with conn.cursor() as cur:
+                    cur.execute(query)
+                    rows = cur.fetchall()
+                    return NeumSinkInfo(number_vectors_stored=dict(rows[0])["count"])
+        except Exception as e:
+            raise Exception(f"Failed to get info for singlestore. Exception - {e}") 

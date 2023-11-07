@@ -1,30 +1,25 @@
 from datetime import datetime
-from Connectors.Connector import Connector
+from DataConnector import DataConnector
 from typing import List, Generator
-from abc import abstractmethod, ABC, abstractproperty
 from supabase import create_client, Client
 from Shared.LocalFile import LocalFile
 from Shared.CloudFile import CloudFile
-from Shared.Selector import Selector
-from Loaders import Loader, AutoLoader, HTMLLoader, MarkdownLoader, NeumCSVLoader, NeumJSONLoader, PDFLoader
 import tempfile
 import os
 
 
-class SupabaseConnector(Connector):
-    """" Neum File Connector """
+class SupabaseConnector(DataConnector):
+    """" Neum File Connector \n
+    connector_information requires:\n
+    [ bucket, folder, url, key ]"""
 
-    def __init__(self, connector_information:dict, selector:Selector) -> None:
-        self.connector_information = connector_information
-        self.selector = selector
-    
     @property
     def connector_name(self) -> str:
         return "SupabaseConnector"
     
     @property
     def requiredProperties(self) -> List[str]:
-        return ["folder", "url", "key"]
+        return ["bucket","folder", "url", "key"]
 
     @property
     def optionalProperties(self) -> List[str]:
@@ -47,17 +42,18 @@ class SupabaseConnector(Connector):
         return False
     
     @property
-    def compatible_loaders(self) -> List[Loader]:
+    def compatible_loaders(self) -> List[str]:
         return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
         # Connect to supabase
+        bucket = self.connector_information["bucket"]
         folder = self.connector_information['folder']
         url = self.connector_information['url']
         key = self.connector_information['key']
         supabase: Client = create_client(url, key)
         #Process files
-        file_list = supabase.storage.from_('pipelines').list(folder)
+        file_list = supabase.storage.from_(bucket).list(folder)
         for file in file_list:
             # Download each file
             name = file['name']
@@ -66,12 +62,13 @@ class SupabaseConnector(Connector):
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
         # Connect to supabase
+        bucket = self.connector_information["bucket"]
         folder = self.connector_information['folder']
         url = self.connector_information['url']
         key = self.connector_information['key']
         supabase: Client = create_client(url, key)
         #Process files
-        file_list = supabase.storage.from_('pipelines').list(folder)
+        file_list = supabase.storage.from_(bucket).list(folder)
         for file in file_list:
             # Check if file has changed
             last_update_date = datetime.strptime(file['updated_at'], "%Y-%m-%dT%H:%M:%S.%fZ")
@@ -83,14 +80,17 @@ class SupabaseConnector(Connector):
 
     def connect_and_download(self, cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
         # Connect to supabase
-        supabase: Client = create_client(self.url, self.key)
+        url = self.connector_information['url']
+        key = self.connector_information['key']
         folder= self.connector_information['folder']
+        bucket = self.connector_information["bucket"]
 
+        supabase: Client = create_client(url, key)
         with tempfile.TemporaryDirectory() as temp_dir:
             file_path = f"{temp_dir}/{folder}/{cloudFile.file_identifier}"
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             with open(f"{file_path}", "wb") as file:
-                supabase_file = supabase.storage.from_("pipelines").download(folder + "/" + cloudFile.file_identifier)
+                supabase_file = supabase.storage.from_(bucket).download(folder + "/" + cloudFile.file_identifier)
                 file.write(supabase_file)
             yield LocalFile(file_path=file_path, metadata=cloudFile.metadata, id=cloudFile.id)
 

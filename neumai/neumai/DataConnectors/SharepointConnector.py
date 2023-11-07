@@ -2,19 +2,14 @@ from datetime import datetime
 from typing import List, Generator
 from Shared.LocalFile import LocalFile
 from Shared.CloudFile import CloudFile
-from Shared.Selector import Selector
-from Loaders.Loader import Loader
-from Connectors.Connector import Connector
+from DataConnector import DataConnector
 import tempfile
-import os
 
 
-class SharepointConnector(Connector):
-    """" Sharepoint Connector """
-
-    def __init__(self, connector_information:dict, selector:Selector) -> None:
-        self.connector_information = connector_information
-        self.selector = selector
+class SharepointConnector(DataConnector):
+    """" Sharepoint Connector \n
+    connector_information requires:\n
+    [ tenant_id, client_id, client_secret, site_id ]"""
     
     @property
     def connector_name(self) -> str:
@@ -45,7 +40,7 @@ class SharepointConnector(Connector):
         return False
     
     @property
-    def compatible_loaders(self) -> List[Loader]:
+    def compatible_loaders(self) -> List[str]:
         return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
     
     def process_folder(self, site_id:str, drive_id:str, folder_id:str, headers:dict) -> Generator[CloudFile, None, None]:

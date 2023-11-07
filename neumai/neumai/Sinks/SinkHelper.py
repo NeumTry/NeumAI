@@ -14,9 +14,7 @@ def as_sink(dct:dict):
         raise HTTPException(status_code=500, detail="[x001] An error occured on our end, please email kevin@tryneum.com to unblock you!")
     sink_name = dct.get("sink_name", None)
     sink_information = dct.get("sink_information", None)
-    if sink_name == "NeumSink":
-        return NeumSink(sink_information=sink_information)
-    elif sink_name == "PineconeSink":
+    if sink_name == "PineconeSink":
         return PineconeSink(sink_information=sink_information)
     elif sink_name == "WeaviateSink":
         return WeaviateSink(sink_information=sink_information)

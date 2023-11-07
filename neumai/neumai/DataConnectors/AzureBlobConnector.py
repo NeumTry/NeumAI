@@ -4,6 +4,7 @@ from typing import List, Generator
 from azure.storage.blob import BlobClient, ContainerClient
 from Shared.LocalFile import LocalFile
 from Shared.CloudFile import CloudFile
+from Shared.Selector import Selector
 from Loaders.Loader import Loader
 from Loaders import (
     AutoLoader, 
@@ -13,17 +14,12 @@ from Loaders import (
     NeumJSONLoader, 
     PDFLoader
 )
-from Shared.Selector import Selector
 import tempfile
 import os
 
 
 class AzureBlobConnector(Connector):
     """" Neum File Connector """
-
-    def __init__(self, connector_information:dict, selector:Selector) -> None:
-        self.connector_information = connector_information
-        self.selector = selector
 
     @property
     def connector_name(self) -> str:

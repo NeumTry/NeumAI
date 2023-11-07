@@ -1,10 +1,10 @@
 from starlette.exceptions import HTTPException
 from abc import ABC, abstractmethod
 from typing import List, Tuple
-from neumai_tools import NeumDocument
+from Shared.NeumDocument import NeumDocument
 
 class EmbedConnector(ABC):
-    def __init__(self, embed_information: dict):
+    def __init__(self, embed_information: dict = {}):
         self.embed_information = embed_information
 
     @property
@@ -57,7 +57,7 @@ class EmbedConnector(ABC):
         return json_to_return
     
     def config(self):
-        return {
-            "requiredProperties":self.requiredProperties,
-            "optionalProperties":self.optionalProperties,
-        }
+        json_to_return = {}
+        json_to_return['requiredProperties'] = self.requiredProperties
+        json_to_return['optionalProperties'] = self.optionalProperties
+        return json_to_return

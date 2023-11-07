@@ -3,22 +3,16 @@ from typing import List, Generator
 import boto3
 from Shared.LocalFile import LocalFile
 from Shared.CloudFile import CloudFile
-from Shared.Selector import Selector
-from Loaders.Loader import Loader
-from Loaders import AutoLoader, HTMLLoader, MarkdownLoader, NeumCSVLoader, NeumJSONLoader, PDFLoader
-from Connectors.Connector import Connector
+from DataConnector import DataConnector
 import tempfile
 import os
 
 
-class S3Connector(Connector):
-    """" Neum File Connector """
-    """" connector_information contains: """
-    """ [ aws_key_id, aws_access_key, bucket_name ]"""
+class S3Connector(DataConnector):
+    """" Neum File Connector \n
+    connector_information contains: \n
+    [ aws_key_id, aws_access_key, bucket_name ]"""
 
-    def __init__(self, connector_information:dict, selector:Selector) -> None:
-        self.connector_information = connector_information
-        self.selector = selector
     @property
     def connector_name(self) -> str:
         return "S3Connector"
@@ -48,7 +42,7 @@ class S3Connector(Connector):
         return False
     
     @property
-    def compatible_loaders(self) -> List[Loader]:
+    def compatible_loaders(self) -> List[str]:
         return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:

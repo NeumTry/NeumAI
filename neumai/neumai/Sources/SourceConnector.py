@@ -1,10 +1,10 @@
-from Connectors.Connector import Connector
-from Connectors import as_connector
+from DataConnectors.DataConnector import DataConnector
+from DataConnectors import as_connector
 from Chunkers.Chunker import Chunker
 from Chunkers import as_chunker
 from Loaders.Loader import Loader
 from Loaders import as_loader
-from neumai_tools import NeumDocument
+from Shared.NeumDocument import NeumDocument
 from typing import List, Generator
 from Shared.LocalFile import LocalFile
 from Shared.CloudFile import CloudFile
@@ -13,7 +13,7 @@ from datetime import datetime
 from abc import ABC
 
 class SourceConnector(ABC):
-    def __init__(self, connector:Connector, chunker:Chunker = None, loader:Loader = None, customMetadata:dict = {}):
+    def __init__(self, connector:DataConnector, chunker:Chunker = None, loader:Loader = None, customMetadata:dict = {}):
         self.connector = connector
         self.chunker = chunker
         self.loader = loader
@@ -34,7 +34,10 @@ class SourceConnector(ABC):
         yield from self.loader.load(file=file)
 
     def chunk_data(self, document:NeumDocument) -> Generator[List[NeumDocument], None, None]:
-        yield from self.chunker.chunk(documents=[document])
+        #At this point unify all the metadata for each document to make sure it is ready downstream.
+        for chunk_set in self.chunker.chunk(documents=[document]):
+            chunk_set_with_custom_metadata = [NeumDocument(id=chunk.id, content=chunk.content, metadata={**chunk.metadata, **self.customMetadata, **{"text":chunk.content}}) for chunk in chunk_set]
+            yield chunk_set_with_custom_metadata
     
     def validation(self) -> bool:
         core_validation = self.connector.validate() and self.loader.validate() and self.chunker.validate()

@@ -1,5 +1,5 @@
 from datetime import datetime
-from Connectors.Connector import Connector
+from DataConnector import DataConnector
 from typing import List, Generator
 from abc import abstractmethod, ABC, abstractproperty
 from supabase import create_client, Client
@@ -11,12 +11,10 @@ import tempfile
 import os
 
 
-class NeumSimpleFileConnector(Connector):
-    """ Neum Simple File Connector \n Requires a `url` as part of the `connector_information`."""
-
-    def __init__(self, connector_information:dict, selector:Selector) -> None:
-        self.connector_information = connector_information
-        self.selector = selector
+class NeumSimpleFileConnector(DataConnector):
+    """ Neum Simple File Connector \n
+    connector_information required:\n
+    [ url ]"""
 
     @property
     def connector_name(self) -> str:
@@ -47,17 +45,16 @@ class NeumSimpleFileConnector(Connector):
         return False
     
     @property
-    def compatible_loaders(self) -> List[Loader]:
+    def compatible_loaders(self) -> List[str]:
         return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        # Connect to supabase
         available_metadata = {'url':self.connector_information['url']}
         selected_metadata  = {k: available_metadata[k] for k in self.selector.to_metadata if k in available_metadata}
         yield CloudFile(file_identifier=self.connector_information['url'], metadata=selected_metadata, id=self.connector_information['url'])
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
-        # Connect to supabase
+        # Delta is not different, we are just getting one file. 
         yield self.connect_and_list_full()
 
     def connect_and_download(self, cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
@@ -65,16 +62,19 @@ class NeumSimpleFileConnector(Connector):
         import requests
         response = requests.get(cloudFile.file_identifier)
 
+        # Download file
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             temp_file.write(response.content)
             yield LocalFile(file_path=temp_file.name, metadata=cloudFile.metadata, id=cloudFile.id)
 
     def validate(self) -> bool:
+        # Check for required properties
         try:
             url = self.connector_information['url']
         except:
             raise ValueError("Required properties not set")
         
+        # Check for metadata
         if not all(x in self.availableMetadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided") 
         return True 

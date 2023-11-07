@@ -1,4 +1,3 @@
-from .NeumSink import NeumSink
 from .PineconeSink import PineconeSink
 from .QdrantSink import QdrantSink
 from .WeaviateSink import WeaviateSink

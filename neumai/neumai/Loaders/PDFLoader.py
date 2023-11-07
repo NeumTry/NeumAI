@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 from typing import List, Generator
-from neumai_tools import NeumDocument
+from Shared.NeumDocument import NeumDocument
 from Shared.LocalFile import LocalFile
 from Loaders.Loader import Loader
 from langchain.document_loaders import PyPDFLoader

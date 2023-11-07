@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 from typing import List, Generator
-from neumai_tools import NeumDocument
+from Shared.NeumDocument import NeumDocument
 from Shared.LocalFile import LocalFile
 from Shared.Selector import Selector
 
@@ -67,9 +67,9 @@ class Loader(ABC):
         return json_to_return
 
     def config(self):
-        return {
-            "requiredProperties":self.requiredProperties,
-            "optionalProperties":self.optionalProperties,
-            "availableMetadata":self.availableMetadata,
-            "availableContent":self.availableContent,
-        }
+        json_to_return = {}
+        json_to_return['requiredProperties'] = self.requiredProperties
+        json_to_return['optionalProperties'] = self.optionalProperties
+        json_to_return['availableMetadata'] = self.availableMetadata
+        json_to_return['availableContent'] = self.availableContent
+        return json_to_return
