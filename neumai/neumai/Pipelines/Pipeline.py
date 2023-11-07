@@ -59,7 +59,7 @@ class Pipeline(object):
                     for document in source.load_data(file=localFile):
                         for chunks in source.chunk_data(document=document):
                             embeddings, embeddings_info = self.embed.embed(documents=chunks)
-                            vectors_to_store = [NeumVector(id=str(uuid.uuid4()), vector=vector, metadata=document.metadata) for vector in embeddings]
+                            vectors_to_store = [NeumVector(id=str(uuid.uuid4()), vector=embeddings[i], metadata=chunks[i].metadata) for i in range(0,len(embeddings))]
                             total_vectors_stored += self.sink.store(vectors_to_store=vectors_to_store, pipeline_id=self.id)
 
         return total_vectors_stored

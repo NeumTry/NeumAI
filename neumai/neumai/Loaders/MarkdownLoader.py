@@ -37,8 +37,7 @@ class MarkdownLoader(Loader):
         loader = UnstructuredMarkdownLoader(file_path=file.file_path)
         documents = loader.load()
         for doc in documents:
-            doc.metadata.update(file.metadata)
-            yield NeumDocument(id=file.id, content=doc.page_content, metadata=doc.metadata)
+            yield NeumDocument(id=file.id, content=doc.page_content, metadata=file.metadata)
 
     def validate(self) -> bool:
         return True   

@@ -34,8 +34,7 @@ class HTMLLoader(Loader):
         documents = loader.load()
         # join the file and document metadata objects
         for doc in documents:
-            doc.metadata.update(file.metadata)
-            yield NeumDocument(id=file.id, content=doc.page_content, metadata=doc.metadata)
+            yield NeumDocument(id=file.id, content=doc.page_content, metadata=file.metadata)
     
     def validate(self) -> bool:
         return True   
