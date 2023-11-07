@@ -1,9 +1,12 @@
 from typing import List, Tuple
-from neumai.Embeds.EmbedConnector import EmbedConnector
+from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
 from langchain.embeddings.openai import OpenAIEmbeddings
 from neumai.Shared.NeumDocument import NeumDocument
 
 class OpenAIEmbed(EmbedConnector):
+    """" OpenAI Embed Connector \n
+    embed_information required: [ api_key ]"""
+
     @property
     def embed_name(self) -> str:
         return 'OpenAIEmbed'
@@ -14,7 +17,7 @@ class OpenAIEmbed(EmbedConnector):
 
     @property
     def optionalProperties(self) -> List[str]:
-        return ['organization', 'max_retries', 'chunk_size']
+        return ['max_retries', 'chunk_size']
 
     def validation(self) -> bool:
         """Validate connector setup"""

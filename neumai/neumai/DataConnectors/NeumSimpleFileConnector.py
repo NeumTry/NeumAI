@@ -8,8 +8,9 @@ import tempfile
 
 class NeumSimpleFileConnector(DataConnector):
     """ Neum Simple File Connector \n
-    connector_information required:\n
-    [ url ]"""
+    connector_information required:[ url ] \n
+    available metadata: [ url ]\n
+    available content: [ file ]"""
 
     @property
     def connector_name(self) -> str:
@@ -29,7 +30,7 @@ class NeumSimpleFileConnector(DataConnector):
 
     @property
     def availableContent(self) -> str:
-        return []
+        return ['file']
     
     @property
     def schedule_avaialable(self) -> bool:

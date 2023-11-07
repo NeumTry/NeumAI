@@ -1,10 +1,13 @@
 from typing import List
 from neumai.Shared.NeumSearch import NeumSearchResult
 from neumai.Shared.NeumSinkInfo import NeumSinkInfo
-from neumai.Sinks.SinkConnector import SinkConnector
+from neumai.SinkConnectors.SinkConnector import SinkConnector
 from neumai.Shared.NeumVector  import NeumVector
 
 class  PineconeSink(SinkConnector):
+    """ Pinecone Sink\n
+    sink_information requires : [ 'api_key', 'environment', 'index' ]"""
+        
     @property
     def sink_name(self) -> str:
         return 'PineconeSink'

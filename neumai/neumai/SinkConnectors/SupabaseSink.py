@@ -1,10 +1,13 @@
 from typing import List
-from neumai.Sinks.SinkConnector import SinkConnector
+from neumai.SinkConnectors.SinkConnector import SinkConnector
 from neumai.Shared.NeumSinkInfo import NeumSinkInfo
 from neumai.Shared.NeumVector  import NeumVector
 from neumai.Shared.NeumSearch import NeumSearchResult
 
 class SupabaseSink(SinkConnector):
+    """ Supabase Sink\n
+    sink_information requires : [ database_connection ]"""
+
     @property
     def sink_name(self) -> str:
         return 'SupabaseSink'

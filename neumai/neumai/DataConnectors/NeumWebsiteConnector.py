@@ -10,8 +10,9 @@ import requests
 
 class NeumWebsiteConnector(DataConnector):
     """" Neum Website Connector \n
-    connector_information contains:\n
-    [ url ]"""
+    connector_information contains: [ url ]\n
+    available metadata: [ url ]\n
+    available content: [ website ]"""
   
     @property
     def connector_name(self) -> str:
@@ -31,7 +32,7 @@ class NeumWebsiteConnector(DataConnector):
 
     @property
     def availableContent(self) -> str:
-        return []
+        return ['website']
     
     @property
     def schedule_avaialable(self) -> bool:

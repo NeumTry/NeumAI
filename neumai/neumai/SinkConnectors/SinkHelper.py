@@ -1,4 +1,4 @@
-from neumai.Sinks import (
+from neumai.SinkConnectors import (
     PineconeSink,
     WeaviateSink,
     QdrantSink,

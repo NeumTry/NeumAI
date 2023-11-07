@@ -1,10 +1,10 @@
 from .PipelineRun import PipelineRun
 from .TriggerSchedule import TriggerSchedule
-from neumai.Sinks.SinkConnector import SinkConnector
-from neumai.Embeds.EmbedConnector import EmbedConnector
+from neumai.SinkConnectors.SinkConnector import SinkConnector
+from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
 from neumai.Sources.SourceConnector import SourceConnector
-from neumai.Embeds.EmbedHelper import as_embed
-from neumai.Sinks.SinkHelper import as_sink
+from neumai.EmbedConnectors.EmbedHelper import as_embed
+from neumai.SinkConnectors.SinkHelper import as_sink
 from neumai.Shared.NeumVector import NeumVector
 from neumai.Shared.NeumSearch import NeumSearchResult
 from typing import List
@@ -13,7 +13,7 @@ import uuid
 accepted_trigger_sync_types: List = []
 class Pipeline(object):
     def __init__(self, 
-                source:  List[SourceConnector], # Change to only support a list of Sources for V2
+                sources:  List[SourceConnector], # Change to only support a list of Sources for V2
                 embed: EmbedConnector, 
                 sink: SinkConnector, 
                 name:str = None,
@@ -28,7 +28,7 @@ class Pipeline(object):
         self.name = name
         self.created = created
         self.updated = updated
-        self.source = source
+        self.sources = sources
         self.embed = embed
         self.sink = sink
         self.trigger_schedule = trigger_schedule
@@ -39,7 +39,7 @@ class Pipeline(object):
     def validate(self) -> bool:
         """Running validation for each connector"""
         try:
-            for source in self.source:
+            for source in self.sources:
                 source.validation()
             self.embed.validation()
             self.sink.validation()
@@ -52,14 +52,14 @@ class Pipeline(object):
         # These should be used to run pipelines at scale.
 
         total_vectors_stored = 0
-        for source in self.source:
+        for source in self.sources:
             for cloudFile in source.list_files_full():
                 for localFile in source.download_files(cloudFile=cloudFile):
                     for document in source.load_data(file=localFile):
                         for chunks in source.chunk_data(document=document):
                             embeddings, embeddings_info = self.embed.embed(documents=chunks)
                             vectors_to_store = [NeumVector(id=str(uuid.uuid4()), vector=vector, metadata=document.metadata) for vector in embeddings]
-                            total_vectors_stored += self.sink.store(vectors_to_store=vectors_to_store, pipeline_id=pipeline.id)
+                            total_vectors_stored += self.sink.store(vectors_to_store=vectors_to_store, pipeline_id=self.id)
 
         return total_vectors_stored
     
@@ -73,7 +73,7 @@ class Pipeline(object):
         content_to_return['id'] = self.id
         content_to_return['name'] = self.name
         content = []
-        for source in self.source:
+        for source in self.sources:
             content.append(source.to_model())
         content_to_return['source'] = content
         content_to_return['embed'] = self.embed.to_model()
@@ -100,7 +100,7 @@ class Pipeline(object):
         json_to_return['id'] = self.id
         json_to_return['name'] = self.name
         json_source = []
-        for source in self.source:
+        for source in self.sources:
             json_source.append(source.toJson())
         json_to_return['source'] = json_source
         json_to_return['embed'] = self.embed.toJson()
@@ -122,7 +122,7 @@ class Pipeline(object):
     def as_request(self):
         json_body = {}
         json_source = []
-        for source in self.source:
+        for source in self.sources:
             json_source.append(source.toJson())
         json_body['source'] = json_source
         json_body['embed'] = self.embed.toJson()
@@ -146,7 +146,7 @@ class Pipeline(object):
     
     def available_metadata(self) -> List[str]:
         available_metadata = []
-        for source in self.source:
+        for source in self.sources:
             available_metadata += source.customMetadata.keys()
             available_metadata += source.connector.selector.to_metadata
             available_metadata += source.loader.selector.to_metadata
@@ -156,14 +156,14 @@ class Pipeline(object):
         if dct == None:
             return None
         
-        source = dct.get("source")
+        sources = dct.get("source")
         source_value = []
-        for s in source:
+        for s in sources:
             source_value.append(SourceConnector.as_source_connector(s))
         return Pipeline(
             name=dct.get("name", None),
             id=dct.get("id", None),
-            source=source_value,
+            sources=source_value,
             embed = as_embed(dct.get("embed")),
             sink = as_sink(dct.get("sink")),
             trigger_schedule=TriggerSchedule.as_trigger_schedule(dct.get("trigger_schedule", None)),
