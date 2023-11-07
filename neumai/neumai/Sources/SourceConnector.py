@@ -1,8 +1,10 @@
 from neumai.DataConnectors.DataConnector import DataConnector
 from neumai.DataConnectors.ConnectorHelper import as_connector
 from neumai.Chunkers.Chunker import Chunker
+from neumai.Chunkers.RecursiveChunker import RecursiveChunker
 from neumai.Chunkers.ChunkerHelper import as_chunker
 from neumai.Loaders.Loader import Loader
+from neumai.Loaders.AutoLoader import AutoLoader
 from neumai.Loaders.LoaderHelper import as_loader
 from neumai.Shared.NeumDocument import NeumDocument
 from neumai.Shared.LocalFile import LocalFile
@@ -13,7 +15,7 @@ from datetime import datetime
 from abc import ABC
 
 class SourceConnector(ABC):
-    def __init__(self, connector:DataConnector, chunker:Chunker = None, loader:Loader = None, customMetadata:dict = {}):
+    def __init__(self, connector:DataConnector, chunker:Chunker = RecursiveChunker(), loader:Loader = AutoLoader(), customMetadata:dict = {}):
         self.connector = connector
         self.chunker = chunker
         self.loader = loader
