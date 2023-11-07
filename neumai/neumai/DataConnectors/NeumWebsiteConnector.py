@@ -44,7 +44,7 @@ class NeumWebsiteConnector(DataConnector):
     
     @property
     def compatible_loaders(self) -> List[str]:
-        return ["HTMLLoader"]
+        return ["HTMLLoader", "AutoLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
         # Send an HTTP GET request to the website

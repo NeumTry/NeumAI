@@ -9,7 +9,7 @@ import os
 
 
 class SupabaseConnector(DataConnector):
-    """" Neum File Connector \n
+    """" Supabase File Connector \n
     connector_information requires:\n
     [ bucket, folder, url, key ]"""
 

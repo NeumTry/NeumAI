@@ -4,7 +4,7 @@ from typing import List, Generator
 from langchain.text_splitter import (RecursiveCharacterTextSplitter)
 
 class RecursiveChunker(Chunker):
-    """" Recursive Chunker \n
+    """Recursive Chunker \n
     chunker_information optional: \n
     [chunk_size, chunk_overlap, batch_size]"""
     

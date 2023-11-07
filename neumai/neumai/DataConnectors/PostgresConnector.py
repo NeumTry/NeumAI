@@ -43,7 +43,7 @@ class PostgresConnector(DataConnector):
     
     @property
     def compatible_loaders(self) -> List[str]:
-        return ["NeumJSONLoader"]
+        return ["NeumJSONLoader", "AutoLoader"]
     
     def datetime_serializer(self, obj):
         if isinstance(obj, datetime):

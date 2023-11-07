@@ -11,9 +11,7 @@ from neumai.Loaders.PDFLoader import PDFLoader
 from langchain.document_loaders import UnstructuredFileLoader
 
 class AutoLoader(Loader):
-    """" Auto Loader """
-    """" loader_information contains: """
-    """ [] """
+    """ Auto Loader\n loader_information contains: [] """
 
     @property
     def loader_name(self) -> str:

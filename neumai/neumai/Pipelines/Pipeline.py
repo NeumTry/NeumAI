@@ -17,7 +17,7 @@ class Pipeline(object):
                 embed: EmbedConnector, 
                 sink: SinkConnector, 
                 name:str = None,
-                id: str = None, 
+                id: str = str(uuid.uuid4()), 
                 created: float = None, 
                 updated: float = None,
                 trigger_schedule: TriggerSchedule = None, 
@@ -43,6 +43,7 @@ class Pipeline(object):
                 source.validation()
             self.embed.validation()
             self.sink.validation()
+            return True
         except Exception as e:
             raise e
         
