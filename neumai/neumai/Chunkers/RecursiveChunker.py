@@ -1,4 +1,4 @@
-from Chunkers.Chunker import Chunker
+from neumai.Chunkers.Chunker import Chunker
 from neumai.Shared.NeumDocument import NeumDocument
 from typing import List, Generator
 from langchain.text_splitter import (RecursiveCharacterTextSplitter)

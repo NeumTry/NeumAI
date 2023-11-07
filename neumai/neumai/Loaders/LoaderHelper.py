@@ -1,4 +1,4 @@
-from Loaders import (
+from neumai.Loaders import (
     AutoLoader,
     MarkdownLoader,
     NeumJSONLoader,
@@ -6,7 +6,7 @@ from Loaders import (
     PDFLoader,
     HTMLLoader,
 )
-from Loaders.Loader import Loader
+from neumai.Loaders.Loader import Loader
 from neumai.Shared.Selector import Selector
 from starlette.exceptions import HTTPException
 

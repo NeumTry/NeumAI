@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC, abstractproperty
-from Chunkers.Chunker import Chunker
+from neumai.Chunkers.Chunker import Chunker
 from starlette.exceptions import HTTPException
 from neumai.Shared.NeumDocument import NeumDocument
 from typing import List, Generator

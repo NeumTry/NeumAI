@@ -1,24 +1,14 @@
 from datetime import datetime
-from .DataConnector import Connector
+from neumai.DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
 from azure.storage.blob import BlobClient, ContainerClient
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
-from neumai.Shared.Selector import Selector
-from Loaders.Loader import Loader
-from Loaders import (
-    AutoLoader, 
-    HTMLLoader, 
-    MarkdownLoader, 
-    NeumCSVLoader, 
-    NeumJSONLoader, 
-    PDFLoader
-)
 import tempfile
 import os
 
 
-class AzureBlobConnector(Connector):
+class AzureBlobConnector(DataConnector):
     """" Neum File Connector """
 
     @property

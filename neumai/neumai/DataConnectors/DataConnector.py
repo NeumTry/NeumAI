@@ -1,9 +1,8 @@
 from abc import abstractmethod, ABC
 from typing import List, Generator
-from neumai.SharedLocalFile import LocalFile
-from neumai.SharedCloudFile import CloudFile
-from neumai.SharedSelector import Selector
-from Loaders.Loader import Loader
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Selector import Selector
 from datetime import datetime
 
 class DataConnector(ABC):

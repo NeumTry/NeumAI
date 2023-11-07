@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from .SinkConnector import SinkConnector
+from neumai.Sinks.SinkConnector import SinkConnector
 from neumai.Shared.NeumVector  import NeumVector
 from neumai.Shared.NeumSinkInfo import NeumSinkInfo
 from neumai.Shared.NeumSearch import NeumSearchResult

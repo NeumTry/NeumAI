@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from typing import List, Generator
 from neumai.Shared.NeumDocument import NeumDocument
 from neumai.Shared.LocalFile import LocalFile
-from Loaders.Loader import Loader
+from neumai.Loaders.Loader import Loader
 from langchain.document_loaders import UnstructuredHTMLLoader
 
 class HTMLLoader(Loader):

@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from .EmbedConnector import EmbedConnector
+from neumai.Embeds.EmbedConnector import EmbedConnector
 from langchain.embeddings.openai import OpenAIEmbeddings
 from neumai.Shared.NeumDocument import NeumDocument
 

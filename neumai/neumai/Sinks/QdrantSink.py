@@ -1,7 +1,7 @@
 from neumai.Shared.NeumSinkInfo import NeumSinkInfo
 from neumai.Shared.NeumVector  import NeumVector
 from neumai.Shared.NeumSearch import NeumSearchResult
-from .SinkConnector import SinkConnector
+from neumai.Sinks.SinkConnector import SinkConnector
 from typing import List
 
 class QdrantSink(SinkConnector):

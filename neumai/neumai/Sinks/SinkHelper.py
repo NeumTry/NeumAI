@@ -1,12 +1,10 @@
-from Sinks import (
+from neumai.Sinks import (
     PineconeSink,
     WeaviateSink,
     QdrantSink,
     SingleStoreSink,
     SupabaseSink
 )
-from Sinks.SinkConnector import SinkConnector
-from neumai.Shared.Selector import Selector
 from starlette.exceptions import HTTPException
 
 def as_sink(dct:dict):

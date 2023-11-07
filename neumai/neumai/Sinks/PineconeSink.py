@@ -1,7 +1,7 @@
 from typing import List
 from neumai.Shared.NeumSearch import NeumSearchResult
 from neumai.Shared.NeumSinkInfo import NeumSinkInfo
-from .SinkConnector import SinkConnector
+from neumai.Sinks.SinkConnector import SinkConnector
 from neumai.Shared.NeumVector  import NeumVector
 
 class  PineconeSink(SinkConnector):

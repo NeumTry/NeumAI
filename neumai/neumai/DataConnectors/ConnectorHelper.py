@@ -1,5 +1,5 @@
-from DataConnector import DataConnector
-from DataConnectors import (
+from neumai.DataConnectors.DataConnector import DataConnector
+from neumai.DataConnectors import (
     S3Connector,
     NeumWebsiteConnector,
     AzureBlobConnector,
@@ -7,7 +7,7 @@ from DataConnectors import (
     PostgresConnector,
     NeumSimpleFileConnector
 )
-from neumai.SharedSelector import Selector
+from neumai.Shared.Selector import Selector
 from starlette.exceptions import HTTPException
 
 # Helper function to map connector configuration to object type

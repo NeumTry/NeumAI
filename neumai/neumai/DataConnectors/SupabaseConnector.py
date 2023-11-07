@@ -1,9 +1,9 @@
 from datetime import datetime
-from DataConnector import DataConnector
+from neumai.DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
 from supabase import create_client, Client
-from neumai.SharedLocalFile import LocalFile
-from neumai.SharedCloudFile import CloudFile
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
 import tempfile
 import os
 

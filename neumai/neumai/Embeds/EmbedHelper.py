@@ -1,4 +1,4 @@
-from Embeds import (
+from neumai.Embeds import (
     OpenAIEmbed,
     ReplicateEmbed,
     AzureOpenAIEmbed

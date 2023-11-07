@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "neumai"
-version = "0.0.2"
+version = "0.0.4"
 description = "Package containing connectors for Neum AI."
 authors = ["David de Matheu <david@tryneum.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://neum.ai"
-repository = "https://github.com/NeumTry/neum-tools"
+repository = "https://github.com/NeumTry/NeumAI"
 keywords = ["neumai", "ai tools", "data tools"]
 
 [tool.poetry.dependencies]
