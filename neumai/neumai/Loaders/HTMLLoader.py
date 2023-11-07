@@ -6,9 +6,7 @@ from neumai.Loaders.Loader import Loader
 from langchain.document_loaders import UnstructuredHTMLLoader
 
 class HTMLLoader(Loader):
-    """" HTML Loader """
-    """" loader_information contains: """
-    """ [] """
+    """" HTML Loader \n loader_information requires: [ ]"""
 
     @property
     def loader_name(self) -> str:

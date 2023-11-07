@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 from neumai.SinkConnectors.SinkConnector import SinkConnector
 from neumai.Shared.NeumVector  import NeumVector
 from neumai.Shared.NeumSinkInfo import NeumSinkInfo
@@ -76,9 +76,9 @@ class WeaviateSink(SinkConnector):
                 print(f"Error when creating class in weaviate.. Skipping task id {task_id}: {e}")
                 raise e
             
-        with client.batch(
+        with client.batch.configure(
             batch_size=batch_size,
-            callback=lambda *args: self.check_batch_result(*args, task_id=task_id, partial_failure=partial_failure),
+            callback=lambda results: self.check_batch_result(results, task_id=task_id, partial_failure=partial_failure),
             num_workers=num_workers,
             dynamic=is_dynamic_batch,
             connection_error_retries=batch_connection_error_retries
@@ -99,7 +99,7 @@ class WeaviateSink(SinkConnector):
             raise Exception(f"Insertion to weaviate failed - Received more than 5 number of failures when batching. Latest error when batching was: {partial_failure['latest_failure']}")
         return len(vectors_to_store)#, partial_failure
 
-    def check_batch_result(results: dict, task_id: str, partial_failure: dict):
+    def check_batch_result(results: Optional[List[dict[str, any]]], task_id: str, partial_failure: dict):
         if results is not None:
             for result in results:
                 if "result" in result and "errors" in result["result"]:
