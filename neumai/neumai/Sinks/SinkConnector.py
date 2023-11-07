@@ -1,8 +1,8 @@
-from typing import List
-from Shared.NeumSearch import NeumSearchResult
-from Shared.NeumVector import NeumVector
-from Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.Shared.NeumSearch import NeumSearchResult
+from neumai.Shared.NeumVector import NeumVector
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
 from abc import ABC, abstractmethod
+from typing import List
 
 # Eventually this is an abstract class where specific implementations of it implement from it.
 # Like, PineconeConnector which extends/implements from SinkConnector

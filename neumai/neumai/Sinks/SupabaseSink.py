@@ -1,8 +1,8 @@
 from typing import List
 from .SinkConnector import SinkConnector
-from Shared.NeumSinkInfo import NeumSinkInfo
-from Shared.NeumVector  import NeumVector
-from Shared.NeumSearch import NeumSearchResult
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.Shared.NeumVector  import NeumVector
+from neumai.Shared.NeumSearch import NeumSearchResult
 
 class SupabaseSink(SinkConnector):
     @property

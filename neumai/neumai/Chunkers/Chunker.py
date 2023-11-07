@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from Shared.NeumDocument import NeumDocument
+from neumai.Shared.NeumDocument import NeumDocument
 from typing import List, Generator
 
 class Chunker(ABC):

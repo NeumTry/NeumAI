@@ -7,7 +7,7 @@ from DataConnectors import (
     PostgresConnector,
     NeumSimpleFileConnector
 )
-from Shared.Selector import Selector
+from neumai.SharedSelector import Selector
 from starlette.exceptions import HTTPException
 
 # Helper function to map connector configuration to object type

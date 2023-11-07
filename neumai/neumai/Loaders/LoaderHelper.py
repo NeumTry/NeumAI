@@ -7,7 +7,7 @@ from Loaders import (
     HTMLLoader,
 )
 from Loaders.Loader import Loader
-from Shared.Selector import Selector
+from neumai.Shared.Selector import Selector
 from starlette.exceptions import HTTPException
 
 def as_loader(dct:dict):

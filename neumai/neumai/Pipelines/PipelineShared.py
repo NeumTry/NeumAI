@@ -1,7 +1,6 @@
 from .Pipeline import Pipeline
 from .Pipeline import Pipeline
 from fastapi.responses import JSONResponse
-from typing import Union
 
 class PipelineModel(JSONResponse):
     def __init__(

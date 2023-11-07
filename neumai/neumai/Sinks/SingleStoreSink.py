@@ -1,8 +1,8 @@
-from typing import List
-from Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.Shared.NeumVector  import NeumVector
+from neumai.Shared.NeumSearch import NeumSearchResult
 from .SinkConnector import SinkConnector
-from Shared.NeumVector  import NeumVector
-from Shared.NeumSearch import NeumSearchResult
+from typing import List
 
 class SingleStoreSink(SinkConnector):
     @property

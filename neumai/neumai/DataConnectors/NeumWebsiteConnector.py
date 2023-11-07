@@ -1,7 +1,7 @@
 from DataConnector import DataConnector
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
+from neumai.SharedLocalFile import LocalFile
+from neumai.SharedCloudFile import CloudFile
 from bs4 import BeautifulSoup
 import tempfile
 import os

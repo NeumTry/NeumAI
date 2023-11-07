@@ -6,7 +6,7 @@ from Sinks import (
     SupabaseSink
 )
 from Sinks.SinkConnector import SinkConnector
-from Shared.Selector import Selector
+from neumai.Shared.Selector import Selector
 from starlette.exceptions import HTTPException
 
 def as_sink(dct:dict):

@@ -1,10 +1,10 @@
 from datetime import datetime
-from Connectors.Connector import Connector
+from .DataConnector import Connector
 from typing import List, Generator
 from azure.storage.blob import BlobClient, ContainerClient
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Selector import Selector
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Selector import Selector
 from Loaders.Loader import Loader
 from Loaders import (
     AutoLoader, 

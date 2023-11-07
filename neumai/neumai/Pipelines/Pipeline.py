@@ -1,12 +1,12 @@
 from .PipelineRun import PipelineRun
 from .TriggerSchedule import TriggerSchedule
-from Sinks.SinkConnector import SinkConnector
-from Embeds.EmbedConnector import EmbedConnector
-from Sources.SourceConnector import SourceConnector
-from Embeds import as_embed
-from Sinks import as_sink
-from Shared.NeumVector import NeumVector
-from Shared.NeumSearch import NeumSearchResult
+from neumai.Sinks.SinkConnector import SinkConnector
+from neumai.Embeds.EmbedConnector import EmbedConnector
+from neumai.Sources.SourceConnector import SourceConnector
+from neumai.Embeds.EmbedHelper import as_embed
+from neumai.Sinks.SinkHelper import as_sink
+from neumai.Shared.NeumVector import NeumVector
+from neumai.Shared.NeumSearch import NeumSearchResult
 from typing import List
 import uuid
 

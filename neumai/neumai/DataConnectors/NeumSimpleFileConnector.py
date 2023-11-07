@@ -3,9 +3,9 @@ from DataConnector import DataConnector
 from typing import List, Generator
 from abc import abstractmethod, ABC, abstractproperty
 from supabase import create_client, Client
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Selector import Selector
+from neumai.SharedLocalFile import LocalFile
+from neumai.SharedCloudFile import CloudFile
+from neumai.SharedSelector import Selector
 from Loaders import Loader, AutoLoader, HTMLLoader, MarkdownLoader, NeumCSVLoader, NeumJSONLoader, PDFLoader
 import tempfile
 import os

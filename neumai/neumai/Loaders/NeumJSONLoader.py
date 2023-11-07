@@ -1,8 +1,8 @@
 from abc import abstractmethod, ABC
 from typing import List, Generator
-from Shared.NeumDocument import NeumDocument
-from Shared.LocalFile import LocalFile
-from Loaders.Loader import Loader
+from neumai.Shared.NeumDocument import NeumDocument
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Loaders.Loader import Loader
 from neumai_tools import JSONLoader
 
 class NeumJSONLoader(Loader):

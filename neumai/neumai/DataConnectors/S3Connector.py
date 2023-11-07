@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import List, Generator
 import boto3
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
+from neumai.SharedLocalFile import LocalFile
+from neumai.SharedCloudFile import CloudFile
 from DataConnector import DataConnector
 import tempfile
 import os

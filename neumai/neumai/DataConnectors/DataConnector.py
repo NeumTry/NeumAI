@@ -1,8 +1,8 @@
 from abc import abstractmethod, ABC
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Selector import Selector
+from neumai.SharedLocalFile import LocalFile
+from neumai.SharedCloudFile import CloudFile
+from neumai.SharedSelector import Selector
 from Loaders.Loader import Loader
 from datetime import datetime
 

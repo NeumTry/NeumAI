@@ -2,8 +2,8 @@ from psycopg2.extras import DictCursor
 from datetime import datetime
 from DataConnector import DataConnector
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
+from neumai.SharedLocalFile import LocalFile
+from neumai.SharedCloudFile import CloudFile
 import singlestoredb as s2
 import json
 

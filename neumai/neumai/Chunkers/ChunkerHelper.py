@@ -1,4 +1,3 @@
-from Chunkers.Chunker import Chunker
 from Chunkers import (
     CharacterChunker,
     CustomChunker,

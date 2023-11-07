@@ -25,7 +25,9 @@ It provides you a comprehensive solution for RAG that can scale with your applic
 
 Sign up today at [dasboard.neum.ai](https://dashboard.neum.ai). See our [quickstart]() to get started.
 
-### Self-Host
+The Neum AI Cloud supports a large-scale, distrubted architecture to run millions of documents through vector embedding. For the full set of features see: [Cloud vs Local](https://neumai.mintlify.app/get-started/cloud-vs-local)
+
+### Local Development
 
 Install the `neumai` package:
 
@@ -34,6 +36,12 @@ pip install neumai
 ```
 
 To create your first data pipelines visit our [quickstart]().
+
+### Self-host
+
+A basic version of the Neum AI platform is available for self-host. See [neumai-server](./neumai-server/) for more information.
+
+This version supports a FastAPI vased deployable service to run and query Neum AI pipelines.
 
 ## Roadmap
 

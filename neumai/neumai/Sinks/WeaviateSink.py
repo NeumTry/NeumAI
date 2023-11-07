@@ -1,8 +1,8 @@
 from typing import List, Tuple
 from .SinkConnector import SinkConnector
-from Shared.NeumVector  import NeumVector
-from Shared.NeumSinkInfo import NeumSinkInfo
-from Shared.NeumSearch import NeumSearchResult
+from neumai.Shared.NeumVector  import NeumVector
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.Shared.NeumSearch import NeumSearchResult
 
 class WeaviateSink(SinkConnector):
     @property

@@ -1,7 +1,7 @@
 from starlette.exceptions import HTTPException
 from abc import ABC, abstractmethod
 from typing import List, Tuple
-from Shared.NeumDocument import NeumDocument
+from neumai.Shared.NeumDocument import NeumDocument
 
 class EmbedConnector(ABC):
     def __init__(self, embed_information: dict = {}):

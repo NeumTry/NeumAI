@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from .EmbedConnector import EmbedConnector
 from langchain.embeddings.openai import OpenAIEmbeddings
-from Shared.NeumDocument import NeumDocument
+from neumai.Shared.NeumDocument import NeumDocument
 
 class OpenAIEmbed(EmbedConnector):
     @property
