@@ -1,18 +1,21 @@
-def createPipeline(pipeline_config:dict, api_key:str):
+from neumai.Pipelines.Pipeline import Pipeline
+from neumai.Client.NeumClient import NeumClient
+
+def createPipeline(pipeline:Pipeline, neumClient:NeumClient):
     import requests
     
     url = f"https://api.neum.ai/v1/pipelines"
 
     # Headers
     headers = {
-        "neum-api-key":api_key,
+        "neum-api-key": neumClient.api_key,
         "Content-Type": "application/json"
     }
 
-    response = requests.post(url, headers=headers, json=pipeline_config)
+    response = requests.post(url, headers=headers, json=pipeline.as_request())
     return response.json()['id']
 
-def getPipeline(pipeline:str, api_key:str):
+def getPipeline(pipeline:Pipeline, neumClient:NeumClient):
     import requests
     import json
 

@@ -76,7 +76,7 @@ class Pipeline(object):
         content = []
         for source in self.sources:
             content.append(source.to_model())
-        content_to_return['source'] = content
+        content_to_return['sources'] = content
         content_to_return['embed'] = self.embed.to_model()
         content_to_return['sink'] = self.sink.to_model()
         content_to_return['created'] = self.created
@@ -103,7 +103,7 @@ class Pipeline(object):
         json_source = []
         for source in self.sources:
             json_source.append(source.toJson())
-        json_to_return['source'] = json_source
+        json_to_return['sources'] = json_source
         json_to_return['embed'] = self.embed.toJson()
         json_to_return['sink'] = self.sink.toJson()
         json_to_return['owner'] = self.owner
@@ -125,7 +125,7 @@ class Pipeline(object):
         json_source = []
         for source in self.sources:
             json_source.append(source.toJson())
-        json_body['source'] = json_source
+        json_body['sources'] = json_source
         json_body['embed'] = self.embed.toJson()
         json_body['sink'] = self.sink.toJson()
         return json_body
@@ -157,7 +157,7 @@ class Pipeline(object):
         if dct == None:
             return None
         
-        sources = dct.get("source")
+        sources = dct.get("sources")
         source_value = []
         for s in sources:
             source_value.append(SourceConnector.as_source_connector(s))
