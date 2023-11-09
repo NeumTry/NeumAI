@@ -17,7 +17,8 @@ It provides you a comprehensive solution for RAG that can scale with your applic
 - 🏭 **High throughput distrubted architecture** to handle billions of data points. Allows high degrees of parallelization to optimize embedding generation and ingestion.
 - 🧱 **Built-in data connectors** to common data sources, embedding services and vector stores.
 - 🔄 **Real-time synchronization** of data sources to ensure your data is always up-to-date. 
-- 🤝 **Cohesive data management** to support hybrid retrieval with metdata. Neum AI automatically augments and tracks metadata to provide rich retrieval experience.
+- ♻ **Customizable data pre-processing** in the form of loading, chunking and selecting.
+- 🤝 **Cohesive data management** to support hybrid retrieval with metadata. Neum AI automatically augments and tracks metadata to provide rich retrieval experience.
 
 ## Getting Started
 
