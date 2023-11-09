@@ -6,7 +6,7 @@ from neumai.Shared.CloudFile import CloudFile
 import tempfile
 
 
-class NeumSimpleFileConnector(DataConnector):
+class NeumFileConnector(DataConnector):
     """ Neum Simple File Connector \n
     connector_information required:[ url ] \n
     available metadata: [ url ]\n

@@ -5,7 +5,7 @@ from neumai.DataConnectors import (
     AzureBlobConnector,
     SupabaseConnector,
     PostgresConnector,
-    NeumSimpleFileConnector
+    NeumFileConnector
 )
 from neumai.Shared.Selector import Selector
 from starlette.exceptions import HTTPException
@@ -29,5 +29,5 @@ def as_connector(dct:dict):
     elif connector_name == "PostgresConnector":
         return PostgresConnector(connector_information=connector_information, selector=selector)
     elif connector_name == "NeumSimpleFileConnector":
-        return NeumSimpleFileConnector(connector_information=connector_information, selector=selector)
+        return NeumFileConnector(connector_information=connector_information, selector=selector)
     return None

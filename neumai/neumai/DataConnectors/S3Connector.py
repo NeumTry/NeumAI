@@ -27,7 +27,7 @@ class S3Connector(DataConnector):
     
     @property
     def availableMetadata(self) -> str:
-        return ["last_modified", "metadata" ] # TODO need to flatten
+        return ["key" , "last_modified", "metadata" ] # TODO need to flatten
 
     @property
     def availableContent(self) -> str:
@@ -93,6 +93,7 @@ class S3Connector(DataConnector):
             if(last_run < obj.last_modified):
                 # If file changed, then download
                 metadata = {
+                    "key" : obj.key,
                     "last_modified" : obj.last_modified
                 }
                 selected_metadata  = {k: metadata[k] for k in self.selector.to_metadata if k in metadata}

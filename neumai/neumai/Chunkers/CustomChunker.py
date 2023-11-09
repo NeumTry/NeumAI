@@ -31,7 +31,7 @@ class CustomChunker(Chunker):
         
         # Probably add some code to check the code I am about to run.
         # Code format must follow:
-        # def split_text_into_chunks(text) -> List[Document]:
+        # def split_text_into_chunks(text) -> List[NeumDocument]:
 
         # Iterate through documents to chunk them and them merge them back up
         documents_to_embed:List[NeumDocument] = []

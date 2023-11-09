@@ -6,5 +6,5 @@ from .SupabaseConnector import SupabaseConnector
 from .PostgresConnector import PostgresConnector
 from .SharepointConnector import SharepointConnector
 from .SingleStoreConnector import SingleStoreConnector
-from .NeumSimpleFileConnector import NeumSimpleFileConnector
+from .NeumFileConnector import NeumFileConnector
 from .ConnectorHelper import as_connector

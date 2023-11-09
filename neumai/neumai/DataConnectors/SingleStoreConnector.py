@@ -42,7 +42,7 @@ class SingleStoreConnector(DataConnector):
     
     @property
     def compatible_loaders(self) -> List[str]:
-        return ["NeumJSONLoader", "AutoLoader"]
+        return ["NeumJSONLoader"]
     
     def datetime_serializer(self, obj):
         if isinstance(obj, datetime):
