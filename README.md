@@ -39,9 +39,9 @@ To create your first data pipelines visit our [quickstart]().
 
 ### Self-host
 
-A basic version of the Neum AI platform is available for self-host. See [neumai-server](./neumai-server/) for more information.
+If you are interested in deploying Neum AI to your own cloud contact us at [founders@tryneum.com](mailto:founders@tryneum.com).
 
-This version supports a FastAPI vased deployable service to run and query Neum AI pipelines.
+We will publish soon an open-source self-host that leverages the framework's architecture to do high throughput data processing.
 
 ## Roadmap
 
