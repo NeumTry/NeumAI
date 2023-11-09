@@ -29,7 +29,7 @@ The Neum AI Cloud supports a large-scale, distrubted architecture to run million
 
 ### Local Development
 
-Install the `neumai` package:
+Install the [`neumai`](https://pypi.org/project/neumai/) package:
 
 ```bash
 pip install neumai
@@ -69,6 +69,6 @@ Experimental
 - [ ]  Chat history connector
 - [ ]  Structured (SQL and GraphQL) search connector
 
-In this repository, we have included tools that the Neum AI team has built to help in process of ingesting and processing data.
+Additional tooling for Neum AI can be found here:
 
 - [neumai-tools](https://pypi.org/project/neumai-tools/): contains pre-processing tools for loading and chunking data before generating vector embeddings.
