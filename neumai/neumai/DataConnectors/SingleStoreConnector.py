@@ -3,6 +3,7 @@ from neumai.DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
+from decimal import Decimal
 import singlestoredb as s2
 import json
 
@@ -44,10 +45,13 @@ class SingleStoreConnector(DataConnector):
     def compatible_loaders(self) -> List[str]:
         return ["NeumJSONLoader"]
     
-    def datetime_serializer(self, obj):
-        if isinstance(obj, datetime):
-            return obj.isoformat()
-        raise TypeError("Type not serializable")
+    class CustomEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, Decimal):
+                return str(obj)  # Convert Decimal to a string representation
+            elif isinstance(obj, datetime):
+                return obj.isoformat()  # Convert datetime to ISO format string
+            return super().default(obj)
 
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
         url = self.connector_information['url']
@@ -64,17 +68,16 @@ class SingleStoreConnector(DataConnector):
                     rows = cur.fetchmany(batch_size)
                     if not rows:
                         break
-
                     for row in rows:
-                        batch_rows.append(row)
+                        serialized_string = json.dumps(dict(row),cls=self.CustomEncoder)
+                        serialized_dict = json.loads(serialized_string)
+                        batch_rows.append(serialized_dict)
                         if(len(batch_rows) == batch_size):
-                            json_object = json.dumps(batch_rows, default=self.datetime_serializer)
-                            yield CloudFile(data=json_object, metadata={})
+                            yield CloudFile(data=json.dumps(batch_rows), metadata={})
                             batch_rows = []
 
                 if len(batch_rows) > 0:
-                        json_object = json.dumps(batch_rows, default=self.datetime_serializer)
-                        yield CloudFile(data=json_object, metadata={})
+                    yield CloudFile(data=json.dumps(batch_rows), metadata={})
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
         # No metadatadata to determine what rows are new. Needs to be done through websocket
@@ -83,7 +86,7 @@ class SingleStoreConnector(DataConnector):
     def connect_and_download(self, cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
          data = json.loads(cloudFile.data)
          for row in data:
-            yield LocalFile(in_mem_data=dict(row), metadata=cloudFile.metadata)
+            yield LocalFile(in_mem_data=json.dumps(row), metadata=cloudFile.metadata)
     
     def validate(self) -> bool:
         try:

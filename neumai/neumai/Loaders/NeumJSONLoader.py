@@ -45,7 +45,7 @@ class NeumJSONLoader(Loader):
             json_data = json.loads(file.in_mem_data)
 
         if json_data is not None:
-            processed_json = self.process_item(json_data, id_key=id_key, selector=selector)
+            processed_json = self.process_item(item=json_data, id_key=id_key)
 
             for item in processed_json:
                 content = ''.join(item['data'])
@@ -66,12 +66,12 @@ class NeumJSONLoader(Loader):
                 new_prefix = f"{prefix}.{key}" if prefix else key
                 new_document_id = f"{item.get(id_key, '')}.{new_prefix}" if id_key in item else new_prefix
                 if self.selector.to_embed is None or new_prefix in self.selector.to_embed or not self.selector.to_embed:
-                    result.extend(self.process_item(value, new_prefix, new_metadata, new_document_id, id_key, self.selector))
+                    result.extend(self.process_item(item=value, prefix=new_prefix, metadata=new_metadata, document_id=new_document_id, id_key=id_key))
             return result
         elif isinstance(item, list):
             result = []
             for value in item:
-                result.extend(self.process_item(value, prefix, metadata, document_id, id_key, self.selector))
+                result.extend(self.process_item(item=value, prefix=prefix, metadata=metadata, document_id=document_id, id_key=id_key))
             return result
         else:
             return [{'data': [f"{item}"], 'metadata': metadata, 'id': document_id or prefix}]
