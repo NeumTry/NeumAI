@@ -67,7 +67,7 @@ class SharepointConnector(DataConnector):
                     "lastModifiedBy.user.displayName":item['createdBy']['user']['displayName'],
                 }
                 selected_metadata  = {k: availableMetadata[k] for k in self.selector.to_metadata if k in availableMetadata}
-                yield CloudFile(file_identifier=file_url, id=file_name, type=file_type, metadata=selected_metadata, id=file_name)
+                yield CloudFile(file_identifier=file_url, id=file_name, type=file_type, metadata=selected_metadata)
             
             elif 'folder' in item.keys():
                 # It's a folder, process it recursively
@@ -98,7 +98,7 @@ class SharepointConnector(DataConnector):
                 }
                 if last_run < item['lastModifiedDateTime']:
                     selected_metadata  = {k: availableMetadata[k] for k in metadata_keys if k in availableMetadata}
-                    yield CloudFile(file_identifier=file_url, id=file_name, type=file_type, metadata=selected_metadata, id=file_name)
+                    yield CloudFile(file_identifier=file_url, id=file_name, type=file_type, metadata=selected_metadata)
             
             elif 'folder' in item.keys():
                 # It's a folder, process it recursively
