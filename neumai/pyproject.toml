@@ -16,8 +16,8 @@ langchain = "0.0.284"
 openai = "0.28.0"
 pandas = "2.1.0"
 neumai-tools = "0.0.15"
-pinecone-client= "2.2.2"
-requests= "2.31.0"
+pinecone-client = "2.2.2"
+requests = "2.31.0"
 scikit-learn = "1.2.2"
 scipy = "1.10.1"
 tokenizers = "0.13.2"
@@ -35,6 +35,7 @@ boto3 = "1.28.81"
 beautifulsoup4 = "4.12.2"
 vecs = "0.3.0"
 singlestoredb = "0.9.1"
+fastapi = "0.104.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -61,7 +61,7 @@ class AzureBlobConnector(DataConnector):
                 "last_access_on": file.last_accessed_on,
             }
             selected_metadata  = {k: metadata[k] for k in self.selector.to_metadata if k in metadata}
-            yield CloudFile(file_identifier=name, metadata=selected_metadata)
+            yield CloudFile(file_identifier=name, metadata=selected_metadata, id = name)
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
         # Connect to Azure Blob Storage
@@ -83,7 +83,7 @@ class AzureBlobConnector(DataConnector):
                     "last_access_on": file.last_accessed_on,
                 }
                 selected_metadata  = {k: metadata[k] for k in self.selector.to_metadata if k in metadata}
-                yield CloudFile(file_identifier=name, metadata=selected_metadata)
+                yield CloudFile(file_identifier=name, metadata=selected_metadata, id=name)
 
     
     def connect_and_download(self,  cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
@@ -98,7 +98,7 @@ class AzureBlobConnector(DataConnector):
             with open(f"{file_path}", "wb") as file:
                 blob_data = client.download_blob()
                 blob_data.readinto(file)
-            yield LocalFile(file_path=file_path, metadata=cloudFile.metadata)
+            yield LocalFile(file_path=file_path, metadata=cloudFile.metadata, id=cloudFile.id)
         
     def validate(self) -> bool:
         try:

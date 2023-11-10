@@ -71,7 +71,7 @@ class S3Connector(DataConnector):
                 # Make an additional call to get the full context
                 additional_metdata:dict = s3_client.head_object(Bucket=bucket_name, Key=obj.key)
                 selected_metadata.update(additional_metdata['Metadata'])
-            yield CloudFile(file_identifier=obj.key, metadata=selected_metadata)
+            yield CloudFile(file_identifier=obj.key, metadata=selected_metadata, id=obj.key)
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
         # Connect to S3
@@ -102,10 +102,8 @@ class S3Connector(DataConnector):
                     # Make an additional call to get the full context
                     additional_metdata:dict = s3_client.head_object(Bucket=bucket_name, Key=obj.key)
                     selected_metadata.update(additional_metdata['Metadata'])
-                yield CloudFile(file_identifier=obj.key, metadata=selected_metadata)
+                yield CloudFile(file_identifier=obj.key, metadata=selected_metadata, id=obj.key)
 
-
-    
     def connect_and_download(self, cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
         # Connect to S3
         aws_key_id= self.connector_information['aws_key_id']
@@ -120,7 +118,7 @@ class S3Connector(DataConnector):
             file_path = f"{temp_dir}/{cloudFile.file_identifier}"
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             s3_client.download_file(bucket_name, cloudFile.file_identifier, file_path)
-            yield LocalFile(file_path=file_path, metadata=cloudFile.metadata, id=cloudFile.file_identifier)
+            yield LocalFile(file_path=file_path, metadata=cloudFile.metadata, id=cloudFile.id)
 
     def validate(self) -> bool:
         try:

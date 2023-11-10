@@ -58,7 +58,7 @@ class SupabaseConnector(DataConnector):
             # Download each file
             name = file['name']
             selected_metadata  = {k: file[k] for k in self.selector.to_metadata if k in file}
-            yield CloudFile(file_identifier=name, metadata=selected_metadata)
+            yield CloudFile(file_identifier=name, metadata=selected_metadata, id=name)
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
         # Connect to supabase
