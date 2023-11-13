@@ -28,10 +28,6 @@ class SupabaseStorageConnector(DataConnector):
     @property
     def availableMetadata(self) -> str:
         return ['name', 'updated_at', 'created_at', 'last_accessed_at']
-
-    @property
-    def availableContent(self) -> str:
-        return ['file']
     
     @property
     def schedule_avaialable(self) -> bool:

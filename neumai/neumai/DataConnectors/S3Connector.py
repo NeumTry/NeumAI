@@ -28,10 +28,6 @@ class S3Connector(DataConnector):
     @property
     def availableMetadata(self) -> str:
         return ["key" , "last_modified", "metadata" ] # TODO need to flatten
-
-    @property
-    def availableContent(self) -> str:
-        return ['file']
     
     @property
     def schedule_avaialable(self) -> bool:

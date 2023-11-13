@@ -26,10 +26,6 @@ class SharepointConnector(DataConnector):
     @property
     def availableMetadata(self) -> str:
         return ["createdDateTime", "lastModifiedDateTime", "name", "createdBy.user.email", "createdBy.user.id", "createdBy.user.displayName", "lastModifiedBy.user.email", "lastModifiedBy.user.id", "lastModifiedBy.user.displayName"]
-
-    @property
-    def availableContent(self) -> str:
-        return ['file']
     
     @property
     def schedule_avaialable(self) -> bool:

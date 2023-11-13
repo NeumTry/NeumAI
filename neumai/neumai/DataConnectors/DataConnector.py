@@ -32,11 +32,6 @@ class DataConnector(ABC):
 
     @property
     @abstractmethod
-    def availableContent(self) -> List[str]:
-        pass
-
-    @property
-    @abstractmethod
     def schedule_avaialable(self) -> bool:
         pass
 
@@ -98,7 +93,6 @@ class DataConnector(ABC):
         json_to_return['requiredProperties'] = self.requiredProperties
         json_to_return['optionalProperties'] = self.optionalProperties
         json_to_return['availableMetadata'] = self.availableMetadata
-        json_to_return['availableContent'] = self.availableContent
         json_to_return['compatible_loaders'] = self.compatible_loaders
         json_to_return['schedule_avaialable'] = self.schedule_avaialable
         json_to_return['auto_sync_available'] = self.auto_sync_available

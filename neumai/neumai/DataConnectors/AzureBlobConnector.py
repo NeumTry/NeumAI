@@ -28,10 +28,6 @@ class AzureBlobConnector(DataConnector):
         return ['name', 'last_modified', 'creation_time', 'last_access_on']
 
     @property
-    def availableContent(self) -> str:
-        return ['file']
-    
-    @property
     def schedule_avaialable(self) -> bool:
         return True
 

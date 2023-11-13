@@ -31,10 +31,6 @@ class PostgresConnector(DataConnector):
         return []
 
     @property
-    def availableContent(self) -> str:
-        return ['row']
-    
-    @property
     def schedule_avaialable(self) -> bool:
         return True
 

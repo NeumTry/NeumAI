@@ -28,10 +28,6 @@ class SingleStoreConnector(DataConnector):
     @property
     def availableMetadata(self) -> str:
         return []
-
-    @property
-    def availableContent(self) -> str:
-        return ['row']
     
     @property
     def schedule_avaialable(self) -> bool:

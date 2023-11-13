@@ -29,10 +29,6 @@ class NeumWebsiteConnector(DataConnector):
     @property
     def availableMetadata(self) -> str:
         return ['url']
-
-    @property
-    def availableContent(self) -> str:
-        return ['website']
     
     @property
     def schedule_avaialable(self) -> bool:
