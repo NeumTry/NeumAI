@@ -29,7 +29,7 @@ class PipelineRunTaskDetails(object):
     
 class PipelineRunStatus(object):
     def __init__(self, status: str, message: str = None, exception_detail :str = None):
-        self.status = status
+        self.status = status.lower()
         self.message = message
         self.exception_detail = exception_detail
 
@@ -51,7 +51,7 @@ class PipelineRunStatus(object):
         )
     
 class PipelineRun(object):
-    def __init__(self, id: str, created: float, pipeline_id: str, trigger_type: str, sync_type: TriggerSyncTypeEnum, detailed_status:PipelineRunStatus = None, vectors_written=0, task_details: PipelineRunTaskDetails = None, last_updated:float = None):
+    def __init__(self, id: str, created: float, pipeline_id: str, trigger_type: str, sync_type: TriggerSyncTypeEnum, detailed_status:PipelineRunStatus = None, vectors_written=0, task_details: PipelineRunTaskDetails = None, last_updated:float = None, number_of_documents: int = None, finished_distributing:bool=False):
         self.pipeline_id = pipeline_id
         self.id = id
         self.created = created
@@ -61,6 +61,8 @@ class PipelineRun(object):
         self.vectors_written = vectors_written
         self.task_details = task_details
         self.last_updated = last_updated
+        self.number_of_documents = number_of_documents
+        self.finished_distributing = finished_distributing
 
     def toJson(self):
         """Python does not have built in serialization. We need this logic to be able to respond in our API..
@@ -76,6 +78,8 @@ class PipelineRun(object):
         json_to_return['sync_type'] = self.sync_type
         json_to_return['vectors_written'] = self.vectors_written
         json_to_return['last_updated'] = self.last_updated
+        json_to_return['number_of_documents'] = self.number_of_documents
+        json_to_return['finished_distributing'] = self.finished_distributing
         if self.task_details != None:
             json_to_return['task_details'] = self.task_details.toJson()
         if(self.detailed_status != None):
@@ -99,7 +103,7 @@ class PipelineRun(object):
     
     def as_pipeline_run(dct:dict):
         if dct == None:
-            return PipelineRun(id=None, created=None, pipeline_id = None, trigger_type=None, sync_type=None, detailed_status=None, vectors_written=None)
+            return PipelineRun(id=None, created=None, pipeline_id = None, trigger_type=None, sync_type=None, detailed_status=None, vectors_written=None, number_of_documents=None, finished_distributing=None)
         return PipelineRun(
             id=dct.get("id", None),
             pipeline_id=dct.get("pipeline_id"),
@@ -109,7 +113,9 @@ class PipelineRun(object):
             detailed_status=PipelineRunStatus.as_pipeline_run_status(detailed_status=dct.get("detailed_status", None)),
             vectors_written=dct.get("vectors_written", None),
             task_details=PipelineRunTaskDetails.as_pipeline_run_task_details(dct.get("task_details", None)),
-            last_updated=dct.get("last_updated", None)
+            last_updated=dct.get("last_updated", None),
+            number_of_documents=dct.get("number_of_documents",None),
+            finished_distributing=dct.get("finished_distributing",None) # we could do something like in distributed tasks where we store the state of the DAG in the pipeline run object.. for now just doing finished_distributing
         )
     
 class PipelineRunModel(JSONResponse):
