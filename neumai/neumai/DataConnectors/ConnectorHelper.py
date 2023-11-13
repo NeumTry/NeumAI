@@ -3,7 +3,7 @@ from neumai.DataConnectors import (
     S3Connector,
     NeumWebsiteConnector,
     AzureBlobConnector,
-    SupabaseConnector,
+    SupabaseStorageConnector,
     PostgresConnector,
     NeumFileConnector
 )
@@ -24,10 +24,10 @@ def as_connector(dct:dict):
         return NeumWebsiteConnector(connector_information=connector_information, selector=selector)
     elif connector_name == "S3Connector":
         return S3Connector(connector_information=connector_information, selector=selector)
-    elif connector_name == "SupabaseConnector":
-        return SupabaseConnector(connector_information=connector_information, selector=selector)
+    elif connector_name == "SupabaseStorageConnector":
+        return SupabaseStorageConnector(connector_information=connector_information, selector=selector)
     elif connector_name == "PostgresConnector":
         return PostgresConnector(connector_information=connector_information, selector=selector)
-    elif connector_name == "NeumSimpleFileConnector":
+    elif connector_name == "NeumFileConnector":
         return NeumFileConnector(connector_information=connector_information, selector=selector)
     return None

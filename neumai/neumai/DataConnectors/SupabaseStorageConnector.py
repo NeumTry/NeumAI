@@ -8,14 +8,14 @@ import tempfile
 import os
 
 
-class SupabaseConnector(DataConnector):
+class SupabaseStorageConnector(DataConnector):
     """" Supabase File Connector \n
     connector_information requires:\n
     [ bucket, folder, url, key ]"""
 
     @property
     def connector_name(self) -> str:
-        return "SupabaseConnector"
+        return "SupabaseStorageConnector"
     
     @property
     def requiredProperties(self) -> List[str]:

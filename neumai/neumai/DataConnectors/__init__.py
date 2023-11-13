@@ -2,7 +2,7 @@ from .DataConnector import DataConnector
 from .AzureBlobConnector import AzureBlobConnector
 from .NeumWebsiteConnector import NeumWebsiteConnector
 from .S3Connector import S3Connector
-from .SupabaseConnector import SupabaseConnector
+from .SupabaseStorageConnector import SupabaseStorageConnector
 from .PostgresConnector import PostgresConnector
 from .SharepointConnector import SharepointConnector
 from .SingleStoreConnector import SingleStoreConnector
