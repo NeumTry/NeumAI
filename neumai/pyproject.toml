@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "neumai"
-version = "0.0.13"
+version = "0.0.14"
 description = "Package containing connectors for Neum AI."
 authors = ["David de Matheu <david@tryneum.com>"]
 license = "MIT"

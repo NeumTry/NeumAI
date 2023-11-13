@@ -14,7 +14,7 @@ class NeumFileConnector(DataConnector):
 
     @property
     def connector_name(self) -> str:
-        return "NeumSimpleFileConnector"
+        return "NeumFileConnector"
     
     @property
     def requiredProperties(self) -> List[str]:
