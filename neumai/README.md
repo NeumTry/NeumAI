@@ -7,18 +7,17 @@
   <a href="https://www.ycombinator.com/companies/neum-ai"><img src="https://badgen.net/badge/Y%20Combinator/S23/orange"/></a>
 </div>
 
-**[Neum AI](https://neum.ai) is a data platform that helps developers leverage their data to contextualize Large Language Models through Retrieval Augmented Generation (RAG)** This includes
+Core library with Neum AI components to connect, load, chunk and sink vector embeddings. **[Neum AI](https://neum.ai) is a data platform that helps developers leverage their data to contextualize Large Language Models through Retrieval Augmented Generation (RAG)** This includes
 extracting data from existing data sources like document storage and NoSQL, processing the contents into vector embeddings and ingesting the vector embeddings into vector databases for similarity search. 
 
 It provides you a comprehensive solution for RAG that can scale with your application and reduce the time spent integrating services like data connectors, embedding models and vector databases.
 
 ## Features
 
-- 🏭 **High throughput distributed architecture** to handle billions of data points. Allows high degrees of parallelization to optimize embedding generation and ingestion.
+- 🏭 **High throughput distrubted architecture** to handle billions of data points. Allows high degrees of parallelization to optimize embedding generation and ingestion.
 - 🧱 **Built-in data connectors** to common data sources, embedding services and vector stores.
 - 🔄 **Real-time synchronization** of data sources to ensure your data is always up-to-date. 
-- ♻ **Customizable data pre-processing** in the form of loading, chunking and selecting.
-- 🤝 **Cohesive data management** to support hybrid retrieval with metadata. Neum AI automatically augments and tracks metadata to provide rich retrieval experience.
+- 🤝 **Cohesive data management** to support hybrid retrieval with metdata. Neum AI automatically augments and tracks metadata to provide rich retrieval experience.
 
 ## Getting Started
 
@@ -69,7 +68,3 @@ Experimental
 - [ ]  Async metadata augmentation
 - [ ]  Chat history connector
 - [ ]  Structured (SQL and GraphQL) search connector
-
-Additional tooling for Neum AI can be found here:
-
-- [neumai-tools](https://pypi.org/project/neumai-tools/): contains pre-processing tools for loading and chunking data before generating vector embeddings.
