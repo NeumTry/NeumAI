@@ -60,5 +60,5 @@ class AzureOpenAIEmbed(EmbedConnector):
         openai.api_base = self.embed_information["endpoint"]
         openai.api_version = "2023-05-15"
         deployment_name = self.embed_information["deployment_name"]
-        result = openai.Embedding.create(input=query, model="text-embedding-ada-002")
+        result = openai.Embedding.create(input=query, engine=deployment_name)
         return result['data'][0]['embedding']
