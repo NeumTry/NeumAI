@@ -76,7 +76,7 @@ class AzureBlobConnector(DataConnector):
                 metadata = {
                     "creation_time": file.creation_time.isoformat(),
                     "last_modified": file.last_modified.isoformat(),
-                    "last_access_on": file.last_accessed_on.isoformat(),
+                    "last_access_on": file.last_accessed_on.isoformat() if file.last_accessed_on is not None else None
                 }
                 selected_metadata  = {k: metadata[k] for k in self.selector.to_metadata if k in metadata}
                 yield CloudFile(file_identifier=name, metadata=selected_metadata, id=name)
