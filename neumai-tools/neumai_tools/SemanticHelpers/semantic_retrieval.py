@@ -15,13 +15,14 @@ def metadata_attributes_for_retrieval(file_path:str, loader_choice:str):
         {"role": "user", "content": text}
     ]
     
-    response = openai.ChatCompletion.create(
+    client = openai.OpenAI()
+    response = client.chat.completions.create(
         model="gpt-4-0613",
         messages=messages,
         temperature=0.9
+        
     )
-    
-    response_message = response["choices"][0]["message"]["content"]
+    response_message = response.choices[0].message
     
     # Optionally, you might want to parse this into a Python array
     try:

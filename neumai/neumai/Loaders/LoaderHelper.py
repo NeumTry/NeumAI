@@ -6,11 +6,11 @@ from neumai.Loaders import (
     PDFLoader,
     HTMLLoader,
 )
-from neumai.Loaders.Loader import Loader
 from neumai.Shared.Selector import Selector
-from starlette.exceptions import HTTPException
 
 def as_loader(dct:dict):
+    if dct == None:
+        return AutoLoader()
     loader_name = dct.get("loader_name", None)
     loader_information = dct.get("loader_information", None)
     selector = Selector.as_selector(dct.get("selector", None))
