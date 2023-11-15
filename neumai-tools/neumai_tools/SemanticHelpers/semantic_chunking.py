@@ -17,13 +17,14 @@ def semantic_chunking_strategy(text:str) -> str:
                                        'Same applies for sentences, try to keep them together within the same chunk and not cut in the middle.')},
         {"role": "user", "content": text}
     ]
-    response = openai.ChatCompletion.create(
+    client = openai.OpenAI()
+    response = client.chat.completions.create(
         model="gpt-4-0613",
         messages=messages,
         temperature=0.9
         
     )
-    response_message = response["choices"][0]["message"]
+    response_message = response.choices[0].message
     return response_message
 
 def semantic_chunking_strategy_code(text:str, chunking_strategy:str) -> str:
@@ -35,12 +36,14 @@ def semantic_chunking_strategy_code(text:str, chunking_strategy:str) -> str:
                                         'Implement the strategy provided by the user to help split text.')},
         {"role": "user", "content": chunking_strategy}
     ]
-    response = openai.ChatCompletion.create(
+    client = openai.OpenAI()
+    response = client.chat.completions.create(
         model="gpt-4-0613",
         messages=messages,
         temperature=0.9
+        
     )
-    response_message = response["choices"][0]["message"]
+    response_message = response.choices[0].message
     return response_message
 
 def semantic_chunking_code(text:str) -> str:

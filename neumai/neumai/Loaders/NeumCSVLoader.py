@@ -3,7 +3,6 @@ from typing import List, Generator
 from neumai.Shared.NeumDocument import NeumDocument
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Loaders.Loader import Loader
-from neumai_tools import CSVLoader
 import csv
 
 class NeumCSVLoader(Loader):
