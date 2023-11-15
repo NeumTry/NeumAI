@@ -1,3 +1,4 @@
+from typing import Any
 from .TriggerSyncTypeEnum import TriggerSyncTypeEnum
 from fastapi.responses import JSONResponse
 
@@ -91,6 +92,12 @@ class PipelineRun(object):
                                                  
     def set_id(self, id: str):
         self.id = id
+
+    def set_number_of_documents(self, number_of_documents):
+        self.number_of_documents = number_of_documents
+    
+    def set_finished_distributing(self, finished_distributing):
+        self.finished_distributing = finished_distributing
 
     def set_detailed_status(self, detailed_status: PipelineRunStatus):
         self.detailed_status = detailed_status
