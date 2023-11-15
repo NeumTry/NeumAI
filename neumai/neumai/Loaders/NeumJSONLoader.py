@@ -34,7 +34,6 @@ class NeumJSONLoader(Loader):
     def load(self, file: LocalFile) -> Generator[NeumDocument, None, None]:
         """Load data into Document objects."""
         id_key = self.loader_information.get('id_key', "id")
-        selector = self.selector
 
         json_data = None
         if file.file_path:
