@@ -30,7 +30,7 @@ class AzureOpenAIEmbed(EmbedConnector):
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:
         """Generate embeddings with Azure OpenAI"""
         max_retries = self.embed_information.get('max_retries', 20)
-        chunk_size = self.embed_information.get('chunk_size', 1000)
+        chunk_size = max(self.embed_information.get('chunk_size', 16), 16)
 
         embedding = azure_openai.AzureOpenAIEmbeddings(
             max_retries=max_retries,
