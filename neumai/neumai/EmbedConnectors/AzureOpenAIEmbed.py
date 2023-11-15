@@ -1,6 +1,7 @@
 from typing import List, Tuple
 from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
 from neumai.Shared.NeumDocument import NeumDocument
+from langchain.embeddings import azure_openai
 
 class AzureOpenAIEmbed(EmbedConnector):
     @property
@@ -25,40 +26,35 @@ class AzureOpenAIEmbed(EmbedConnector):
             raise ValueError("Required properties are not set.")
         return True 
 
+
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:
         """Generate embeddings with Azure OpenAI"""
-        import openai
-        cost_per_token = 0.000000001 # ADA-002 as of Sept 2023
-        batch_size = 32 # how does changing this affect ?
-        # Should we generate batched embeddings, store, then batch embeddings, store. or should we gneralte all embeddings then store? what's perf diff?
-        batched_embeddings = []
-        deployment_name = self.embed_information["deployment_name"]
-        openai.api_key = self.embed_information["api_key"]
-        openai.api_base = self.embed_information["endpoint"]
-        openai.api_type = "azure"
-        openai.api_version = "2023-05-15"
-        for i in range(0, len(documents), batch_size):
-            # set end position of batch
-            i_end = min(i + batch_size, len(documents))
-            # get batch of texts and ids
-            lines_batch = [doc.content for doc in documents[i:i_end]]
-            result = openai.Embedding.create(input=lines_batch, engine=deployment_name)
-            batched_embeddings  += [record['embedding'] for record in result['data']]
-        
+        max_retries = self.embed_information.get('max_retries', 20)
+        chunk_size = max(self.embed_information.get('chunk_size', 16), 16)
+
+        embedding = azure_openai.AzureOpenAIEmbeddings(
+            max_retries=max_retries,
+            chunk_size=chunk_size,
+            azure_deployment=self.embed_information["deployment_name"],
+            api_key=self.embed_information['api_key'],
+            azure_endpoint=self.embed_information['endpoint'],
+        )
+        embeddings = []
+        texts = [x.content for x in documents]
+        embeddings  = embedding.embed_documents(texts=texts)
         info = {
             "estimated_cost":str("Not implemented"),
             "total_tokens":str("Not implemented"),
             "attempts_used":str("Not implemented")
         }
-
-        return batched_embeddings, info
+        return embeddings,info
     
     def embed_query(self, query: str) -> List[float]:
-        import openai
-        openai.api_type = "azure"
-        openai.api_key = self.embed_information["api_key"]
-        openai.api_base = self.embed_information["endpoint"]
-        openai.api_version = "2023-05-15"
-        deployment_name = self.embed_information["deployment_name"]
-        result = openai.Embedding.create(input=query, model="text-embedding-ada-002")
-        return result['data'][0]['embedding']
+        """Generate embeddings for a single query using Azure OpenAI"""
+
+        embedding = azure_openai.AzureOpenAIEmbeddings(
+            azure_deployment=self.embed_information["deployment_name"],
+            api_key=self.embed_information['api_key'],
+            azure_endpoint=self.embed_information['endpoint'],
+        )
+        return embedding.embed_query(query)
