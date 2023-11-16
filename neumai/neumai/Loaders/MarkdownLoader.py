@@ -14,15 +14,15 @@ class MarkdownLoader(Loader):
         return "MarkdownLoader"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return []
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return []
     
     @property
-    def availableMetadata(self) -> List[str]:
+    def available_metadata(self) -> List[str]:
         return []
 
     @property

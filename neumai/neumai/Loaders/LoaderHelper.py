@@ -1,5 +1,6 @@
 from neumai.Loaders import (
     AutoLoader,
+    LoaderEnum,
     MarkdownLoader,
     NeumJSONLoader,
     NeumCSVLoader,

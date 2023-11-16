@@ -19,15 +19,15 @@ class SingleStoreConnector(DataConnector):
         return "SingleStoreConnector"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["url", "query"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ["batch_size"]
     
     @property
-    def availableMetadata(self) -> str:
+    def available_metadata(self) -> str:
         return []
     
     @property

@@ -8,11 +8,11 @@ class NeumJSONLoader(Loader):
     """" Neum JSON Loader """
 
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return []
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ["id_key"]
 
     @property
@@ -20,7 +20,7 @@ class NeumJSONLoader(Loader):
         return "NeumJSONLoader"
     
     @property
-    def availableMetadata(self) -> List[str]:
+    def available_metadata(self) -> List[str]:
         return ["custom"]
 
     @property

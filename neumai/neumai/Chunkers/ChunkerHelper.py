@@ -1,5 +1,6 @@
 from neumai.Chunkers import (
     CharacterChunker,
+    ChunkerEnum,
     CustomChunker,
     RecursiveChunker
 )    

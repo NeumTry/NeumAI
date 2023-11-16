@@ -15,15 +15,15 @@ class NeumFileConnector(DataConnector):
         return "NeumFileConnector"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["url"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return []
 
     @property
-    def availableMetadata(self) -> str:
+    def available_metadata(self) -> str:
         return ['url']
     
     @property
@@ -65,6 +65,6 @@ class NeumFileConnector(DataConnector):
             raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
         # Check for metadata
-        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
+        if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided") 
         return True 

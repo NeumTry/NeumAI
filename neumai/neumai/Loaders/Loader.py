@@ -16,17 +16,17 @@ class Loader(ABC):
     
     @property
     @abstractmethod
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         pass
 
     @property
     @abstractmethod
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         pass
 
     @property
     @abstractmethod
-    def availableMetadata(self) -> List[str]:
+    def available_metadata(self) -> List[str]:
         pass
 
     @property
@@ -68,8 +68,8 @@ class Loader(ABC):
 
     def config(self):
         json_to_return = {}
-        json_to_return['requiredProperties'] = self.requiredProperties
-        json_to_return['optionalProperties'] = self.optionalProperties
-        json_to_return['availableMetadata'] = self.availableMetadata
+        json_to_return['required_properties'] = self.required_properties
+        json_to_return['optional_properties'] = self.optional_properties
+        json_to_return['available_metadata'] = self.available_metadata
         json_to_return['availableContent'] = self.availableContent
         return json_to_return

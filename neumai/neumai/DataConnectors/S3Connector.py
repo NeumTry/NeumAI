@@ -18,11 +18,11 @@ class S3Connector(DataConnector):
         return "S3Connector"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["aws_key_id", "aws_access_key", "bucket_name"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ["prefix"]
     
     @property
@@ -123,7 +123,7 @@ class S3Connector(DataConnector):
         except:
             raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
-        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
+        if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:

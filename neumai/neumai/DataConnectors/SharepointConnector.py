@@ -17,15 +17,15 @@ class SharepointConnector(DataConnector):
         return "SharepointConnector"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["tenant_id", "client_id", "client_secret", "site_id"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return []
 
     @property
-    def availableMetadata(self) -> str:
+    def available_metadata(self) -> str:
         return ["createdDateTime", "lastModifiedDateTime", "name", "createdBy.user.email", "createdBy.user.id", "createdBy.user.displayName", "lastModifiedBy.user.email", "lastModifiedBy.user.id", "lastModifiedBy.user.displayName"]
     
     @property
@@ -52,7 +52,7 @@ class SharepointConnector(DataConnector):
                 file_url = item['@microsoft.graph.downloadUrl']
                 file_name = item['name']
                 file_type = item['file']['mimeType']
-                availableMetadata = {
+                available_metadata = {
                     "createdDateTime":item['createdDateTime'],
                     "lastModifiedDateTime":item['lastModifiedDateTime'],
                     "name":item['name'],
@@ -63,7 +63,7 @@ class SharepointConnector(DataConnector):
                     "lastModifiedBy.user.id":item['createdBy']['user']['id'],
                     "lastModifiedBy.user.displayName":item['createdBy']['user']['displayName'],
                 }
-                selected_metadata  = {k: availableMetadata[k] for k in self.selector.to_metadata if k in availableMetadata}
+                selected_metadata  = {k: available_metadata[k] for k in self.selector.to_metadata if k in available_metadata}
                 yield CloudFile(file_identifier=file_url, id=file_name, type=file_type, metadata=selected_metadata)
             
             elif 'folder' in item.keys():
@@ -82,7 +82,7 @@ class SharepointConnector(DataConnector):
                 file_url = item['@microsoft.graph.downloadUrl']
                 file_name = item['name']
                 file_type = item['file']['mimeType']
-                availableMetadata = {
+                available_metadata = {
                     "createdDateTime":item['createdDateTime'],
                     "lastModifiedDateTime":item['lastModifiedDateTime'],
                     "name":item['name'],
@@ -94,7 +94,7 @@ class SharepointConnector(DataConnector):
                     "lastModifiedBy.user.displayName":item['createdBy']['user']['displayName'],
                 }
                 if last_run < item['lastModifiedDateTime']:
-                    selected_metadata  = {k: availableMetadata[k] for k in metadata_keys if k in availableMetadata}
+                    selected_metadata  = {k: available_metadata[k] for k in metadata_keys if k in available_metadata}
                     yield CloudFile(file_identifier=file_url, id=file_name, type=file_type, metadata=selected_metadata)
             
             elif 'folder' in item.keys():
@@ -196,7 +196,7 @@ class SharepointConnector(DataConnector):
         except:
             raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
-        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
+        if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:

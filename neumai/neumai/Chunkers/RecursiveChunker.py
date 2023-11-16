@@ -13,11 +13,11 @@ class RecursiveChunker(Chunker):
         return "RecursiveChunker"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return []
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ["chunk_size" , "chunk_overlap" , "batch_size", "separators"]
 
     def chunk(self, documents:List[NeumDocument]) -> Generator[List[NeumDocument], None, None]:

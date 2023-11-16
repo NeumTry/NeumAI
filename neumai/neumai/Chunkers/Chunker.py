@@ -13,12 +13,12 @@ class Chunker(ABC):
 
     @property
     @abstractmethod
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         pass
 
     @property
     @abstractmethod
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         pass
 
     @abstractmethod
@@ -53,6 +53,6 @@ class Chunker(ABC):
 
     def config(self):
         json_to_return = {}
-        json_to_return['requiredProperties'] = self.requiredProperties
-        json_to_return['optionalProperties'] = self.optionalProperties
+        json_to_return['required_properties'] = self.required_properties
+        json_to_return['optional_properties'] = self.optional_properties
         return json_to_return

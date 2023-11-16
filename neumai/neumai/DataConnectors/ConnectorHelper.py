@@ -10,9 +10,7 @@ from neumai.DataConnectors import (
 )
 
 from neumai.DataConnectors.DataConnectorEnum import DataConnectorEnum
-
 from neumai.Shared.Selector import Selector
-
 from neumai.Shared.Exceptions import InvalidDataConnectorException
 
 available_connectors = [enum.value for enum in list(DataConnectorEnum)]

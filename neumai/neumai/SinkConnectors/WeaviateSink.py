@@ -21,11 +21,11 @@ class WeaviateSink(SinkConnector):
         return 'WeaviateSink'
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ['url', 'api_key']
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ['class_name', 'num_workers', 'shard_count', 'batch_size', 'is_dynamic_batch', 'batch_connection_error_retries']
 
     def validation(self) -> bool:

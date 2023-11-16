@@ -7,9 +7,7 @@ from neumai.SinkConnectors import (
 )
 
 from neumai.SinkConnectors.SinkConnectorEnum import SinkConnectorEnum
-
 from neumai.Shared.Exceptions import InvalidSinkConnectorException
-
 available_sink_connectors = [enum.value for enum in list(SinkConnectorEnum)]
 
 def as_sink(dct:dict):

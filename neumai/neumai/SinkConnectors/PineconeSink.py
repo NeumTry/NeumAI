@@ -20,11 +20,11 @@ class  PineconeSink(SinkConnector):
         return 'PineconeSink'
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ['api_key', 'environment', 'index']
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ['namespace']
 
     def validation(self) -> bool:

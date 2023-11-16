@@ -21,11 +21,11 @@ class SingleStoreSink(SinkConnector):
         return 'SingleStoreSink'
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ['url', 'api_key']
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ['collection_name']
 
     def validation(self) -> bool:

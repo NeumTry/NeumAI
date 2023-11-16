@@ -13,11 +13,11 @@ class OpenAIEmbed(EmbedConnector):
         return 'OpenAIEmbed'
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["api_key"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ['max_retries', 'chunk_size']
 
     def validation(self) -> bool:
