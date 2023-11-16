@@ -1,18 +1,18 @@
 from neumai.Loaders import (
     AutoLoader,
-    LoaderEnum,
     MarkdownLoader,
     NeumJSONLoader,
     NeumCSVLoader,
     PDFLoader,
     HTMLLoader,
 )
+from neumai.Loaders.LoaderEnum import LoaderEnum
 from neumai.Shared.Selector import Selector
 
 def as_loader(dct:dict):
     if dct == None:
         return AutoLoader()
-    loader_name = dct.get("loader_name", None)
+    loader_name = str(dct.get("loader_name", None)).replace(" ","").lower()
     loader_information = dct.get("loader_information", None)
     selector = Selector.as_selector(dct.get("selector", None))
     if loader_name == LoaderEnum.autoloader:
