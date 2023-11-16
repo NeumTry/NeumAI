@@ -67,10 +67,10 @@ class PostgresConnector(DataConnector):
                     serialized_dict = json.loads(serialized_string)
                     batch_rows.append(serialized_dict)
                     if(len(batch_rows) == batch_size):
-                        yield CloudFile(data=json.dumps(batch_rows), metadata={})
+                        yield CloudFile(data=json.dumps(batch_rows), metadata={}, id="Postgres")
                         batch_rows = []
                 if len(batch_rows) > 0:
-                    yield CloudFile(data=json.dumps(batch_rows), metadata={})
+                    yield CloudFile(data=json.dumps(batch_rows), metadata={}, id="Postgres")
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
         # No metadatadata to determine what rows are new. Needs to be done through websocket

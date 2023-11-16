@@ -52,9 +52,9 @@ class AzureBlobConnector(DataConnector):
         for file in file_list:
             name = file.name
             metadata = {
-                "creation_time": file.creation_time,
-                "last_modified": file.last_modified,
-                "last_access_on": file.last_accessed_on,
+                "creation_time": file.creation_time.isoformat(),
+                "last_modified": file.last_modified.isoformat(),
+                "last_access_on": file.last_accessed_on.isoformat() if file.last_accessed_on is not None else None
             }
             selected_metadata  = {k: metadata[k] for k in self.selector.to_metadata if k in metadata}
             yield CloudFile(file_identifier=name, metadata=selected_metadata, id = name)
@@ -74,14 +74,13 @@ class AzureBlobConnector(DataConnector):
             if(last_run < last_update_date):
                 name = file.name
                 metadata = {
-                    "creation_time": file.creation_time,
-                    "last_modified": file.last_modified,
-                    "last_access_on": file.last_accessed_on,
+                    "creation_time": file.creation_time.isoformat(),
+                    "last_modified": file.last_modified.isoformat(),
+                    "last_access_on": file.last_accessed_on.isoformat() if file.last_accessed_on is not None else None
                 }
                 selected_metadata  = {k: metadata[k] for k in self.selector.to_metadata if k in metadata}
                 yield CloudFile(file_identifier=name, metadata=selected_metadata, id=name)
 
-    
     def connect_and_download(self,  cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
         # Connect to Azure Blob Storage
         connection_string = self.connector_information['connection_string']
