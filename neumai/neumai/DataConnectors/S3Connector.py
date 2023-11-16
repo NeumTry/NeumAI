@@ -26,7 +26,7 @@ class S3Connector(DataConnector):
         return ["prefix"]
     
     @property
-    def availableMetadata(self) -> str:
+    def available_metadata(self) -> str:
         return ["key" , "last_modified", "metadata" ]
     
     @property
