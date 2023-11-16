@@ -1,6 +1,6 @@
 from typing import List, Generator
-from Chunkers.Chunker import Chunker
-from Shared.NeumDocument import NeumDocument
+from neumai.Chunkers.Chunker import Chunker
+from neumai.Shared.NeumDocument import NeumDocument
 from langchain.text_splitter import (RecursiveCharacterTextSplitter)
 
 class RecursiveChunker(Chunker):
@@ -13,11 +13,11 @@ class RecursiveChunker(Chunker):
         return "RecursiveChunker"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return []
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return ["chunk_size" , "chunk_overlap" , "batch_size", "separators"]
 
     def chunk(self, documents:List[NeumDocument]) -> Generator[List[NeumDocument], None, None]:

@@ -1,12 +1,12 @@
-from Loaders import (
+from neumai.Loaders import (
     AutoLoader,
-    LoaderEnum,
     MarkdownLoader,
     NeumJSONLoader,
     NeumCSVLoader,
     PDFLoader,
     HTMLLoader,
 )
+from neumai.Loaders.LoaderEnum import LoaderEnum
 from neumai.Shared.Selector import Selector
 
 def as_loader(dct:dict):

@@ -1,12 +1,12 @@
 from .PipelineRun import PipelineRun
 from .TriggerSchedule import TriggerSchedule
-from SinkConnectors.SinkConnector import SinkConnector
-from EmbedConnectors.EmbedConnector import EmbedConnector
-from Sources.SourceConnector import SourceConnector
-from EmbedConnectors.EmbedHelper import as_embed
-from SinkConnectors.SinkHelper import as_sink
-from Shared.NeumVector import NeumVector
-from Shared.NeumSearch import NeumSearchResult
+from neumai.SinkConnectors.SinkConnector import SinkConnector
+from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
+from neumai.Sources.SourceConnector import SourceConnector
+from neumai.EmbedConnectors.EmbedHelper import as_embed
+from neumai.SinkConnectors.SinkHelper import as_sink
+from neumai.Shared.NeumVector import NeumVector
+from neumai.Shared.NeumSearch import NeumSearchResult
 from typing import List
 import uuid
 
@@ -87,7 +87,7 @@ class Pipeline(object):
             content_to_return['trigger_schedule'] = self.trigger_schedule.to_model()
 
         content_to_return['latest_run'] = self.latest_run.toJson()
-        content_to_return['available_metadata'] = self.available_metadata()
+        content_to_return['availableMetadata'] = self.availableMetadata()
 
         return content_to_return
     
@@ -117,7 +117,7 @@ class Pipeline(object):
             json_to_return['trigger_schedule'] = self.trigger_schedule.toJson()
 
         json_to_return['latest_run'] = self.latest_run.toJson()
-        json_to_return['available_metadata'] = self.available_metadata()
+        json_to_return['availableMetadata'] = self.availableMetadata()
         return json_to_return
 
     def as_request(self):
@@ -145,13 +145,13 @@ class Pipeline(object):
     def set_owner(self, owner: str):
         self.owner = owner
     
-    def available_metadata(self) -> List[str]:
-        available_metadata = []
+    def availableMetadata(self) -> List[str]:
+        availableMetadata = []
         for source in self.sources:
-            available_metadata += source.customMetadata.keys()
-            available_metadata += source.connector.selector.to_metadata
-            available_metadata += source.loader.selector.to_metadata
-        return available_metadata
+            availableMetadata += source.customMetadata.keys()
+            availableMetadata += source.connector.selector.to_metadata
+            availableMetadata += source.loader.selector.to_metadata
+        return availableMetadata
 
     def as_pipeline(dct:dict):
         if dct == None:

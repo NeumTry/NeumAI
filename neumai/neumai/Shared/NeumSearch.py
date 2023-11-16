@@ -1,5 +1,5 @@
 from abc import ABC
-from Shared.Exceptions import NeumSearchResultEmptyException
+from neumai.Shared.Exceptions import NeumSearchResultEmptyException
 
 class NeumSearchResult(ABC):
     def __init__(self, id:str, metadata:dict, score:float) -> None:

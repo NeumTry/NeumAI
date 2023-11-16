@@ -1,13 +1,13 @@
-from Shared.NeumSinkInfo import NeumSinkInfo
-from Shared.NeumVector  import NeumVector
-from Shared.NeumSearch import NeumSearchResult
-from Shared.Exceptions import(
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.Shared.NeumVector  import NeumVector
+from neumai.Shared.NeumSearch import NeumSearchResult
+from neumai.Shared.Exceptions import(
     SinglestoreConnectionException,
     SinglestoreInsertionException,
     SinglestoreIndexInfoException,
     SinglestoreQueryException
 )
-from SinkConnectors.SinkConnector import SinkConnector
+from neumai.SinkConnectors.SinkConnector import SinkConnector
 from typing import List
 
 import singlestoredb as s2
@@ -21,11 +21,11 @@ class SingleStoreSink(SinkConnector):
         return 'SingleStoreSink'
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ['url', 'api_key']
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return ['collection_name']
 
     def validation(self) -> bool:
@@ -35,7 +35,7 @@ class SingleStoreSink(SinkConnector):
             url = self.sink_information['url']
             table = self.sink_information['table']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         try: 
             s2.connect(url)
         except Exception as e:

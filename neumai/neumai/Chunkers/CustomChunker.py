@@ -1,6 +1,6 @@
 from typing import List, Generator
-from Chunkers.Chunker import Chunker
-from Shared.NeumDocument import NeumDocument
+from neumai.Chunkers.Chunker import Chunker
+from neumai.Shared.NeumDocument import NeumDocument
 from neumai_tools import semantic_chunking
 
 class CustomChunker(Chunker):
@@ -15,11 +15,11 @@ class CustomChunker(Chunker):
         return "CustomChunker"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ["code"]
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return ["batch_size"]
 
     def chunk(self, documents:List[NeumDocument]) -> Generator[List[NeumDocument], None, None]:

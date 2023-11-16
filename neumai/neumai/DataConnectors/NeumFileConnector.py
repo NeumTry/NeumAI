@@ -1,9 +1,9 @@
 from datetime import datetime
-from DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
 import tempfile
+from neumai.DataConnectors.DataConnector import DataConnector
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
 
 class NeumFileConnector(DataConnector):
     """ Neum Simple File Connector \n
@@ -15,15 +15,15 @@ class NeumFileConnector(DataConnector):
         return "NeumFileConnector"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ["url"]
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return []
 
     @property
-    def available_metadata(self) -> str:
+    def availableMetadata(self) -> str:
         return ['url']
     
     @property
@@ -39,8 +39,8 @@ class NeumFileConnector(DataConnector):
         return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        available_metadata = {'url':self.connector_information['url']}
-        selected_metadata  = {k: available_metadata[k] for k in self.selector.to_metadata if k in available_metadata}
+        availableMetadata = {'url':self.connector_information['url']}
+        selected_metadata  = {k: availableMetadata[k] for k in self.selector.to_metadata if k in availableMetadata}
         yield CloudFile(file_identifier=self.connector_information['url'], metadata=selected_metadata, id=self.connector_information['url'])
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
@@ -62,9 +62,9 @@ class NeumFileConnector(DataConnector):
         try:
             self.connector_information['url']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
         # Check for metadata
-        if not all(x in self.available_metadata for x in self.selector.to_metadata):
+        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided") 
         return True 

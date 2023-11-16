@@ -1,10 +1,10 @@
 from psycopg2.extras import DictCursor
 from datetime import datetime
-from DataConnectors.DataConnector import DataConnector
+from neumai.DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import PostgresConnectionException
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import PostgresConnectionException
 from decimal import Decimal
 import psycopg2
 import json
@@ -19,15 +19,15 @@ class PostgresConnector(DataConnector):
         return "PostgresConnector"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ["connection_string", "query"]
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return ["batch_size"]
     
     @property
-    def available_metadata(self) -> str:
+    def availableMetadata(self) -> str:
         return []
 
     @property
@@ -86,9 +86,9 @@ class PostgresConnector(DataConnector):
             connection_string = self.connector_information['connection_string']
             query = self.connector_information['query']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
-        if not all(x in self.available_metadata for x in self.selector.to_metadata):
+        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:

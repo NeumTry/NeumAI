@@ -1,9 +1,9 @@
-from Chunkers import (
+from neumai.Chunkers import (
     CharacterChunker,
-    ChunkerEnum,
     CustomChunker,
     RecursiveChunker
 )    
+from neumai.Chunkers.ChunkerEnum import ChunkerEnum
 
 def as_chunker(dct:dict):
     if dct == None:

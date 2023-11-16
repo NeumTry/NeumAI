@@ -1,10 +1,10 @@
 from datetime import datetime
-from DataConnectors import DataConnector
+from neumai.DataConnectors import DataConnector
 from typing import List, Generator
 from azure.storage.blob import BlobClient, ContainerClient
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import AzureBlobConnectionException
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import AzureBlobConnectionException
 import tempfile
 import os
 
@@ -16,15 +16,15 @@ class AzureBlobConnector(DataConnector):
         return "AzureBlobConnector"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ["connection_string", "container_name"]
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return []
     
     @property
-    def available_metadata(self) -> str:
+    def availableMetadata(self) -> str:
         return ['name', 'last_modified', 'creation_time', 'last_access_on']
 
     @property
@@ -100,9 +100,9 @@ class AzureBlobConnector(DataConnector):
             connection_string = self.connector_information['connection_string']
             container_name = self.connector_information['container_name']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
-        if not all(x in self.available_metadata for x in self.selector.to_metadata):
+        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
 
         try:

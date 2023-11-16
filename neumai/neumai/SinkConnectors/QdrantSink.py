@@ -1,12 +1,12 @@
-from Shared.NeumSinkInfo import NeumSinkInfo
-from Shared.NeumVector  import NeumVector
-from Shared.NeumSearch import NeumSearchResult
-from Shared.Exceptions import(
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.Shared.NeumVector  import NeumVector
+from neumai.Shared.NeumSearch import NeumSearchResult
+from neumai.Shared.Exceptions import(
     QdrantInsertionException,
     QdrantIndexInfoException,
     QdrantQueryException
 )
-from SinkConnectors.SinkConnector import SinkConnector
+from neumai.SinkConnectors.SinkConnector import SinkConnector
 from typing import List
 
 from qdrant_client.http.models import Distance, VectorParams
@@ -23,11 +23,11 @@ class QdrantSink(SinkConnector):
         return 'QdrantSink'
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ['url', 'api_key']
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return ['collection_name']
 
     def validation(self) -> bool:
@@ -37,7 +37,7 @@ class QdrantSink(SinkConnector):
             url = self.sink_information["url"]
             api_key = self.sink_information["api_key"]
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         return True 
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:

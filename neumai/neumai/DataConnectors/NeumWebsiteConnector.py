@@ -1,8 +1,8 @@
-from DataConnectors.DataConnector import DataConnector
+from neumai.DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import WebsiteConnectionException
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import WebsiteConnectionException
 from bs4 import BeautifulSoup
 import tempfile
 import requests
@@ -18,15 +18,15 @@ class NeumWebsiteConnector(DataConnector):
         return "NeumWebsiteConnector"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ["url"]
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return []
     
     @property
-    def available_metadata(self) -> str:
+    def availableMetadata(self) -> str:
         return ['url']
     
     @property
@@ -47,8 +47,8 @@ class NeumWebsiteConnector(DataConnector):
         clean_url = url.replace(" ", "")
         list_urls = clean_url.split(" , ")
         for u in list_urls:
-            available_metadata = {'url':u}
-            selected_metadata  = {k: available_metadata[k] for k in self.selector.to_metadata if k in available_metadata}
+            availableMetadata = {'url':u}
+            selected_metadata  = {k: availableMetadata[k] for k in self.selector.to_metadata if k in availableMetadata}
             yield CloudFile(file_identifier=u, metadata=selected_metadata, id=u)
 
     def connect_and_list_delta(self) -> Generator[CloudFile, None, None]:
@@ -71,10 +71,10 @@ class NeumWebsiteConnector(DataConnector):
         try:
             url:str = str(self.connector_information['url'])
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
         # Check for metadata values
-        if not all(x in self.available_metadata for x in self.selector.to_metadata):
+        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         # Check to see that site exists

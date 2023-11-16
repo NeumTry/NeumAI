@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import List, Generator
 import boto3
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import S3ConnectionException
-from DataConnectors.DataConnector import DataConnector
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import S3ConnectionException
+from neumai.DataConnectors.DataConnector import DataConnector
 import tempfile
 import os
 
@@ -18,15 +18,15 @@ class S3Connector(DataConnector):
         return "S3Connector"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ["aws_key_id", "aws_access_key", "bucket_name"]
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return ["prefix"]
     
     @property
-    def available_metadata(self) -> str:
+    def availableMetadata(self) -> str:
         return ["key" , "last_modified", "metadata" ]
     
     @property
@@ -121,9 +121,9 @@ class S3Connector(DataConnector):
             aws_access_key= self.connector_information['aws_access_key']
             bucket_name= self.connector_information['bucket_name']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
-        if not all(x in self.available_metadata for x in self.selector.to_metadata):
+        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:

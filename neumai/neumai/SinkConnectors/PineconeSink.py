@@ -1,9 +1,9 @@
 from typing import List
-from Shared.NeumSearch import NeumSearchResult
-from Shared.NeumSinkInfo import NeumSinkInfo
-from SinkConnectors.SinkConnector import SinkConnector
-from Shared.NeumVector  import NeumVector
-from Shared.Exceptions import (
+from neumai.Shared.NeumSearch import NeumSearchResult
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.SinkConnectors.SinkConnector import SinkConnector
+from neumai.Shared.NeumVector  import NeumVector
+from neumai.Shared.Exceptions import (
     PineconeConnectionException,
     PineconeInsertionException,
     PineconeIndexInfoException,
@@ -20,11 +20,11 @@ class  PineconeSink(SinkConnector):
         return 'PineconeSink'
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ['api_key', 'environment', 'index']
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return ['namespace']
 
     def validation(self) -> bool:
@@ -35,7 +35,7 @@ class  PineconeSink(SinkConnector):
             environment = self.sink_information['environment']
             index = self.sink_information['index']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         try:
             pinecone.init(api_key=api_key, environment=environment)    
             index = pinecone.Index(index_name=index)

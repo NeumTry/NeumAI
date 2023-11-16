@@ -1,9 +1,9 @@
 from datetime import datetime
-from DataConnectors.DataConnector import DataConnector
+from neumai.DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import SinglestoreConnectionException
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import SinglestoreConnectionException
 from decimal import Decimal
 import singlestoredb as s2
 import json
@@ -19,15 +19,15 @@ class SingleStoreConnector(DataConnector):
         return "SingleStoreConnector"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ["url", "query"]
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return ["batch_size"]
     
     @property
-    def available_metadata(self) -> str:
+    def availableMetadata(self) -> str:
         return []
     
     @property
@@ -90,7 +90,7 @@ class SingleStoreConnector(DataConnector):
             url = self.connector_information['url']
             query = self.connector_information['query']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         try: 
             s2.connect(url, results_type="dict")
         except Exception as e:

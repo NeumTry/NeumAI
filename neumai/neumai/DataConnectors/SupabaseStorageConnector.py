@@ -1,10 +1,10 @@
 from datetime import datetime
-from DataConnectors.DataConnector import DataConnector
+from neumai.DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
 from supabase import create_client, Client
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import SupabaseConnectionException
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import SupabaseConnectionException
 import tempfile
 import os
 
@@ -19,15 +19,15 @@ class SupabaseStorageConnector(DataConnector):
         return "SupabaseStorageConnector"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ["bucket","folder", "url", "key"]
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return []
     
     @property
-    def available_metadata(self) -> str:
+    def availableMetadata(self) -> str:
         return ['name', 'updated_at', 'created_at', 'last_accessed_at']
     
     @property
@@ -97,9 +97,9 @@ class SupabaseStorageConnector(DataConnector):
             url = self.connector_information['url']
             key = self.connector_information['key']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
-        if not all(x in self.available_metadata for x in self.selector.to_metadata):
+        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:

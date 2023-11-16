@@ -13,12 +13,12 @@ class EmbedConnector(ABC):
     
     @property
     @abstractmethod
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         pass
 
     @property
     @abstractmethod
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         pass
 
     @abstractmethod
@@ -57,6 +57,6 @@ class EmbedConnector(ABC):
     
     def config(self):
         json_to_return = {}
-        json_to_return['required_properties'] = self.required_properties
-        json_to_return['optional_properties'] = self.optional_properties
+        json_to_return['requiredProperties'] = self.requiredProperties
+        json_to_return['optionalProperties'] = self.optionalProperties
         return json_to_return

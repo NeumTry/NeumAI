@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import SharepointConnectionException
-from DataConnectors.DataConnector import DataConnector
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import SharepointConnectionException
+from neumai.DataConnectors.DataConnector import DataConnector
 import tempfile
 import requests
 
@@ -17,15 +17,15 @@ class SharepointConnector(DataConnector):
         return "SharepointConnector"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ["tenant_id", "client_id", "client_secret", "site_id"]
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return []
 
     @property
-    def available_metadata(self) -> str:
+    def availableMetadata(self) -> str:
         return ["createdDateTime", "lastModifiedDateTime", "name", "createdBy.user.email", "createdBy.user.id", "createdBy.user.displayName", "lastModifiedBy.user.email", "lastModifiedBy.user.id", "lastModifiedBy.user.displayName"]
     
     @property
@@ -52,7 +52,7 @@ class SharepointConnector(DataConnector):
                 file_url = item['@microsoft.graph.downloadUrl']
                 file_name = item['name']
                 file_type = item['file']['mimeType']
-                available_metadata = {
+                availableMetadata = {
                     "createdDateTime":item['createdDateTime'],
                     "lastModifiedDateTime":item['lastModifiedDateTime'],
                     "name":item['name'],
@@ -63,7 +63,7 @@ class SharepointConnector(DataConnector):
                     "lastModifiedBy.user.id":item['createdBy']['user']['id'],
                     "lastModifiedBy.user.displayName":item['createdBy']['user']['displayName'],
                 }
-                selected_metadata  = {k: available_metadata[k] for k in self.selector.to_metadata if k in available_metadata}
+                selected_metadata  = {k: availableMetadata[k] for k in self.selector.to_metadata if k in availableMetadata}
                 yield CloudFile(file_identifier=file_url, id=file_name, type=file_type, metadata=selected_metadata)
             
             elif 'folder' in item.keys():
@@ -82,7 +82,7 @@ class SharepointConnector(DataConnector):
                 file_url = item['@microsoft.graph.downloadUrl']
                 file_name = item['name']
                 file_type = item['file']['mimeType']
-                available_metadata = {
+                availableMetadata = {
                     "createdDateTime":item['createdDateTime'],
                     "lastModifiedDateTime":item['lastModifiedDateTime'],
                     "name":item['name'],
@@ -94,7 +94,7 @@ class SharepointConnector(DataConnector):
                     "lastModifiedBy.user.displayName":item['createdBy']['user']['displayName'],
                 }
                 if last_run < item['lastModifiedDateTime']:
-                    selected_metadata  = {k: available_metadata[k] for k in metadata_keys if k in available_metadata}
+                    selected_metadata  = {k: availableMetadata[k] for k in metadata_keys if k in availableMetadata}
                     yield CloudFile(file_identifier=file_url, id=file_name, type=file_type, metadata=selected_metadata)
             
             elif 'folder' in item.keys():
@@ -194,9 +194,9 @@ class SharepointConnector(DataConnector):
             client_secret = self.connector_information['client_secret']
             site_id = self.connector_information['site_id']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
-        if not all(x in self.available_metadata for x in self.selector.to_metadata):
+        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:

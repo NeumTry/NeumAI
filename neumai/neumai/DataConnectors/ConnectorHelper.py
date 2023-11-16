@@ -1,4 +1,4 @@
-from DataConnectors import (
+from neumai.DataConnectors import (
     AzureBlobConnector,
     NeumFileConnector,
     NeumWebsiteConnector,
@@ -9,11 +9,11 @@ from DataConnectors import (
     PostgresConnector,
 )
 
-from DataConnectors.DataConnectorEnum import DataConnectorEnum
+from neumai.DataConnectors.DataConnectorEnum import DataConnectorEnum
 
-from Shared.Selector import Selector
+from neumai.Shared.Selector import Selector
 
-from Shared.Exceptions import InvalidDataConnectorException
+from neumai.Shared.Exceptions import InvalidDataConnectorException
 
 available_connectors = [enum.value for enum in list(DataConnectorEnum)]
 

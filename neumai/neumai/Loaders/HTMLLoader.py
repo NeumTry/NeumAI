@@ -1,7 +1,7 @@
 from typing import List, Generator
-from Shared.NeumDocument import NeumDocument
-from Shared.LocalFile import LocalFile
-from Loaders.Loader import Loader
+from neumai.Shared.NeumDocument import NeumDocument
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Loaders.Loader import Loader
 from langchain.document_loaders import UnstructuredHTMLLoader
 
 class HTMLLoader(Loader):
@@ -12,15 +12,15 @@ class HTMLLoader(Loader):
         return "HTMLLoader"
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return []
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return []
     
     @property
-    def available_metadata(self) -> List[str]:
+    def availableMetadata(self) -> List[str]:
         return []
 
     @property

@@ -1,9 +1,9 @@
 from typing import List, Optional, Tuple
-from SinkConnectors.SinkConnector import SinkConnector
-from Shared.NeumVector  import NeumVector
-from Shared.NeumSinkInfo import NeumSinkInfo
-from Shared.NeumSearch import NeumSearchResult
-from Shared.Exceptions import(
+from neumai.SinkConnectors.SinkConnector import SinkConnector
+from neumai.Shared.NeumVector  import NeumVector
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.Shared.NeumSearch import NeumSearchResult
+from neumai.Shared.Exceptions import(
     WeaviateConnectionException,
     WeaviateInsertionException,
     WeaviateIndexInfoException,
@@ -21,11 +21,11 @@ class WeaviateSink(SinkConnector):
         return 'WeaviateSink'
     
     @property
-    def required_properties(self) -> List[str]:
+    def requiredProperties(self) -> List[str]:
         return ['url', 'api_key']
 
     @property
-    def optional_properties(self) -> List[str]:
+    def optionalProperties(self) -> List[str]:
         return ['class_name', 'num_workers', 'shard_count', 'batch_size', 'is_dynamic_batch', 'batch_connection_error_retries']
 
     def validation(self) -> bool:
@@ -35,7 +35,7 @@ class WeaviateSink(SinkConnector):
             if 'https' not in url:
                 api_key = self.sink_information["api_key"]
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         try:
             if 'https' not in url:
                 client = weaviate.Client(
