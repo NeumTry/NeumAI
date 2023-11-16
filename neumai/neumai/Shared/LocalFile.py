@@ -1,5 +1,5 @@
 from abc import ABC
-from .Exceptions import LocalFileEmptyException
+from neumai.Shared.Exceptions import LocalFileEmptyException
 
 class LocalFile(ABC):
     def __init__(self, metadata:dict, file_path:str = None, in_mem_data:dict = None, type:str = "Any", id:str = None) -> None:

@@ -23,7 +23,7 @@ class AzureOpenAIEmbed(EmbedConnector):
             api_key = self.embed_information["api_key"]
             api_base = self.embed_information["endpoint"]
         except Exception as e:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         return True 
 
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:

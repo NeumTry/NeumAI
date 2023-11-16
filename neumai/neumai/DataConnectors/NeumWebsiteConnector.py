@@ -47,8 +47,8 @@ class NeumWebsiteConnector(DataConnector):
         clean_url = url.replace(" ", "")
         list_urls = clean_url.split(" , ")
         for u in list_urls:
-            available_metadata = {'url':u}
-            selected_metadata  = {k: available_metadata[k] for k in self.selector.to_metadata if k in available_metadata}
+            availableMetadata = {'url':u}
+            selected_metadata  = {k: availableMetadata[k] for k in self.selector.to_metadata if k in availableMetadata}
             yield CloudFile(file_identifier=u, metadata=selected_metadata, id=u)
 
     def connect_and_list_delta(self) -> Generator[CloudFile, None, None]:
@@ -71,7 +71,7 @@ class NeumWebsiteConnector(DataConnector):
         try:
             url:str = str(self.connector_information['url'])
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
         # Check for metadata values
         if not all(x in self.available_metadata for x in self.selector.to_metadata):

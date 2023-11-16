@@ -37,7 +37,7 @@ class QdrantSink(SinkConnector):
             url = self.sink_information["url"]
             api_key = self.sink_information["api_key"]
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         return True 
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:

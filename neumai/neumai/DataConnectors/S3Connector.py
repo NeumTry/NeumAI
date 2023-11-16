@@ -26,7 +26,7 @@ class S3Connector(DataConnector):
         return ["prefix"]
     
     @property
-    def available_metadata(self) -> str:
+    def availableMetadata(self) -> str:
         return ["key" , "last_modified", "metadata" ]
     
     @property
@@ -121,7 +121,7 @@ class S3Connector(DataConnector):
             aws_access_key= self.connector_information['aws_access_key']
             bucket_name= self.connector_information['bucket_name']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")

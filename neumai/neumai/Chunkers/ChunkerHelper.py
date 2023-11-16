@@ -2,7 +2,7 @@ from neumai.Chunkers import (
     CharacterChunker,
     CustomChunker,
     RecursiveChunker
-)
+)    
 from neumai.Chunkers.ChunkerEnum import ChunkerEnum
 
 def as_chunker(dct:dict):
