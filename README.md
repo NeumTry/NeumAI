@@ -2,9 +2,12 @@
 
 <div align="center">
   
-  [Homepage](https://www.neum.ai) | [Documentation](https://docs.neum.ai) | [Discord](https://discord.gg/mJeNZYRz4m) | [Twitter](https://twitter.com/neum_ai)
+  [Homepage](https://www.neum.ai) | [Documentation](https://docs.neum.ai) | [Blog](https://neum.ai/blog) | [Discord](https://discord.gg/mJeNZYRz4m) | [Twitter](https://twitter.com/neum_ai)
   
-  <a href="https://www.ycombinator.com/companies/neum-ai"><img src="https://badgen.net/badge/Y%20Combinator/S23/orange"/></a>
+  <a href="https://www.ycombinator.com/companies/neum-ai"><img src="https://badgen.net/badge/Y%20Combinator/S23/orange"/></a> 
+  <a href="https://pypi.org/project/embedchain/">
+    <img src="https://img.shields.io/pypi/v/neumai" alt="PyPI">
+  </a>
 </div>
 
 **[Neum AI](https://neum.ai) is a data platform that helps developers leverage their data to contextualize Large Language Models through Retrieval Augmented Generation (RAG)** This includes
