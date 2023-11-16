@@ -1,5 +1,5 @@
 from abc import ABC
-from .Exceptions import CloudFileEmptyException
+from neumai.Shared.Exceptions import CloudFileEmptyException
 
 class CloudFile(ABC):
     def __init__(self, metadata:dict, file_identifier:str = None, id:str = None, data:str = None, type:str = None) -> None:

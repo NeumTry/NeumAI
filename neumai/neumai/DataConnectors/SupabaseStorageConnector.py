@@ -97,7 +97,7 @@ class SupabaseStorageConnector(DataConnector):
             url = self.connector_information['url']
             key = self.connector_information['key']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")

@@ -35,7 +35,7 @@ class  PineconeSink(SinkConnector):
             environment = self.sink_information['environment']
             index = self.sink_information['index']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         try:
             pinecone.init(api_key=api_key, environment=environment)    
             index = pinecone.Index(index_name=index)

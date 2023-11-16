@@ -7,15 +7,14 @@ from neumai.SinkConnectors import (
 )
 from neumai.SinkConnectors.SinkConnectorEnum import SinkConnectorEnum
 from neumai.Shared.Exceptions import InvalidSinkConnectorException
-
-available_connectors = [enum.value for enum in list(SinkConnectorEnum)]
+available_sink_connectors = [enum.value for enum in list(SinkConnectorEnum)]
 
 def as_sink(dct:dict):
     if dct == None:
         raise InvalidSinkConnectorException("Must supply a data connector configuration")
     if not isinstance(dct, dict):
         raise InvalidSinkConnectorException("Data connector configuration needs to be a dictionary")
-    sink_name = dct.get("sink_name", None)
+    sink_name = str(dct.get("sink_name", "")).replace(" ","").lower()
     sink_information = dct.get("sink_information", None)
     if sink_name == SinkConnectorEnum.pineconesink:
         return PineconeSink(sink_information=sink_information)

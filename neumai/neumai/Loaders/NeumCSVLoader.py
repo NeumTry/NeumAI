@@ -24,7 +24,7 @@ class NeumCSVLoader(Loader):
         return ["custom"]
 
     @property
-    def availableContent(self) -> List[str]:
+    def available_content(self) -> List[str]:
         return ["custom"]
     
     def validate(self) -> bool:

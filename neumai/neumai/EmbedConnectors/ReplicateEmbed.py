@@ -22,7 +22,7 @@ class ReplicateEmbed(EmbedConnector):
             api_key = self.embed_information["api_key"]
             model = self.embed_information["replicate_model"]
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         return True 
 
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:

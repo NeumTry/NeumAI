@@ -31,7 +31,7 @@ class Loader(ABC):
 
     @property
     @abstractmethod
-    def availableContent(self) -> List[str]:
+    def available_content(self) -> List[str]:
         pass
 
     @abstractmethod
@@ -71,5 +71,5 @@ class Loader(ABC):
         json_to_return['required_properties'] = self.required_properties
         json_to_return['optional_properties'] = self.optional_properties
         json_to_return['available_metadata'] = self.available_metadata
-        json_to_return['availableContent'] = self.availableContent
+        json_to_return['available_content'] = self.available_content
         return json_to_return
