@@ -15,7 +15,7 @@ def as_embed(dct:dict):
     if not isinstance(dct, dict):
         raise InvalidEmbedConnectorException("Embed connector configuration needs to be a dictionary")
     
-    embed_connector_name = dct.get("embed_name", None)
+    embed_connector_name = str(dct.get("embed_name", "")).replace(" ","").lower()
     embed_connector_enum = EmbedConnectorEnum.as_embed_connector_enum(embed_connector_name=embed_connector_name)
     embed_information = dct.get("embed_information", None)
     if embed_connector_enum == EmbedConnectorEnum.azureopenaiembed:

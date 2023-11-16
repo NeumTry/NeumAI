@@ -1,14 +1,14 @@
 from neumai.Chunkers import (
     CharacterChunker,
-    ChunkerEnum,
     CustomChunker,
     RecursiveChunker
-)    
+)
+from neumai.Chunkers.ChunkerEnum import ChunkerEnum
 
 def as_chunker(dct:dict):
     if dct == None:
         return RecursiveChunker()
-    chunker_name = dct.get("chunker_name", None)
+    chunker_name = str(dct.get("chunker_name", "")).replace(" ","").lower()
     chunker_information = dct.get("chunker_information", None)
     if chunker_name == ChunkerEnum.characterchunker:
         return CharacterChunker(chunker_information=chunker_information)

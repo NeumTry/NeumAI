@@ -15,7 +15,7 @@ def as_sink(dct:dict):
         raise InvalidSinkConnectorException("Must supply a data connector configuration")
     if not isinstance(dct, dict):
         raise InvalidSinkConnectorException("Data connector configuration needs to be a dictionary")
-    sink_name = dct.get("sink_name", None)
+    sink_name = str(dct.get("sink_name", "")).replace(" ","").lower()
     sink_information = dct.get("sink_information", None)
     if sink_name == SinkConnectorEnum.pineconesink:
         return PineconeSink(sink_information=sink_information)

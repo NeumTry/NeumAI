@@ -20,7 +20,7 @@ def as_connector(dct:dict):
     if not isinstance(dct, dict):
         raise InvalidDataConnectorException("Data connector configuration needs to be a dictionary")
     
-    connector_name = dct.get("connector_name", None)
+    connector_name = str(dct.get("connector_name", "")).replace(" ","").lower()
     connector_name_enum = DataConnectorEnum.as_data_connector_enum(data_connector_name=connector_name)
     connector_information = dct.get("connector_information", None)
     selector = Selector.as_selector(dct.get("selector", None))
