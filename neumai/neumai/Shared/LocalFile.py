@@ -1,5 +1,5 @@
 from abc import ABC
-from starlette.exceptions import HTTPException
+from Shared.Exceptions import LocalFileEmptyException
 
 class LocalFile(ABC):
     def __init__(self, metadata:dict, file_path:str = None, in_mem_data:dict = None, type:str = "Any", id:str = None) -> None:
@@ -11,7 +11,7 @@ class LocalFile(ABC):
 
     def as_file(dct:dict):
         if dct == None:
-            raise HTTPException(status_code=500, detail="[x001] An error occured on our end, please email kevin@tryneum.com to unblock you!")
+            raise LocalFileEmptyException("Received empty dict when converting to as_file")
         return LocalFile(
             file_path=dct.get("file_path", None),
             metadata=dct.get("metadata", None),

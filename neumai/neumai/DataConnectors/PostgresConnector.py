@@ -1,13 +1,13 @@
 from psycopg2.extras import DictCursor
 from datetime import datetime
-from neumai.DataConnectors.DataConnector import DataConnector
+from DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
-from neumai.Shared.LocalFile import LocalFile
-from neumai.Shared.CloudFile import CloudFile
+from Shared.LocalFile import LocalFile
+from Shared.CloudFile import CloudFile
+from Shared.Exceptions import PostgresConnectionException
 from decimal import Decimal
 import psycopg2
 import json
-
 
 class PostgresConnector(DataConnector):
     """Postgres Connector \n
@@ -19,15 +19,15 @@ class PostgresConnector(DataConnector):
         return "PostgresConnector"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["connection_string", "query"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ["batch_size"]
     
     @property
-    def availableMetadata(self) -> str:
+    def available_metadata(self) -> str:
         return []
 
     @property
@@ -67,10 +67,10 @@ class PostgresConnector(DataConnector):
                     serialized_dict = json.loads(serialized_string)
                     batch_rows.append(serialized_dict)
                     if(len(batch_rows) == batch_size):
-                        yield CloudFile(data=json.dumps(batch_rows), metadata={})
+                        yield CloudFile(data=json.dumps(batch_rows), metadata={}, id="Postgres")
                         batch_rows = []
                 if len(batch_rows) > 0:
-                    yield CloudFile(data=json.dumps(batch_rows), metadata={})
+                    yield CloudFile(data=json.dumps(batch_rows), metadata={}, id="Postgres")
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
         # No metadatadata to determine what rows are new. Needs to be done through websocket
@@ -86,13 +86,13 @@ class PostgresConnector(DataConnector):
             connection_string = self.connector_information['connection_string']
             query = self.connector_information['query']
         except:
-            raise ValueError("Required properties not set")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         
-        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
+        if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:
-            connection = psycopg2.connect(connection_string)
+            psycopg2.connect(connection_string)
         except Exception as e:
-            raise Exception(f"Connection to Postgres failed, check credentials. See Exception: {e}")      
+            raise PostgresConnectionException(f"Connection to Postgres failed, check credentials. See Exception: {e}")      
         return True   

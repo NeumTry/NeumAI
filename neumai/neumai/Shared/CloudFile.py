@@ -1,5 +1,5 @@
 from abc import ABC
-from starlette.exceptions import HTTPException
+from Shared.Exceptions import CloudFileEmptyException
 
 class CloudFile(ABC):
     def __init__(self, metadata:dict, file_identifier:str = None, id:str = None, data:str = None, type:str = None) -> None:
@@ -11,7 +11,7 @@ class CloudFile(ABC):
 
     def as_file(dct:dict):
         if dct == None:
-            raise HTTPException(status_code=500, detail="[x001] An error occured on our end, please email kevin@tryneum.com to unblock you!")
+            raise CloudFileEmptyException("Received empty dict when converting to as_file")
         return CloudFile(
             file_identifier=dct.get("file_identifier", None),
             data=dct.get("data", None),

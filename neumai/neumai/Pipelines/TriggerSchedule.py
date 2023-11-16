@@ -1,15 +1,13 @@
 from .TriggerSyncTypeEnum import TriggerSyncTypeEnum
 
 class TriggerSchedule(object):
-    # Maybe add something like start date
-    # Special option for "auto sync" (real time)
     def __init__(self, start_date: str, cadence: str, sync_type: TriggerSyncTypeEnum):
         self.start_date = start_date
         self.cadence = cadence
         self.sync_type = sync_type
 
     def toJson(self):
-        """Python does not have built in serialization. We need this logic to be able to respond in our API..
+        """Python does not have built in serialization. We need this logic to be able to respond in our API.
 
         Returns:
             _type_: the json to return
@@ -21,9 +19,7 @@ class TriggerSchedule(object):
         return json_to_return
     
     def to_model(self):
-        """Python does not have built in serialization. We need this logic to be able to respond in our API..
-        This is different han toJson, here we use it to create a model, we don't want to return the api key in the body back. Eventualyl this should be its own class...
-        Returns:
+        """Convert to model for serialization
             _type_: the json to return
         """
         json_to_return = {}

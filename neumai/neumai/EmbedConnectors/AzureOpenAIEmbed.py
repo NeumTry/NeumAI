@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
-from neumai.Shared.NeumDocument import NeumDocument
+from EmbedConnectors.EmbedConnector import EmbedConnector
+from Shared.NeumDocument import NeumDocument
 from langchain.embeddings import azure_openai
 
 class AzureOpenAIEmbed(EmbedConnector):
@@ -9,11 +9,11 @@ class AzureOpenAIEmbed(EmbedConnector):
         return 'AzureOpenAIEmbed'
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ['deployment_name', 'api_key', 'endpoint']
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return []
 
     def validation(self) -> bool:
@@ -23,9 +23,8 @@ class AzureOpenAIEmbed(EmbedConnector):
             api_key = self.embed_information["api_key"]
             api_base = self.embed_information["endpoint"]
         except Exception as e:
-            raise ValueError("Required properties are not set.")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         return True 
-
 
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:
         """Generate embeddings with Azure OpenAI"""

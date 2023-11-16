@@ -1,8 +1,7 @@
-from abc import abstractmethod, ABC
 from typing import List, Generator
-from neumai.Shared.NeumDocument import NeumDocument
-from neumai.Shared.LocalFile import LocalFile
-from neumai.Loaders.Loader import Loader
+from Shared.NeumDocument import NeumDocument
+from Shared.LocalFile import LocalFile
+from Loaders.Loader import Loader
 from langchain.document_loaders import UnstructuredHTMLLoader
 
 class HTMLLoader(Loader):
@@ -13,15 +12,15 @@ class HTMLLoader(Loader):
         return "HTMLLoader"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return []
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return []
     
     @property
-    def availableMetadata(self) -> List[str]:
+    def available_metadata(self) -> List[str]:
         return []
 
     @property

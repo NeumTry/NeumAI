@@ -1,7 +1,7 @@
 from typing import List, Tuple
-from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
+from EmbedConnectors.EmbedConnector import EmbedConnector
+from Shared.NeumDocument import NeumDocument
 import replicate
-from neumai.Shared.NeumDocument import NeumDocument
 
 class ReplicateEmbed(EmbedConnector):
     @property
@@ -9,11 +9,11 @@ class ReplicateEmbed(EmbedConnector):
         return 'ReplicateEmbed'
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ['api_key', 'replicate_model']
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return []
 
     def validation(self) -> bool:
@@ -21,8 +21,8 @@ class ReplicateEmbed(EmbedConnector):
         try:
             api_key = self.embed_information["api_key"]
             model = self.embed_information["replicate_model"]
-        except Exception as e:
-            raise ValueError("Required properties are not set.")
+        except:
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         return True 
 
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:

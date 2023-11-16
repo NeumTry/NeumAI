@@ -1,8 +1,6 @@
-from abc import abstractmethod, ABC, abstractproperty
-from neumai.Chunkers.Chunker import Chunker
-from starlette.exceptions import HTTPException
-from neumai.Shared.NeumDocument import NeumDocument
 from typing import List, Generator
+from Chunkers.Chunker import Chunker
+from Shared.NeumDocument import NeumDocument
 from neumai_tools import semantic_chunking
 
 class CustomChunker(Chunker):
@@ -17,11 +15,11 @@ class CustomChunker(Chunker):
         return "CustomChunker"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["code"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ["batch_size"]
 
     def chunk(self, documents:List[NeumDocument]) -> Generator[List[NeumDocument], None, None]:

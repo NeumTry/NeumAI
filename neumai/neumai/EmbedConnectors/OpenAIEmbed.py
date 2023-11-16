@@ -1,7 +1,9 @@
 from typing import List, Tuple
-from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
+from EmbedConnectors.EmbedConnector import EmbedConnector
 from langchain.embeddings.openai import OpenAIEmbeddings
-from neumai.Shared.NeumDocument import NeumDocument
+from Shared.NeumDocument import NeumDocument
+from Shared.Exceptions import OpenAIConnectionException
+
 class OpenAIEmbed(EmbedConnector):
     """" OpenAI Embed Connector \n
     embed_information required: [ api_key ]"""
@@ -11,11 +13,11 @@ class OpenAIEmbed(EmbedConnector):
         return 'OpenAIEmbed'
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["api_key"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ['max_retries', 'chunk_size']
 
     def validation(self) -> bool:
@@ -23,11 +25,11 @@ class OpenAIEmbed(EmbedConnector):
         try:
             api_key = self.embed_information['api_key']
         except:
-            raise ValueError("Required properties not set")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         try:
             OpenAIEmbeddings(max_retries=20, api_key=api_key, chunk_size=1000)
         except Exception as e:
-            raise ValueError(f"OpenAI couldn't be initialized. See exception: {e}")
+            raise OpenAIConnectionException(f"OpenAI couldn't be initialized. See exception: {e}")
         return True 
 
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:

@@ -1,8 +1,6 @@
-from abc import abstractmethod, ABC, abstractproperty
-from neumai.Chunkers.Chunker import Chunker
-from starlette.exceptions import HTTPException
-from neumai.Shared.NeumDocument import NeumDocument
 from typing import List, Generator
+from Chunkers.Chunker import Chunker
+from Shared.NeumDocument import NeumDocument
 from langchain.text_splitter import (CharacterTextSplitter)
 
 class CharacterChunker(Chunker):
@@ -15,11 +13,11 @@ class CharacterChunker(Chunker):
         return "CharacterChunker"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return []
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ["chunk_size" , "chunk_overlap" , "batch_size", "separator"]
 
     def chunk(self, documents:List[NeumDocument]) -> Generator[List[NeumDocument], None, None]:

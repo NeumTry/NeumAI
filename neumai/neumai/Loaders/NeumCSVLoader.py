@@ -1,8 +1,7 @@
-from abc import abstractmethod, ABC
 from typing import List, Generator
-from neumai.Shared.NeumDocument import NeumDocument
-from neumai.Shared.LocalFile import LocalFile
-from neumai.Loaders.Loader import Loader
+from Shared.NeumDocument import NeumDocument
+from Shared.LocalFile import LocalFile
+from Loaders.Loader import Loader
 import csv
 
 class NeumCSVLoader(Loader):
@@ -13,15 +12,15 @@ class NeumCSVLoader(Loader):
         return "NeumCSVLoader"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return []
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ["id_key" , "source_column" , "encoding", "csv_args"]
     
     @property
-    def availableMetadata(self) -> List[str]:
+    def available_metadata(self) -> List[str]:
         return ["custom"]
 
     @property

@@ -1,13 +1,12 @@
-from abc import abstractmethod, ABC
 from typing import List, Generator
-from neumai.Shared.NeumDocument import NeumDocument
-from neumai.Shared.LocalFile import LocalFile
-from neumai.Loaders.Loader import Loader
-from neumai.Loaders.NeumCSVLoader import NeumCSVLoader
-from neumai.Loaders.NeumJSONLoader import NeumJSONLoader
-from neumai.Loaders.HTMLLoader import HTMLLoader
-from neumai.Loaders.MarkdownLoader import MarkdownLoader
-from neumai.Loaders.PDFLoader import PDFLoader
+from Shared.NeumDocument import NeumDocument
+from Shared.LocalFile import LocalFile
+from Loaders.Loader import Loader
+from Loaders.NeumCSVLoader import NeumCSVLoader
+from Loaders.NeumJSONLoader import NeumJSONLoader
+from Loaders.HTMLLoader import HTMLLoader
+from Loaders.MarkdownLoader import MarkdownLoader
+from Loaders.PDFLoader import PDFLoader
 from langchain.document_loaders import UnstructuredFileLoader
 
 class AutoLoader(Loader):
@@ -18,15 +17,15 @@ class AutoLoader(Loader):
         return "AutoLoader"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return []
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return []
     
     @property
-    def availableMetadata(self) -> List[str]:
+    def available_metadata(self) -> List[str]:
         return []
 
     @property

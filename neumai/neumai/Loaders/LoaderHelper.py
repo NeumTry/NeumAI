@@ -1,5 +1,6 @@
-from neumai.Loaders import (
+from Loaders import (
     AutoLoader,
+    LoaderEnum,
     MarkdownLoader,
     NeumJSONLoader,
     NeumCSVLoader,
@@ -14,17 +15,17 @@ def as_loader(dct:dict):
     loader_name = dct.get("loader_name", None)
     loader_information = dct.get("loader_information", None)
     selector = Selector.as_selector(dct.get("selector", None))
-    if loader_name == "AutoLoader":
+    if loader_name == LoaderEnum.autoloader:
         return AutoLoader(loader_information=loader_information, selector=selector)
-    elif loader_name == "MarkdownLoader":
-        return MarkdownLoader(loader_information=loader_information, selector=selector)
-    elif loader_name == "NeumJSONLoader":
-        return NeumJSONLoader(loader_information=loader_information, selector=selector)
-    elif loader_name == "NeumCSVLoader":
-        return NeumCSVLoader(loader_information=loader_information, selector=selector)
-    elif loader_name == "PDFLoader":
-        return PDFLoader(loader_information=loader_information, selector=selector)
-    elif loader_name == "HTMLLoader":
+    elif loader_name == LoaderEnum.htmlloader:
         return HTMLLoader(loader_information=loader_information, selector=selector)
+    elif loader_name == LoaderEnum.markdownloader:
+        return MarkdownLoader(loader_information=loader_information, selector=selector)
+    elif loader_name == LoaderEnum.neumjsonloader:
+        return NeumJSONLoader(loader_information=loader_information, selector=selector)
+    elif loader_name == LoaderEnum.neumcsvloader:
+        return NeumCSVLoader(loader_information=loader_information, selector=selector)
+    elif loader_name == LoaderEnum.pdfloader:
+        return PDFLoader(loader_information=loader_information, selector=selector)
     else: 
         return AutoLoader(loader_information=loader_information, selector=selector)
