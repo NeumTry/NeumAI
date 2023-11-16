@@ -1,8 +1,8 @@
 from abc import abstractmethod, ABC
 from typing import List, Generator
-from Shared.NeumDocument import NeumDocument
-from Shared.LocalFile import LocalFile
-from Shared.Selector import Selector
+from neumai.Shared.NeumDocument import NeumDocument
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.Selector import Selector
 
 class Loader(ABC):
     def __init__(self, loader_information:dict = {}, selector:Selector = Selector(to_embed=[], to_metadata=[])) -> None:

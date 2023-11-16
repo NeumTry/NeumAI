@@ -1,4 +1,4 @@
-from Chunkers import (
+from neumai.Chunkers import (
     CharacterChunker,
     ChunkerEnum,
     CustomChunker,

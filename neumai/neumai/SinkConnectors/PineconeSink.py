@@ -1,9 +1,9 @@
 from typing import List
-from Shared.NeumSearch import NeumSearchResult
-from Shared.NeumSinkInfo import NeumSinkInfo
-from SinkConnectors.SinkConnector import SinkConnector
-from Shared.NeumVector  import NeumVector
-from Shared.Exceptions import (
+from neumai.Shared.NeumSearch import NeumSearchResult
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.SinkConnectors.SinkConnector import SinkConnector
+from neumai.Shared.NeumVector  import NeumVector
+from neumai.Shared.Exceptions import (
     PineconeConnectionException,
     PineconeInsertionException,
     PineconeIndexInfoException,

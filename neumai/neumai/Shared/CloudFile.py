@@ -1,5 +1,5 @@
 from abc import ABC
-from Shared.Exceptions import CloudFileEmptyException
+from .Exceptions import CloudFileEmptyException
 
 class CloudFile(ABC):
     def __init__(self, metadata:dict, file_identifier:str = None, id:str = None, data:str = None, type:str = None) -> None:

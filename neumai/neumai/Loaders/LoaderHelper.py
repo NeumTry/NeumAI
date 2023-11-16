@@ -1,4 +1,4 @@
-from Loaders import (
+from neumai.Loaders import (
     AutoLoader,
     LoaderEnum,
     MarkdownLoader,

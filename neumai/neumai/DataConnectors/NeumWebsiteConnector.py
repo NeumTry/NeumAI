@@ -1,8 +1,8 @@
-from DataConnectors.DataConnector import DataConnector
+from neumai.DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import WebsiteConnectionException
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import WebsiteConnectionException
 from bs4 import BeautifulSoup
 import tempfile
 import requests

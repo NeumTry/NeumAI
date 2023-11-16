@@ -1,6 +1,6 @@
 from typing import List, Generator
-from Chunkers.Chunker import Chunker
-from Shared.NeumDocument import NeumDocument
+from neumai.Chunkers.Chunker import Chunker
+from neumai.Shared.NeumDocument import NeumDocument
 from langchain.text_splitter import (RecursiveCharacterTextSplitter)
 
 class RecursiveChunker(Chunker):

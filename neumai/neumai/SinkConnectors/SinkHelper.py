@@ -1,13 +1,12 @@
-from SinkConnectors import (
+from neumai.SinkConnectors import (
     PineconeSink,
     WeaviateSink,
     QdrantSink,
     SingleStoreSink,
-    SinkConnectorEnum,
     SupabaseSink
 )
-
-from Shared.Exceptions import InvalidSinkConnectorException
+from neumai.SinkConnectors.SinkConnectorEnum import SinkConnectorEnum
+from neumai.Shared.Exceptions import InvalidSinkConnectorException
 
 available_connectors = [enum.value for enum in list(SinkConnectorEnum)]
 
@@ -29,4 +28,4 @@ def as_sink(dct:dict):
     elif sink_name == SinkConnectorEnum.weaviatesink:
         return WeaviateSink(sink_information=sink_information)
     else:
-        raise InvalidSinkConnectorException(f"{sink_name} is an invalid sink connector. Available connectors: {available_sink_connectors}]")
+        raise InvalidSinkConnectorException(f"{sink_name} is an invalid sink connector. Available connectors: {available_connectors}]")

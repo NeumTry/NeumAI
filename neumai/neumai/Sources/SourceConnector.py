@@ -2,18 +2,18 @@ from typing import List, Generator
 from datetime import datetime
 from abc import ABC
 
-from DataConnectors.DataConnector import DataConnector
-from DataConnectors.ConnectorHelper import as_connector
-from Chunkers.Chunker import Chunker
-from Chunkers.RecursiveChunker import RecursiveChunker
-from Chunkers.ChunkerHelper import as_chunker
-from Loaders.Loader import Loader
-from Loaders.AutoLoader import AutoLoader
-from Loaders.LoaderHelper import as_loader
-from Shared.NeumDocument import NeumDocument
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import SourceConnectorEmptyException
+from neumai.DataConnectors.DataConnector import DataConnector
+from neumai.DataConnectors.ConnectorHelper import as_connector
+from neumai.Chunkers.Chunker import Chunker
+from neumai.Chunkers.RecursiveChunker import RecursiveChunker
+from neumai.Chunkers.ChunkerHelper import as_chunker
+from neumai.Loaders.Loader import Loader
+from neumai.Loaders.AutoLoader import AutoLoader
+from neumai.Loaders.LoaderHelper import as_loader
+from neumai.Shared.NeumDocument import NeumDocument
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import SourceConnectorEmptyException
 
 class SourceConnector(ABC):
     def __init__(self, connector:DataConnector, chunker:Chunker = RecursiveChunker(), loader:Loader = AutoLoader(), customMetadata:dict = {}):

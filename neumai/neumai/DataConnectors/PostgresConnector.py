@@ -1,10 +1,10 @@
 from psycopg2.extras import DictCursor
 from datetime import datetime
-from DataConnectors.DataConnector import DataConnector
+from neumai.DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import PostgresConnectionException
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import PostgresConnectionException
 from decimal import Decimal
 import psycopg2
 import json

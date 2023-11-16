@@ -1,10 +1,10 @@
 from datetime import datetime
-from DataConnectors import DataConnector
+from neumai.DataConnectors import DataConnector
 from typing import List, Generator
 from azure.storage.blob import BlobClient, ContainerClient
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import AzureBlobConnectionException
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import AzureBlobConnectionException
 import tempfile
 import os
 

@@ -1,5 +1,5 @@
 from abc import ABC
-from Shared.Exceptions import NeumDocumentEmptyException
+from .Exceptions import NeumDocumentEmptyException
 
 class NeumDocument(ABC):
     def __init__(self, id:str, content:str, metadata:dict) -> None:

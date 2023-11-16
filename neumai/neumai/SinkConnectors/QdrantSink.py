@@ -1,12 +1,12 @@
-from Shared.NeumSinkInfo import NeumSinkInfo
-from Shared.NeumVector  import NeumVector
-from Shared.NeumSearch import NeumSearchResult
-from Shared.Exceptions import(
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.Shared.NeumVector  import NeumVector
+from neumai.Shared.NeumSearch import NeumSearchResult
+from neumai.Shared.Exceptions import(
     QdrantInsertionException,
     QdrantIndexInfoException,
     QdrantQueryException
 )
-from SinkConnectors.SinkConnector import SinkConnector
+from neumai.SinkConnectors.SinkConnector import SinkConnector
 from typing import List
 
 from qdrant_client.http.models import Distance, VectorParams

@@ -1,8 +1,8 @@
 from typing import List, Tuple
-from EmbedConnectors.EmbedConnector import EmbedConnector
+from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
 from langchain.embeddings.openai import OpenAIEmbeddings
-from Shared.NeumDocument import NeumDocument
-from Shared.Exceptions import OpenAIConnectionException
+from neumai.Shared.NeumDocument import NeumDocument
+from neumai.Shared.Exceptions import OpenAIConnectionException
 
 class OpenAIEmbed(EmbedConnector):
     """" OpenAI Embed Connector \n
