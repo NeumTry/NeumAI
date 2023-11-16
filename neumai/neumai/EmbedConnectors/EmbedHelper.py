@@ -4,8 +4,8 @@ from neumai.EmbedConnectors import (
     AzureOpenAIEmbed
 )
 
-from EmbedConnectors.EmbedConnectorEnum import EmbedConnectorEnum
-from Shared.Exceptions import InvalidEmbedConnectorException
+from neumai.EmbedConnectors.EmbedConnectorEnum import EmbedConnectorEnum
+from neumai.Shared.Exceptions import InvalidEmbedConnectorException
 
 available_embed_connectors = [enum.value for enum in list(EmbedConnectorEnum)]
 

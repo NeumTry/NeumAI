@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import List, Generator
-from Shared.LocalFile import LocalFile
-from Shared.CloudFile import CloudFile
-from Shared.Exceptions import SharepointConnectionException
-from DataConnectors.DataConnector import DataConnector
+from neumai.Shared.LocalFile import LocalFile
+from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Exceptions import SharepointConnectionException
+from neumai.DataConnectors.DataConnector import DataConnector
 import tempfile
 import requests
 

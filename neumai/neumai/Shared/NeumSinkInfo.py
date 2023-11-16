@@ -1,5 +1,5 @@
 from abc import ABC
-from Shared.Exceptions import NeumSinkInfoEmptyException
+from .Exceptions import NeumSinkInfoEmptyException
 
 class NeumSinkInfo(ABC):
     def __init__(self, number_vectors_stored:int) -> None:
