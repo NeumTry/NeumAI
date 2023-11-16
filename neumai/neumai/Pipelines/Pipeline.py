@@ -64,7 +64,7 @@ class Pipeline(object):
 
         return total_vectors_stored
     
-    def searchPipeline(self, query:str, number_of_results:int) -> List[NeumSearchResult]:
+    def search(self, query:str, number_of_results:int) -> List[NeumSearchResult]:
         vector_for_query = self.embed.embed_query(query=query)
         matches =  self.sink.search(vector=vector_for_query, number_of_results=number_of_results, pipeline_id=self.id)
         return matches
