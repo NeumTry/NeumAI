@@ -1,6 +1,5 @@
 from abc import ABC
-from fastapi.responses import JSONResponse
-from starlette.exceptions import HTTPException
+from Shared.Exceptions import NeumSinkInfoEmptyException
 
 class NeumSinkInfo(ABC):
     def __init__(self, number_vectors_stored:int) -> None:
@@ -8,7 +7,7 @@ class NeumSinkInfo(ABC):
 
     def as_sink_info(dct:dict):
         if dct == None:
-            raise HTTPException(status_code=500, detail="[x001] An error occured on our end, please email kevin@tryneum.com to unblock you!")
+            raise NeumSinkInfoEmptyException("Received empty dict when converting to as_sink_info")
         return NeumSinkInfo(
             number_vectors_stored=dct.get("number_vectors_stored", None),
         )
@@ -22,11 +21,3 @@ class NeumSinkInfo(ABC):
         json_to_return = {}
         json_to_return['number_vectors_stored'] = self.number_vectors_stored
         return json_to_return
-
-class NeumSinkInfoModel(JSONResponse):
-    def __init__(
-        self,
-        content: NeumSinkInfo,
-        status_code: int = 200,
-    ) -> None:
-        super().__init__(content, status_code, headers=None, media_type="application/json", background=None)

@@ -1,5 +1,4 @@
 from .TriggerSyncTypeEnum import TriggerSyncTypeEnum
-from fastapi.responses import JSONResponse
 
 class PipelineRunTaskDetails(object):
     def __init__(self, completed_embedding_tasks: int, completed_storing_tasks: int, failed_embedding_tasks: int, failed_storing_tasks: int ):
@@ -117,11 +116,3 @@ class PipelineRun(object):
             number_of_documents=dct.get("number_of_documents",None),
             finished_distributing=dct.get("finished_distributing",None) # we could do something like in distributed tasks where we store the state of the DAG in the pipeline run object.. for now just doing finished_distributing
         )
-    
-class PipelineRunModel(JSONResponse):
-    def __init__(
-        self,
-        content: PipelineRun,
-        status_code: int = 200,
-    ) -> None:
-        super().__init__(content, status_code, headers=None, media_type="application/json", background=None)

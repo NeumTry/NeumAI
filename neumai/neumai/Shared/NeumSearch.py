@@ -1,7 +1,5 @@
 from abc import ABC
-from fastapi.responses import JSONResponse
-from starlette.exceptions import HTTPException
-from typing import List
+from Shared.Exceptions import NeumSearchResultEmptyException
 
 class NeumSearchResult(ABC):
     def __init__(self, id:str, metadata:dict, score:float) -> None:
@@ -11,8 +9,7 @@ class NeumSearchResult(ABC):
 
     def as_search_result(dct:dict):
         if dct == None:
-            raise HTTPException(status_code=500, detail="Value dct must be a dictionary")
-        
+            raise NeumSearchResultEmptyException("Received empty dict when converting to as_search_result")
         return NeumSearchResult(
             id=dct.get("id", None),
             metadata=dct.get("metadata", None),
@@ -30,11 +27,3 @@ class NeumSearchResult(ABC):
         json_to_return['metadata'] = self.metadata
         json_to_return['score'] = self.score
         return json_to_return
-
-class NeumSearchResultModel(JSONResponse):
-    def __init__(
-        self,
-        content: List[NeumSearchResult],
-        status_code: int = 200,
-    ) -> None:
-        super().__init__(content, status_code, headers=None, media_type="application/json", background=None)

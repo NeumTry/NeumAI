@@ -1,8 +1,15 @@
 from typing import List
-from neumai.SinkConnectors.SinkConnector import SinkConnector
-from neumai.Shared.NeumSinkInfo import NeumSinkInfo
-from neumai.Shared.NeumVector  import NeumVector
-from neumai.Shared.NeumSearch import NeumSearchResult
+from SinkConnectors.SinkConnector import SinkConnector
+from Shared.NeumSinkInfo import NeumSinkInfo
+from Shared.NeumVector  import NeumVector
+from Shared.NeumSearch import NeumSearchResult
+from Shared.Exceptions import(
+    SupabaseConnectionException,
+    SupabaseInsertionException,
+    SupabaseIndexInfoException,
+    SupabaseQueryException
+)
+import vecs
 
 class SupabaseSink(SinkConnector):
     """ Supabase Sink\n
@@ -13,11 +20,11 @@ class SupabaseSink(SinkConnector):
         return 'SupabaseSink'
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ['database_connection']
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ['collection_name']
 
     def validation(self) -> bool:
@@ -26,57 +33,53 @@ class SupabaseSink(SinkConnector):
         try:
             database_connection = self.sink_information['database_connection']
         except:
-            raise ValueError("Required properties not set")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         try:
             vx = vecs.create_client(database_connection)
         except Exception as e:
-            raise ValueError(f"Supabase connection couldn't be initialized. See exception: {e}")
+            raise SupabaseConnectionException(f"Supabase connection couldn't be initialized. See exception: {e}")
         return True 
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
-        import vecs
-        from vecs import Collection
         database_connection = self.sink_information['database_connection']
         vx = vecs.create_client(database_connection)
-        collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
+        try:
+            collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
+            dimensions = len(vectors_to_store[0].vector)
+            db = vx.get_or_create_collection(name=collection_name, dimension=dimensions)
+            to_upsert = []
+            for i in range(0, len(vectors_to_store)):
+                to_upsert.append((vectors_to_store[i].id, vectors_to_store[i].vector, vectors_to_store[i].metadata))
 
-        dimensions = len(vectors_to_store[0].vector)
-        db = vx.get_or_create_collection(name=collection_name, dimension=dimensions)
-
-        # supabase is doing some chunking here to automatically partition and batch the data, we should understand this further.
-        # Also, this won't scale if there are too many items in the array
-        toUpsert = []
-        for i in range(0, len(vectors_to_store)):
-            toUpsert.append((vectors_to_store[i].id, vectors_to_store[i].vector, vectors_to_store[i].metadata))
-
-        db.upsert(records=toUpsert)
-
-        # do we need to re index every time? this might be super costly. Can we check if there's an index and if not index otherwise don't?
-        # db.create_index()
-        # need to figure out how to do this only once. 
-        vx.disconnect()
+            db.upsert(records=to_upsert)
+        except Exception as e:
+            raise SupabaseInsertionException(f"Supabase storing failed. Exception {e}")
+        finally:
+            vx.disconnect()
         return len(vectors_to_store)
     
     def search(self, vector: List[float], number_of_results:int, pipeline_id:str) -> List:
-        import vecs
-        DB_CONNECTION = self.sink_information['database_connection']
-        vx = vecs.create_client(DB_CONNECTION)
+        database_connection = self.sink_information['database_connection']
+        vx = vecs.create_client(database_connection)
         collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
         try:
             db = vx.get_collection(name=collection_name)
         except:
-            raise Exception(f"Collection {collection_name} does not exist")
-        
+            raise SupabaseQueryException(f"Collection {collection_name} does not exist")
+        finally:
+            vx.disconnect()
+
         try:
             results = db.query(
-                data=vector,           # required
+                data=vector,
                 include_metadata=True,
                 include_value=True,
-                limit=number_of_results,  # number of records to return
+                limit=number_of_results,
             )
         except Exception as e:
-            raise Exception(f"Error querying vectors from Supabase. Exception: {e}")
-        
+            raise SupabaseQueryException(f"Error querying vectors from Supabase. Exception: {e}")
+        finally:
+            vx.disconnect()
         matches = []
         for result in results:
             matches.append(NeumSearchResult(
@@ -89,14 +92,15 @@ class SupabaseSink(SinkConnector):
         return matches
     
     def info(self, pipeline_id: str) -> NeumSinkInfo:
-        import vecs
-        DB_CONNECTION = self.sink_information['database_connection']
-        vx = vecs.create_client(DB_CONNECTION)
+        database_connection = self.sink_information['database_connection']
+        vx = vecs.create_client(database_connection)
         collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
         try:
             db = vx.get_collection(name=collection_name)
         except:
-            raise Exception(f"Collection {collection_name} does not exist")
+            raise SupabaseIndexInfoException(f"Collection {collection_name} does not exist")
+        finally:
+            vx.disconnect()
         
         number_of_vectors = db.table.select('count(*)')[0].count
 

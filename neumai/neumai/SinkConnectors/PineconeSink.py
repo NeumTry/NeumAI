@@ -1,8 +1,15 @@
 from typing import List
-from neumai.Shared.NeumSearch import NeumSearchResult
-from neumai.Shared.NeumSinkInfo import NeumSinkInfo
-from neumai.SinkConnectors.SinkConnector import SinkConnector
-from neumai.Shared.NeumVector  import NeumVector
+from Shared.NeumSearch import NeumSearchResult
+from Shared.NeumSinkInfo import NeumSinkInfo
+from SinkConnectors.SinkConnector import SinkConnector
+from Shared.NeumVector  import NeumVector
+from Shared.Exceptions import (
+    PineconeConnectionException,
+    PineconeInsertionException,
+    PineconeIndexInfoException,
+    PineconeQueryException,
+)
+import pinecone
 
 class  PineconeSink(SinkConnector):
     """ Pinecone Sink\n
@@ -13,11 +20,11 @@ class  PineconeSink(SinkConnector):
         return 'PineconeSink'
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ['api_key', 'environment', 'index']
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ['namespace']
 
     def validation(self) -> bool:
@@ -28,16 +35,16 @@ class  PineconeSink(SinkConnector):
             environment = self.sink_information['environment']
             index = self.sink_information['index']
         except:
-            raise ValueError("Required properties not set")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         try:
             pinecone.init(api_key=api_key, environment=environment)    
             index = pinecone.Index(index_name=index)
+            index.describe_index_stats()
         except Exception as e:
-            raise ValueError(f"Pinecone connection couldn't be initialized. See exception: {e}")
+            raise PineconeConnectionException(f"Pinecone connection couldn't be initialized. See exception: {e}")
         return True 
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
-        import pinecone
         api_key =  self.sink_information['api_key']
         environment = self.sink_information['environment']
         index = self.sink_information['index']
@@ -56,7 +63,7 @@ class  PineconeSink(SinkConnector):
                 result = index.upsert(vectors=to_upsert, namespace=namespace)
                 vectors_stored += result['upserted_count'] 
         except Exception as e:
-            raise Exception(f"Failed to store in Pinecone. Exception - {e}")
+            raise PineconeInsertionException(f"Failed to store in Pinecone. Exception - {e}")
         return int(vectors_stored)
     
     def search(self, vector: List[float], number_of_results:int, pipeline_id:str) -> List[NeumSearchResult]:
@@ -72,7 +79,7 @@ class  PineconeSink(SinkConnector):
             index = pinecone.Index(index)
             results = index.query(vector=vector, top_k=number_of_results, namespace=namespace, include_values=False, include_metadata=True)["matches"]
         except Exception as e:
-            raise Exception(f"Failed to query pinecone. Exception - {e}")
+            raise PineconeQueryException(f"Failed to query pinecone. Exception - {e}")
         
         matches = []
         for result in results:
@@ -94,4 +101,4 @@ class  PineconeSink(SinkConnector):
             if namespace in namespaces:
                 return NeumSinkInfo(number_vectors_stored=namespaces[namespace]["vector_count"])
         except Exception as e:
-            raise Exception(f"Failed to get info for pinecone. Exception - {e}")
+            raise PineconeIndexInfoException(f"Failed to get info for pinecone. Exception - {e}")

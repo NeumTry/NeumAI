@@ -1,12 +1,12 @@
 from datetime import datetime
-from neumai.DataConnectors.DataConnector import DataConnector
+from DataConnectors import DataConnector
 from typing import List, Generator
 from azure.storage.blob import BlobClient, ContainerClient
-from neumai.Shared.LocalFile import LocalFile
-from neumai.Shared.CloudFile import CloudFile
+from Shared.LocalFile import LocalFile
+from Shared.CloudFile import CloudFile
+from Shared.Exceptions import AzureBlobConnectionException
 import tempfile
 import os
-
 
 class AzureBlobConnector(DataConnector):
     """" Neum File Connector """
@@ -16,15 +16,15 @@ class AzureBlobConnector(DataConnector):
         return "AzureBlobConnector"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["connection_string", "container_name"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return []
     
     @property
-    def availableMetadata(self) -> str:
+    def available_metadata(self) -> str:
         return ['name', 'last_modified', 'creation_time', 'last_access_on']
 
     @property
@@ -101,17 +101,17 @@ class AzureBlobConnector(DataConnector):
             connection_string = self.connector_information['connection_string']
             container_name = self.connector_information['container_name']
         except:
-            raise ValueError("Required properties not set")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         
-        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
+        if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
-        
+
         try:
-            container = ContainerClient.from_connection_string(
+            ContainerClient.from_connection_string(
                 conn_str=connection_string, container_name=container_name
             )
         except Exception as e:
-            raise Exception(f"Connection to Azure Blob Storage failed, check credentials. See Exception: {e}")   
+            raise AzureBlobConnectionException(f"Connection to Azure Blob Storage failed, check credentials. See Exception: {e}")
         return True     
 
 

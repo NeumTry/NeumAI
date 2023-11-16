@@ -1,9 +1,10 @@
 from datetime import datetime
-from neumai.DataConnectors.DataConnector import DataConnector
+from DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
 from supabase import create_client, Client
-from neumai.Shared.LocalFile import LocalFile
-from neumai.Shared.CloudFile import CloudFile
+from Shared.LocalFile import LocalFile
+from Shared.CloudFile import CloudFile
+from Shared.Exceptions import SupabaseConnectionException
 import tempfile
 import os
 
@@ -18,15 +19,15 @@ class SupabaseStorageConnector(DataConnector):
         return "SupabaseStorageConnector"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["bucket","folder", "url", "key"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return []
     
     @property
-    def availableMetadata(self) -> str:
+    def available_metadata(self) -> str:
         return ['name', 'updated_at', 'created_at', 'last_accessed_at']
     
     @property
@@ -92,17 +93,17 @@ class SupabaseStorageConnector(DataConnector):
 
     def validate(self) -> bool:
         try:
-            folder= self.connector_information['folder']
+            folder = self.connector_information['folder']
             url = self.connector_information['url']
             key = self.connector_information['key']
         except:
-            raise ValueError("Required properties not set")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         
-        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
+        if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:
-            supabase: Client = create_client(url, key)
+            create_client(url, key)
         except Exception as e:
-            raise Exception(f"Connection to Supabase failed, check credentials. See Exception: {e}")
+            raise SupabaseConnectionException(f"Connection to Supabase failed, check credentials. See Exception: {e}")
         return True 

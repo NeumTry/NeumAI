@@ -1,12 +1,12 @@
 from datetime import datetime
 from typing import List, Generator
 import boto3
-from neumai.Shared.LocalFile import LocalFile
-from neumai.Shared.CloudFile import CloudFile
-from neumai.DataConnectors.DataConnector import DataConnector
+from Shared.LocalFile import LocalFile
+from Shared.CloudFile import CloudFile
+from Shared.Exceptions import S3ConnectionException
+from DataConnectors.DataConnector import DataConnector
 import tempfile
 import os
-
 
 class S3Connector(DataConnector):
     """" Neum File Connector \n
@@ -18,16 +18,16 @@ class S3Connector(DataConnector):
         return "S3Connector"
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ["aws_key_id", "aws_access_key", "bucket_name"]
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ["prefix"]
     
     @property
-    def availableMetadata(self) -> str:
-        return ["key" , "last_modified", "metadata" ] # TODO need to flatten
+    def available_metadata(self) -> str:
+        return ["key" , "last_modified", "metadata" ]
     
     @property
     def schedule_avaialable(self) -> bool:
@@ -42,7 +42,6 @@ class S3Connector(DataConnector):
         return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        #Connect to S3
         aws_key_id= self.connector_information['aws_key_id']
         aws_access_key= self.connector_information['aws_access_key']
         bucket_name= self.connector_information['bucket_name']
@@ -122,9 +121,9 @@ class S3Connector(DataConnector):
             aws_access_key= self.connector_information['aws_access_key']
             bucket_name= self.connector_information['bucket_name']
         except:
-            raise ValueError("Required properties not set")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         
-        if not all(x in self.availableMetadata for x in self.selector.to_metadata):
+        if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:
@@ -132,10 +131,9 @@ class S3Connector(DataConnector):
                 aws_access_key_id=aws_key_id,
                 aws_secret_access_key=aws_access_key,
             )
-            s3_resource = session.resource('s3')
-            s3_client = session.client("s3")
-            bucket = s3_resource.Bucket(bucket_name)
+            client = session.client("s3")
+            client.head_bucket(Bucket=bucket_name)
         except Exception as e:
-            raise Exception(f"Connection to S3 failed, check key and key ID. See Exception: {e}")
+            raise S3ConnectionException(f"Connection to S3 failed, check key and key ID. See Exception: {e}")
         return True 
 

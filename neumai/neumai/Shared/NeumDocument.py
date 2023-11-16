@@ -1,5 +1,5 @@
 from abc import ABC
-from starlette.exceptions import HTTPException
+from Shared.Exceptions import NeumDocumentEmptyException
 
 class NeumDocument(ABC):
     def __init__(self, id:str, content:str, metadata:dict) -> None:
@@ -9,7 +9,7 @@ class NeumDocument(ABC):
 
     def as_file(dct:dict):
         if dct == None:
-            raise HTTPException(status_code=500, detail="[x001] An error occured on our end, please email kevin@tryneum.com to unblock you!")
+            raise NeumDocumentEmptyException("Received empty dict when converting to as_file")
         return NeumDocument(
             content=dct.get("content", None),
             metadata=dct.get("metadata", None),

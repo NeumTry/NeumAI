@@ -1,5 +1,4 @@
 from abc import ABC
-from starlette.exceptions import HTTPException
 from typing import List
 
 class NeumVector(ABC):

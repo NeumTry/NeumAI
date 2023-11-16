@@ -1,19 +1,19 @@
 from .PipelineRun import PipelineRun
 from .TriggerSchedule import TriggerSchedule
-from neumai.SinkConnectors.SinkConnector import SinkConnector
-from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
-from neumai.Sources.SourceConnector import SourceConnector
-from neumai.EmbedConnectors.EmbedHelper import as_embed
-from neumai.SinkConnectors.SinkHelper import as_sink
-from neumai.Shared.NeumVector import NeumVector
-from neumai.Shared.NeumSearch import NeumSearchResult
+from SinkConnectors.SinkConnector import SinkConnector
+from EmbedConnectors.EmbedConnector import EmbedConnector
+from Sources.SourceConnector import SourceConnector
+from EmbedConnectors.EmbedHelper import as_embed
+from SinkConnectors.SinkHelper import as_sink
+from Shared.NeumVector import NeumVector
+from Shared.NeumSearch import NeumSearchResult
 from typing import List
 import uuid
 
 accepted_trigger_sync_types: List = []
 class Pipeline(object):
     def __init__(self, 
-                sources:  List[SourceConnector], # Change to only support a list of Sources for V2
+                sources:  List[SourceConnector],
                 embed: EmbedConnector, 
                 sink: SinkConnector, 
                 name:str = None,
@@ -47,7 +47,7 @@ class Pipeline(object):
         except Exception as e:
             raise e
         
-    def runPipeline(self) -> int:
+    def run(self) -> int:
         # This method is meant for local development only. Not to be used in production.
         # The Neum AI framework provides parallelization constructs through yielding
         # These should be used to run pipelines at scale.

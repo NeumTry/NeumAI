@@ -1,8 +1,18 @@
-from neumai.Shared.NeumSinkInfo import NeumSinkInfo
-from neumai.Shared.NeumVector  import NeumVector
-from neumai.Shared.NeumSearch import NeumSearchResult
-from neumai.SinkConnectors.SinkConnector import SinkConnector
+from Shared.NeumSinkInfo import NeumSinkInfo
+from Shared.NeumVector  import NeumVector
+from Shared.NeumSearch import NeumSearchResult
+from Shared.Exceptions import(
+    QdrantInsertionException,
+    QdrantIndexInfoException,
+    QdrantQueryException
+)
+from SinkConnectors.SinkConnector import SinkConnector
 from typing import List
+
+from qdrant_client.http.models import Distance, VectorParams
+from qdrant_client.http.models import PointStruct
+from qdrant_client.http.models import UpdateStatus
+from qdrant_client import QdrantClient
 
 class QdrantSink(SinkConnector):
     """ Qdrant Sink\n
@@ -13,11 +23,11 @@ class QdrantSink(SinkConnector):
         return 'QdrantSink'
     
     @property
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         return ['url', 'api_key']
 
     @property
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         return ['collection_name']
 
     def validation(self) -> bool:
@@ -27,22 +37,10 @@ class QdrantSink(SinkConnector):
             url = self.sink_information["url"]
             api_key = self.sink_information["api_key"]
         except:
-            raise ValueError("Required properties not set")
-        try:
-            qdrant_client = QdrantClient(
-                url=url, 
-                api_key=api_key,
-            )
-        except Exception as e:
-            raise ValueError(f"Qdrant connection couldn't be initialized. See exception: {e}")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         return True 
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
-        from qdrant_client.http.models import Distance, VectorParams
-        from qdrant_client.http.models import PointStruct
-        from qdrant_client.http.models import UpdateStatus
-        from qdrant_client import QdrantClient
-
         url = self.sink_information["url"]
         api_key = self.sink_information["api_key"]
         collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
@@ -62,10 +60,9 @@ class QdrantSink(SinkConnector):
         )
         if(operation_info.status == UpdateStatus.COMPLETED):
             return  len(points)
-        raise Exception("Qdrant storing failed. Try again later.")
+        raise QdrantInsertionException("Qdrant storing failed. Try again later.")
     
     def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List:
-        from qdrant_client import QdrantClient
         api_key = self.sink_information["api_key"]
         url = self.sink_information['url']
         collection_name = self.sink_information['collection_name']
@@ -81,7 +78,7 @@ class QdrantSink(SinkConnector):
                 limit=number_of_results
             )
         except Exception as e:
-            raise(f"Failed to query Qdrant. Exception - {e}")
+            raise QdrantQueryException(f"Failed to query Qdrant. Exception - {e}")
         
         matches = []
         for result in search_result:
@@ -95,7 +92,6 @@ class QdrantSink(SinkConnector):
         return matches
     
     def info(self, pipeline_id: str) -> NeumSinkInfo:
-        from qdrant_client import QdrantClient
         api_key = self.sink_information["api_key"]
         url = self.sink_information['url']
         collection_name = self.sink_information['collection_name']
@@ -107,4 +103,4 @@ class QdrantSink(SinkConnector):
             collection_info = qdrant_client.get_collection(collection_name=collection_name)
             return(NeumSinkInfo(number_vectors_stored=collection_info.indexed_vectors_count))
         except Exception as e:
-            raise(f"Failed to get information from Qdrant. Exception - {e}")
+            raise QdrantIndexInfoException(f"Failed to get information from Qdrant. Exception - {e}")

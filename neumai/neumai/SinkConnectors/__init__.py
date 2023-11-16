@@ -5,3 +5,4 @@ from .SingleStoreSink import SingleStoreSink
 from .SupabaseSink import SupabaseSink
 from .SinkHelper import as_sink
 from .SinkConnector import SinkConnector
+from .SinkConnectorEnum import SinkConnectorEnum

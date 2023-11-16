@@ -1,11 +1,9 @@
-from neumai.Shared.NeumSearch import NeumSearchResult
-from neumai.Shared.NeumVector import NeumVector
-from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from Shared.NeumSearch import NeumSearchResult
+from Shared.NeumVector import NeumVector
+from Shared.NeumSinkInfo import NeumSinkInfo
 from abc import ABC, abstractmethod
 from typing import List
 
-# Eventually this is an abstract class where specific implementations of it implement from it.
-# Like, PineconeConnector which extends/implements from SinkConnector
 class SinkConnector(ABC):
     def __init__(self, sink_information: dict = {}):
         self.sink_information = sink_information
@@ -17,12 +15,12 @@ class SinkConnector(ABC):
     
     @property
     @abstractmethod
-    def requiredProperties(self) -> List[str]:
+    def required_properties(self) -> List[str]:
         pass
 
     @property
     @abstractmethod
-    def optionalProperties(self) -> List[str]:
+    def optional_properties(self) -> List[str]:
         pass
 
     @abstractmethod
@@ -65,6 +63,6 @@ class SinkConnector(ABC):
 
     def config(self):
         json_to_return = {}
-        json_to_return['requiredProperties'] = self.requiredProperties
-        json_to_return['optionalProperties'] = self.optionalProperties
+        json_to_return['required_properties'] = self.required_properties
+        json_to_return['optional_properties'] = self.optional_properties
         return json_to_return

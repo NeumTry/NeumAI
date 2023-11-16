@@ -1,13 +1,9 @@
 from .Pipeline import (
     Pipeline
 )
-from .PipelineShared import (
-    PipelineModel,
-    PipelinesModel,
-)
+
 from .PipelineRun import (
-    PipelineRun, 
-    PipelineRunModel, 
+    PipelineRun,
     PipelineRunStatus, 
     PipelineRunTaskDetails
 )

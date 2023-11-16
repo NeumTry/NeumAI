@@ -1,33 +1,48 @@
-from neumai.DataConnectors.DataConnector import DataConnector
-from neumai.DataConnectors import (
-    S3Connector,
-    NeumWebsiteConnector,
+from DataConnectors import (
     AzureBlobConnector,
+    NeumFileConnector,
+    NeumWebsiteConnector,
+    S3Connector,
+    SharepointConnector,
+    SingleStoreConnector,
     SupabaseStorageConnector,
     PostgresConnector,
-    NeumFileConnector
 )
-from neumai.Shared.Selector import Selector
-from starlette.exceptions import HTTPException
 
-# Helper function to map connector configuration to object type
+from DataConnectors.DataConnectorEnum import DataConnectorEnum
+
+from Shared.Selector import Selector
+
+from Shared.Exceptions import InvalidDataConnectorException
+
+available_connectors = [enum.value for enum in list(DataConnectorEnum)]
 
 def as_connector(dct:dict):
     if dct == None:
-        raise HTTPException(status_code=500, detail="[x001] An error occured on our end, please email kevin@tryneum.com to unblock you!")
+        raise InvalidDataConnectorException("Must supply a data connector configuration")
+    if not isinstance(dct, dict):
+        raise InvalidDataConnectorException("Data connector configuration needs to be a dictionary")
+    
     connector_name = dct.get("connector_name", None)
+    connector_name_enum = DataConnectorEnum.as_data_connector_enum(data_connector_name=connector_name)
     connector_information = dct.get("connector_information", None)
     selector = Selector.as_selector(dct.get("selector", None))
-    if connector_name == "AzureBlobConnector":
+
+    if connector_name_enum == DataConnectorEnum.azureblobconnector:
         return AzureBlobConnector(connector_information=connector_information, selector=selector)
-    elif connector_name == "NeumWebsiteConnector":
+    elif connector_name_enum == DataConnectorEnum.neumwebsiteconnector:
         return NeumWebsiteConnector(connector_information=connector_information, selector=selector)
-    elif connector_name == "S3Connector":
-        return S3Connector(connector_information=connector_information, selector=selector)
-    elif connector_name == "SupabaseStorageConnector":
-        return SupabaseStorageConnector(connector_information=connector_information, selector=selector)
-    elif connector_name == "PostgresConnector":
-        return PostgresConnector(connector_information=connector_information, selector=selector)
-    elif connector_name == "NeumFileConnector":
+    elif connector_name_enum == DataConnectorEnum.neumfileconnector:
         return NeumFileConnector(connector_information=connector_information, selector=selector)
-    return None
+    elif connector_name_enum == DataConnectorEnum.postgresconnector:
+        return PostgresConnector(connector_information=connector_information, selector=selector)
+    elif connector_name_enum == DataConnectorEnum.s3connector:
+        return S3Connector(connector_information=connector_information, selector=selector)
+    elif connector_name_enum == DataConnectorEnum.sharepointconnector:
+        return SharepointConnector(connector_information=connector_information, selector=selector)
+    elif connector_name_enum == DataConnectorEnum.singlestoreconnector:
+        return SingleStoreConnector(connector_information=connector_information, selector=selector)
+    elif connector_name_enum == DataConnectorEnum.supabasestorageconnector:
+        return SupabaseStorageConnector(connector_information=connector_information, selector=selector)
+    else:
+        raise InvalidDataConnectorException(f"{connector_name} is an invalid Data Connector. Available connectors: {available_connectors}] ")
