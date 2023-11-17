@@ -48,7 +48,7 @@ class NeumClient(ABC):
         response = requests.post(url, headers=headers, json={ "sync_type": sync_type.value })
         return json.loads(response.text)
 
-    def search(self, pipeline_id:str, query:str, num_of_results:int = 3, track:bool = False):
+    def searchPipeline(self, pipeline_id:str, query:str, num_of_results:int = 3, track:bool = False):
         url = f"https://api.neum.ai/v2/pipelines/{pipeline_id}/search"
 
         payload = {
