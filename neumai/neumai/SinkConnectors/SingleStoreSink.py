@@ -35,7 +35,7 @@ class SingleStoreSink(SinkConnector):
             url = self.sink_information['url']
             table = self.sink_information['table']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         try: 
             s2.connect(url)
         except Exception as e:

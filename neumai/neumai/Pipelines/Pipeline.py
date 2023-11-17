@@ -87,7 +87,7 @@ class Pipeline(object):
             content_to_return['trigger_schedule'] = self.trigger_schedule.to_model()
 
         content_to_return['latest_run'] = self.latest_run.toJson()
-        content_to_return['availableMetadata'] = self.availableMetadata()
+        content_to_return['available_metadata'] = self.available_metadata()
 
         return content_to_return
     
@@ -117,7 +117,7 @@ class Pipeline(object):
             json_to_return['trigger_schedule'] = self.trigger_schedule.toJson()
 
         json_to_return['latest_run'] = self.latest_run.toJson()
-        json_to_return['availableMetadata'] = self.availableMetadata()
+        json_to_return['available_metadata'] = self.available_metadata()
         return json_to_return
 
     def as_request(self):
@@ -145,13 +145,13 @@ class Pipeline(object):
     def set_owner(self, owner: str):
         self.owner = owner
     
-    def availableMetadata(self) -> List[str]:
-        availableMetadata = []
+    def available_metadata(self) -> List[str]:
+        available_metadata = []
         for source in self.sources:
-            availableMetadata += source.customMetadata.keys()
-            availableMetadata += source.connector.selector.to_metadata
-            availableMetadata += source.loader.selector.to_metadata
-        return availableMetadata
+            available_metadata += source.customMetadata.keys()
+            available_metadata += source.connector.selector.to_metadata
+            available_metadata += source.loader.selector.to_metadata
+        return available_metadata
 
     def as_pipeline(dct:dict):
         if dct == None:

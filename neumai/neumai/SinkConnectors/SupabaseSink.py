@@ -33,7 +33,7 @@ class SupabaseSink(SinkConnector):
         try:
             database_connection = self.sink_information['database_connection']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         try:
             vx = vecs.create_client(database_connection)
         except Exception as e:

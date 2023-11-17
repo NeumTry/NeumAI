@@ -90,7 +90,7 @@ class SingleStoreConnector(DataConnector):
             url = self.connector_information['url']
             query = self.connector_information['query']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         try: 
             s2.connect(url, results_type="dict")
         except Exception as e:

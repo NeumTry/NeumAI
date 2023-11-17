@@ -35,7 +35,7 @@ class WeaviateSink(SinkConnector):
             if 'https' not in url:
                 api_key = self.sink_information["api_key"]
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         try:
             if 'https' not in url:
                 client = weaviate.Client(
