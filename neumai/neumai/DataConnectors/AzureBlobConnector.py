@@ -100,7 +100,7 @@ class AzureBlobConnector(DataConnector):
             connection_string = self.connector_information['connection_string']
             container_name = self.connector_information['container_name']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")

@@ -25,7 +25,7 @@ class OpenAIEmbed(EmbedConnector):
         try:
             api_key = self.embed_information['api_key']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         try:
             OpenAIEmbeddings(max_retries=20, api_key=api_key, chunk_size=1000)
         except Exception as e:
