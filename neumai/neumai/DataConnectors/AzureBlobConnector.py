@@ -7,9 +7,17 @@ from neumai.Shared.CloudFile import CloudFile
 from neumai.Shared.Exceptions import AzureBlobConnectionException
 import tempfile
 import os
+from neumai.Shared.Selector import Selector
+from pydantic import BaseModel
 
-class AzureBlobConnector(DataConnector):
-    """" Neum File Connector """
+class AzureBlobConnector(BaseModel , DataConnector):
+    """" Azure Blob connector """
+
+    connection_string: str
+    """Connection string to connect to azure blob [required]"""
+
+    container_name: str
+    """Container name to connect to [required]"""
 
     @property
     def connector_name(self) -> str:
@@ -40,11 +48,8 @@ class AzureBlobConnector(DataConnector):
         return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        # Connect to Azure Blob Storage
-        connection_string = self.connector_information['connection_string']
-        container_name = self.connector_information['container_name']
         container = ContainerClient.from_connection_string(
-            conn_str=connection_string, container_name=container_name
+            conn_str=self.connection_string, container_name=self.container_name
         )
 
         #Process files
@@ -60,11 +65,8 @@ class AzureBlobConnector(DataConnector):
             yield CloudFile(file_identifier=name, metadata=selected_metadata, id = name)
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
-        # Connect to Azure Blob Storage
-        connection_string = self.connector_information['connection_string']
-        container_name = self.connector_information['container_name']
         container = ContainerClient.from_connection_string(
-            conn_str=connection_string, container_name=container_name
+            conn_str=self.connection_string, container_name=self.container_name
         )
 
         #Process files
@@ -82,13 +84,9 @@ class AzureBlobConnector(DataConnector):
                 yield CloudFile(file_identifier=name, metadata=selected_metadata, id=name)
 
     def connect_and_download(self,  cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
-        # Connect to Azure Blob Storage
-        connection_string = self.connector_information['connection_string']
-        container_name = self.connector_information['container_name']
-        
-        client = BlobClient.from_connection_string(conn_str=connection_string, container_name=container_name, blob_name=cloudFile.file_identifier)
+        client = BlobClient.from_connection_string(conn_str=self.connection_string, container_name=self.container_name, blob_name=cloudFile.file_identifier)
         with tempfile.TemporaryDirectory() as temp_dir:
-            file_path = f"{temp_dir}/{container_name}/{cloudFile.file_identifier}"
+            file_path = f"{temp_dir}/{self.container_name}/{cloudFile.file_identifier}"
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             with open(f"{file_path}", "wb") as file:
                 blob_data = client.download_blob()
@@ -96,18 +94,12 @@ class AzureBlobConnector(DataConnector):
             yield LocalFile(file_path=file_path, metadata=cloudFile.metadata, id=cloudFile.id)
         
     def validate(self) -> bool:
-        try:
-            connection_string = self.connector_information['connection_string']
-            container_name = self.connector_information['container_name']
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
-        
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
 
         try:
             ContainerClient.from_connection_string(
-                conn_str=connection_string, container_name=container_name
+                conn_str=self.connection_string, container_name=self.container_name
             )
         except Exception as e:
             raise AzureBlobConnectionException(f"Connection to Azure Blob Storage failed, check credentials. See Exception: {e}")
