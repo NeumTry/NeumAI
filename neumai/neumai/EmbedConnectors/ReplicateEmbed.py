@@ -1,13 +1,20 @@
 from typing import List, Tuple
 from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
 from neumai.Shared.NeumDocument import NeumDocument
+from pydantic import Field
 import replicate
 
 class ReplicateEmbed(EmbedConnector):
+    """Replicate Embed Connector."""
+
+    api_key: str = Field(..., description="API key for the Replicate service.")
+
+    replicate_model: str = Field(..., description="Model identifier for Replicate.")
+
     @property
     def embed_name(self) -> str:
         return 'ReplicateEmbed'
-    
+
     @property
     def required_properties(self) -> List[str]:
         return ['api_key', 'replicate_model']
@@ -17,18 +24,13 @@ class ReplicateEmbed(EmbedConnector):
         return []
 
     def validation(self) -> bool:
-        """Validate connector setup"""
-        try:
-            api_key = self.embed_information["api_key"]
-            model = self.embed_information["replicate_model"]
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+        """config_validation connector setup"""
         return True 
 
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:
         """Generate embeddings with Azure OpenAI"""
-        api_key = self.embed_information["api_key"]
-        model = self.embed_information["replicate_model"]
+        api_key = self.api_key
+        model = self.replicate_model
         client = replicate.Client(api_token=api_key)
         batch_size = 32
         batched_embeddings = []
@@ -52,8 +54,8 @@ class ReplicateEmbed(EmbedConnector):
         return batched_embeddings, info
 
     def embed_query(self, query: str) -> List[float]:
-        api_key = self.embed_information["api_key"]
-        model = self.embed_information["replicate_model"]
+        api_key = self.api_key
+        model = self.replicate_model
         client = replicate.Client(api_token=api_key)
         output = client.run(
             model,

@@ -1,23 +1,23 @@
 from datetime import datetime
 from neumai.DataConnectors import DataConnector
-from typing import List, Generator
+from typing import List, Generator, Optional
 from azure.storage.blob import BlobClient, ContainerClient
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
 from neumai.Shared.Exceptions import AzureBlobConnectionException
+from neumai.Shared.Selector import Selector
 import tempfile
 import os
-from neumai.Shared.Selector import Selector
-from pydantic import BaseModel
+from pydantic import Field
 
-class AzureBlobConnector(BaseModel , DataConnector):
-    """" Azure Blob connector """
+class AzureBlobConnector(DataConnector):
+    """Azure Blob data connector"""
 
-    connection_string: str
-    """Connection string to connect to azure blob [required]"""
+    connection_string: str = Field(..., description="Connection string to connect to Azure Blob [required]")
 
-    container_name: str
-    """Container name to connect to [required]"""
+    container_name: str = Field(..., description="Container name to connect to [required]")
+
+    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
 
     @property
     def connector_name(self) -> str:
@@ -93,7 +93,7 @@ class AzureBlobConnector(BaseModel , DataConnector):
                 blob_data.readinto(file)
             yield LocalFile(file_path=file_path, metadata=cloudFile.metadata, id=cloudFile.id)
         
-    def validate(self) -> bool:
+    def config_validation(self) -> bool:
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
 

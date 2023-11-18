@@ -1,11 +1,21 @@
-from typing import List, Generator
+from typing import List, Generator, Optional
 from neumai.Shared.NeumDocument import NeumDocument
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Loaders.Loader import Loader
+from pydantic import Field
+from neumai.Shared.Selector import Selector
 import json
 
 class NeumJSONLoader(Loader):
-    """" Neum JSON Loader """
+    """Neum JSON Loader."""
+
+    id_key: Optional[str] = Field(None, description="Optional ID key.")
+
+    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for loader metadata")
+
+    @property
+    def loader_name(self) -> str:
+        return "NeumJSONLoader"
 
     @property
     def required_properties(self) -> List[str]:
@@ -27,7 +37,7 @@ class NeumJSONLoader(Loader):
     def available_content(self) -> List[str]:
         return ["custom"]
     
-    def validate(self) -> bool:
+    def config_validation(self) -> bool:
         return True   
 
     def load(self, file: LocalFile) -> Generator[NeumDocument, None, None]:

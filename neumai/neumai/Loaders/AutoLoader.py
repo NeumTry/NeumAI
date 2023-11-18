@@ -56,5 +56,5 @@ class AutoLoader(Loader):
         
         yield from loader.load(file=LocalFile)
     
-    def validate(self) -> bool:
+    def config_validation(self) -> bool:
         return True   

@@ -1,19 +1,27 @@
 from datetime import datetime
 from neumai.DataConnectors.DataConnector import DataConnector
-from typing import List, Generator
+from typing import List, Generator, Optional
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Selector import Selector
 from neumai.Shared.Exceptions import SinglestoreConnectionException
 from decimal import Decimal
+from pydantic import Field
 import singlestoredb as s2
 import json
 
 
 class SingleStoreConnector(DataConnector):
-    """SingleStore Connector \n
-    connector_information requires:\n
-    [ url, query ]"""
+    """SingleStore Connector."""
     
+    url: str = Field(..., description="URL for SingleStore.")
+
+    query: str = Field(..., description="Query to be executed.")
+
+    batch_size: Optional[int] = Field(1000, description="Batch size for processing.")
+
+    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
+
     @property
     def connector_name(self) -> str:
         return "SingleStoreConnector"
@@ -51,11 +59,9 @@ class SingleStoreConnector(DataConnector):
             return super().default(obj)
 
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        url = self.connector_information['url']
-        query = self.connector_information['query']
-        batch_size = 1000
-        if 'batch_size' in self.connector_information.keys():
-            batch_size = self.connector_information['batch_size']
+        url = self.url
+        query = self.query
+        batch_size = self.batch_size
         
         with s2.connect(url, results_type="dict") as conn:
             with conn.cursor() as cur:
@@ -85,14 +91,9 @@ class SingleStoreConnector(DataConnector):
          for row in data:
             yield LocalFile(in_mem_data=json.dumps(row), metadata=cloudFile.metadata)
     
-    def validate(self) -> bool:
-        try:
-            url = self.connector_information['url']
-            query = self.connector_information['query']
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+    def config_validation(self) -> bool:
         try: 
-            s2.connect(url, results_type="dict")
+            s2.connect(self.url, results_type="dict")
         except Exception as e:
             raise SinglestoreConnectionException(f"There was a problem connecting to Singlestore. See Exception: {e}")
         return True 

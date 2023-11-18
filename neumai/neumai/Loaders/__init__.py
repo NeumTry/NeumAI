@@ -5,5 +5,4 @@ from .MarkdownLoader import MarkdownLoader
 from .PDFLoader import PDFLoader
 from .NeumCSVLoader import NeumCSVLoader
 from .NeumJSONLoader import NeumJSONLoader
-from .LoaderHelper import as_loader
 from .LoaderEnum import LoaderEnum

@@ -1,10 +1,9 @@
 from abc import abstractmethod, ABC
 from neumai.Shared.NeumDocument import NeumDocument
 from typing import List, Generator
+from pydantic import BaseModel
 
-class Chunker(ABC):
-    def __init__(self, chunker_information:dict = {}) -> None:
-        self.chunker_information = chunker_information
+class Chunker(ABC, BaseModel):
     
     @property
     @abstractmethod
@@ -26,10 +25,10 @@ class Chunker(ABC):
         """Chunk documents into more documents"""
 
     @abstractmethod
-    def validate(self) -> bool:
-        """Validate if the chunker is correctly configured"""
+    def config_validation(self) -> bool:
+        """config_validation if the chunker is correctly configured"""
 
-    def toJson(self):
+    def as_json(self):
         """Python does not have built in serialization. We need this logic to be able to respond in our API..
 
         Returns:
@@ -37,18 +36,7 @@ class Chunker(ABC):
         """
         json_to_return = {}
         json_to_return['chunker_name'] = self.chunker_name
-        json_to_return['chunker_information'] = self.chunker_information
-        return json_to_return
-    
-    def to_model(self):
-        """Python does not have built in serialization. We need this logic to be able to respond in our API..
-        This is different han toJson, here we use it to create a model, we don't want to return the api key in the body back. Eventualyl this should be its own class...
-        Returns:
-            _type_: the json to return
-        """
-        json_to_return = {}
-        json_to_return['chunker_name'] = self.chunker_name
-        json_to_return['chunker_information'] = self.chunker_information
+        json_to_return['chunker_information'] = self.json()
         return json_to_return
 
     def config(self):

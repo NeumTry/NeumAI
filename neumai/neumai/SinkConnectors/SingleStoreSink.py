@@ -8,44 +8,46 @@ from neumai.Shared.Exceptions import(
     SinglestoreQueryException
 )
 from neumai.SinkConnectors.SinkConnector import SinkConnector
-from typing import List
-
+from typing import List, Optional
+from pydantic import Field
 import singlestoredb as s2
 
 class SingleStoreSink(SinkConnector):
-    """ SingleStore Sink\n
-    sink_information requires : [ 'url', 'api_key' ]"""
-        
+    """SingleStore Sink"""
+
+    url: str = Field(..., description="URL for SingleStore.")
+
+    api_key: str = Field(..., description="API key for SingleStore.")
+
+    table: str = Field(..., description="Table name. Needs to be pre-created")
+
+    batch_size: Optional[str] = Field(1000, description="Optional size of row batches extracted")
+
     @property
     def sink_name(self) -> str:
         return 'SingleStoreSink'
-    
+
     @property
     def required_properties(self) -> List[str]:
-        return ['url', 'api_key']
+        return ['url', 'api_key', 'table']
 
     @property
     def optional_properties(self) -> List[str]:
-        return ['collection_name']
+        return ['batch_size']
 
     def validation(self) -> bool:
-        """Validate connector setup"""
+        """config_validation connector setup"""
         import singlestoredb as s2
-        try:
-            url = self.sink_information['url']
-            table = self.sink_information['table']
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
         try: 
-            s2.connect(url)
+            s2.connect(self.url)
         except Exception as e:
             raise SinglestoreConnectionException(f"There was a problem connecting to Singlestore. See Exception: {e}")
         return True 
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
-        batch_size = 1000
-        url = self.sink_information['url']
-        table = self.sink_information['table']
+        batch_size = self.batch_size
+        url = self.url
+        table = self.table
 
         # Get metadata list
         # metadata_fields = ""
@@ -89,8 +91,8 @@ class SingleStoreSink(SinkConnector):
         return len(vectors_to_store), None
     
     def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List[NeumSearchResult]:
-        url = self.sink_information['url']
-        table = self.sink_information['table']
+        url = self.url
+        table = self.table
 
         query = f"""SELECT id, text, dot_product(vector, json_array_pack('{vector}')) AS score
         FROM {table}
@@ -109,8 +111,8 @@ class SingleStoreSink(SinkConnector):
             raise SinglestoreQueryException(f"Failed to query single store. Exception - {e}")
 
     def info(self, pipeline_id: str) -> NeumSinkInfo:
-        url = self.sink_information['url']
-        table = self.sink_information['table']
+        url = self.url
+        table = self.table
 
         query = f"""SELECT Count(*) as count
         FROM {table}"""

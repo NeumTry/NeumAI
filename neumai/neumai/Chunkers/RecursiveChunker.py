@@ -1,33 +1,41 @@
-from typing import List, Generator
+from typing import List, Generator, Optional
 from neumai.Chunkers.Chunker import Chunker
 from neumai.Shared.NeumDocument import NeumDocument
 from langchain.text_splitter import (RecursiveCharacterTextSplitter)
+from pydantic import Field
 
 class RecursiveChunker(Chunker):
-    """Recursive Chunker \n
-    chunker_information optional: \n
-    [chunk_size, chunk_overlap, batch_size]"""
-    
+    """Recursive Chunker."""
+
+    chunk_size: Optional[int] = Field(500, description="Optional chunk size.")
+
+    chunk_overlap: Optional[int] = Field(0, description="Optional chunk overlap.")
+
+    batch_size: Optional[int] = Field(1000, description="Optional batch size for processing.")
+
+    separators: Optional[List[str]] = Field(["\n\n", "\n", " ", ""], description="Optional list of separators for chunking.")
+
     @property
     def chunker_name(self) -> str:
         return "RecursiveChunker"
-    
+
     @property
     def required_properties(self) -> List[str]:
         return []
 
     @property
     def optional_properties(self) -> List[str]:
-        return ["chunk_size" , "chunk_overlap" , "batch_size", "separators"]
+        return ["chunk_size", "chunk_overlap", "batch_size", "separators"]
+
 
     def chunk(self, documents:List[NeumDocument]) -> Generator[List[NeumDocument], None, None]:
         
-        batch_size = self.chunker_information.get('batch_size', 1000)
+        batch_size = self.batch_size
 
         text_splitter = RecursiveCharacterTextSplitter(
-            separators = self.chunker_information.get('separators', ["\n\n", "\n", " ", ""]),
-            chunk_size = self.chunker_information.get('chunk_size', 500),
-            chunk_overlap  = self.chunker_information.get('chunk_overlap', 0),
+            separators = self.separators,
+            chunk_size = self.chunk_size,
+            chunk_overlap  = self.chunk_overlap,
             length_function = len,
         )
 
@@ -45,5 +53,5 @@ class RecursiveChunker(Chunker):
         if(len(documents_to_embed) > 0):
             yield documents_to_embed
     
-    def validate(self) -> bool:
+    def config_validation(self) -> bool:
         return True   

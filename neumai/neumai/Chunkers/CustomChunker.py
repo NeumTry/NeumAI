@@ -1,19 +1,21 @@
-from typing import List, Generator
+from typing import List, Generator, Optional
 from neumai.Chunkers.Chunker import Chunker
 from neumai.Shared.NeumDocument import NeumDocument
 from neumai_tools import semantic_chunking
+from pydantic import Field
+from neumai.Shared.Exceptions import CustomChunkerException
 
 class CustomChunker(Chunker):
-    """" Custom Chunker \n
-    chunker_information requires: \n
-    [ code ] \n
-    chunker_information optional: \n
-    [ batch_size ]"""
-    
+    """Custom Chunker."""
+
+    code: str = Field(..., description="Code required for the chunker.")
+
+    batch_size: Optional[int] = Field(1000, description="Optional batch size for chunking.")
+
     @property
     def chunker_name(self) -> str:
         return "CustomChunker"
-    
+
     @property
     def required_properties(self) -> List[str]:
         return ["code"]
@@ -24,8 +26,8 @@ class CustomChunker(Chunker):
 
     def chunk(self, documents:List[NeumDocument]) -> Generator[List[NeumDocument], None, None]:
         
-        chunking_code_exec=self.chunker_information['code']
-        batch_size = self.chunker_information.get('batch_size', 1000)
+        chunking_code_exec=self.code
+        batch_size = self.batch_size
         
         # Probably add some code to check the code I am about to run.
         # Code format must follow:
@@ -45,5 +47,9 @@ class CustomChunker(Chunker):
         if(len(documents_to_embed) > 0):
             yield documents_to_embed
 
-    def validate(self) -> bool:
+    def config_validation(self) -> bool:
+        try:
+            chunks = semantic_chunking(documents=[NeumDocument(id="test", content="test", metadata={})], chunking_code_exec=self.code)
+        except Exception as e:
+            raise CustomChunkerException(f"Connection to Sharepoint failed, check credentials. See Exception: {e}")   
         return True   

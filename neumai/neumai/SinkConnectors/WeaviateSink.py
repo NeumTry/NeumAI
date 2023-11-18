@@ -9,12 +9,28 @@ from neumai.Shared.Exceptions import(
     WeaviateIndexInfoException,
     WeaviateQueryException
 )
-import weaviate
+from pydantic import Field
 from weaviate.util import generate_uuid5, _capitalize_first_letter
+import weaviate
 
 class WeaviateSink(SinkConnector):
-    """ Weaviate Sink\n
-    sink_information requires : [ url , api_key ]"""
+    """Weaviate Sink."""
+
+    url: str = Field(..., description="URL for Weaviate.")
+
+    api_key: str = Field(..., description="API key for Weaviate.")
+
+    class_name: Optional[str] = Field(None, description="Optional class name.")
+
+    num_workers: Optional[int] = Field(1, description="Optional number of workers.")
+
+    shard_count: Optional[int] = Field(1, description="Optional shard count.")
+
+    batch_size: Optional[int] = Field(100, description="Optional batch size.")
+
+    is_dynamic_batch: Optional[bool] = Field(False, description="Optional dynamic batch flag.")
+
+    batch_connection_error_retries: Optional[int] = Field(3, description="Optional batch connection error retries.")
 
     @property
     def sink_name(self) -> str:
@@ -29,22 +45,16 @@ class WeaviateSink(SinkConnector):
         return ['class_name', 'num_workers', 'shard_count', 'batch_size', 'is_dynamic_batch', 'batch_connection_error_retries']
 
     def validation(self) -> bool:
-        """Validate connector setup"""
+        """config_validation connector setup"""
         try:
-            url = self.sink_information["url"]
-            if 'https' not in url:
-                api_key = self.sink_information["api_key"]
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
-        try:
-            if 'https' not in url:
+            if 'https' not in self.url:
                 client = weaviate.Client(
-                    url=url
+                    url=self.url
                 )
             else:
-                api_key = self.sink_information["api_key"]
+                api_key = self.api_key
                 client = weaviate.Client(
-                    url=url,
+                    url=self.url,
                     auth_client_secret=weaviate.AuthApiKey(api_key=api_key),
                 )
         except Exception as e:
@@ -62,13 +72,14 @@ class WeaviateSink(SinkConnector):
                         partial_failure['number_of_failures'] += 1
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> Tuple[List, dict]:
-        url = self.sink_information["url"]
-        num_workers = self.sink_information.get('num_workers', 1)
-        shard_count = self.sink_information.get('shard_count', 1)
-        batch_size = self.sink_information.get('batch_size', 100)
-        is_dynamic_batch = self.sink_information.get('is_dynamic_batch', False)
-        batch_connection_error_retries = self.sink_information.get('batch_connection_error_retries', 3)
-        class_name = self.sink_information.get('class_name', f"pipeline_{pipeline_id.replace('-','_')}")
+        url = self.url
+        num_workers = self.num_workers
+        shard_count = self.shard_count
+        batch_size = self.batch_size
+        is_dynamic_batch = self.is_dynamic_batch
+        batch_connection_error_retries = self.batch_connection_error_retries
+        class_name = self.class_name
+        if class_name == None: class_name = f"pipeline_{pipeline_id.replace('-','_')}"
         partial_failure = {'did_fail': False, 'latest_failure': None, 'number_of_failures': 0}
 
         if 'https' not in url:
@@ -76,7 +87,7 @@ class WeaviateSink(SinkConnector):
                 url=url
             )
         else:
-            api_key = self.sink_information["api_key"]
+            api_key = self.api_key
             client = weaviate.Client(
                 url=url,
                 auth_client_secret=weaviate.AuthApiKey(api_key=api_key),
@@ -112,8 +123,8 @@ class WeaviateSink(SinkConnector):
         return len(vectors_to_store)
 
     def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List[NeumSearchResult]:
-        api_key = self.sink_information["api_key"]
-        url = self.sink_information['url']
+        api_key = self.api_key
+        url = self.url
         # Weaviate requires first letter to be capitalized
         class_name = _capitalize_first_letter(self.sink_information.get('class_name', f"Pipeline_{pipeline_id.replace('-', '_')}"))
         client = weaviate.Client(
@@ -148,8 +159,8 @@ class WeaviateSink(SinkConnector):
         return matches
 
     def info(self, pipeline_id:str) -> NeumSinkInfo:
-        api_key = self.sink_information["api_key"]
-        url = self.sink_information['url']
+        api_key = self.api_key
+        url = self.url
         
         class_name = _capitalize_first_letter(self.sink_information.get('class_name', f"Pipeline_{pipeline_id.replace('-', '_')}"))
         client = weaviate.Client(

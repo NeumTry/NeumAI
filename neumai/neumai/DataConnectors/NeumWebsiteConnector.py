@@ -1,22 +1,25 @@
 from neumai.DataConnectors.DataConnector import DataConnector
-from typing import List, Generator
+from typing import List, Generator, Optional
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Selector import Selector
 from neumai.Shared.Exceptions import WebsiteConnectionException
 from bs4 import BeautifulSoup
+from pydantic import Field
 import tempfile
 import requests
 
 class NeumWebsiteConnector(DataConnector):
-    """" Neum Website Connector \n
-    connector_information contains: [ url ]\n
-    available metadata: [ url ]\n
-    available content: [ website ]"""
-  
+    """Neum Website Connector."""
+
+    url: str = Field(..., description="URL of the website to connect to.")
+
+    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
+
     @property
     def connector_name(self) -> str:
         return "NeumWebsiteConnector"
-    
+
     @property
     def required_properties(self) -> List[str]:
         return ["url"]
@@ -43,7 +46,7 @@ class NeumWebsiteConnector(DataConnector):
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
         # Send an HTTP GET request to the website
-        url:str = str(self.connector_information['url'])
+        url:str = str(self.url)
         clean_url = url.replace(" ", "")
         list_urls = clean_url.split(" , ")
         for u in list_urls:
@@ -66,20 +69,14 @@ class NeumWebsiteConnector(DataConnector):
                 temp.write(body_html)
                 yield LocalFile(file_path=temp.name, metadata=cloudFile.metadata, id=cloudFile.id)
         
-    def validate(self) -> bool:
-        # Check for required properties
-        try:
-            url:str = str(self.connector_information['url'])
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
-        
+    def config_validation(self) -> bool:
         # Check for metadata values
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         # Check to see that site exists
         try:
-            requests.get(url)
+            requests.get(self.url)
         except Exception as e:
             raise WebsiteConnectionException(f"Connection to website failed, check url. See Exception: {e}")      
         return True 

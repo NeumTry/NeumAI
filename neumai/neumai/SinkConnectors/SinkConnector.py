@@ -3,11 +3,10 @@ from neumai.Shared.NeumVector import NeumVector
 from neumai.Shared.NeumSinkInfo import NeumSinkInfo
 from abc import ABC, abstractmethod
 from typing import List
+from pydantic import BaseModel
 
-class SinkConnector(ABC):
-    def __init__(self, sink_information: dict = {}):
-        self.sink_information = sink_information
-    
+class SinkConnector(ABC, BaseModel):
+
     @property
     @abstractmethod
     def sink_name(self) -> str:
@@ -25,7 +24,7 @@ class SinkConnector(ABC):
 
     @abstractmethod
     def validation(self) -> bool:
-        """Validate sink setup"""
+        """config_validation sink setup"""
 
     @abstractmethod
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
@@ -39,7 +38,7 @@ class SinkConnector(ABC):
     def info(self, pipeline_id:str) -> NeumSinkInfo:
         """Get information about what is stores in the sink"""
 
-    def toJson(self):
+    def as_json(self):
         """Python does not have built in serialization. We need this logic to be able to respond in our API..
 
         Returns:
@@ -47,18 +46,7 @@ class SinkConnector(ABC):
         """
         json_to_return = {}
         json_to_return['sink_name'] = self.sink_name
-        json_to_return['sink_information'] = self.sink_information
-        return json_to_return
-    
-    def to_model(self):
-        """Python does not have built in serialization. We need this logic to be able to respond in our API..
-        This is different han toJson, here we use it to create a model, we don't want to return the api key in the body back. Eventualyl this should be its own class...
-        Returns:
-            _type_: the json to return
-        """
-        json_to_return = {}
-        json_to_return['sink_name'] = self.sink_name
-        json_to_return['sink_information'] = self.sink_information
+        json_to_return['sink_information'] = self.json()
         return json_to_return
 
     def config(self):

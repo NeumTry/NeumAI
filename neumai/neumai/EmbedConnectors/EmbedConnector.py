@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 from neumai.Shared.NeumDocument import NeumDocument
+from pydantic import BaseModel
 
-class EmbedConnector(ABC):
-    def __init__(self, embed_information: dict = {}):
-        self.embed_information = embed_information
+class EmbedConnector(ABC, BaseModel):
 
     @property
     @abstractmethod
@@ -23,7 +22,7 @@ class EmbedConnector(ABC):
 
     @abstractmethod
     def validation(self) -> bool:
-        """Validate connector setup"""
+        """config_validation connector setup"""
 
     @abstractmethod
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:
@@ -33,7 +32,7 @@ class EmbedConnector(ABC):
     def embed_query(self, query:str) -> List[float]:
         """Generate embeddings with a given service"""
 
-    def toJson(self):
+    def as_json(self):
         """Python does not have built in serialization. We need this logic to be able to respond in our API..
 
         Returns:
@@ -41,18 +40,7 @@ class EmbedConnector(ABC):
         """
         json_to_return = {}
         json_to_return['embed_name'] = self.embed_name
-        json_to_return['embed_information'] = self.embed_information
-        return json_to_return
-    
-    def to_model(self):
-        """Python does not have built in serialization. We need this logic to be able to respond in our API..
-        This is different han toJson, here we use it to create a model, we don't want to return the api key in the body back. Eventualyl this should be its own class...
-        Returns:
-            _type_: the json to return
-        """
-        json_to_return = {}
-        json_to_return['embed_name'] = self.embed_name
-        json_to_return['embed_information'] = self.embed_information
+        json_to_return['embed_information'] = self.json()
         return json_to_return
     
     def config(self):

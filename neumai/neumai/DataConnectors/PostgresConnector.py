@@ -1,23 +1,31 @@
 from psycopg2.extras import DictCursor
 from datetime import datetime
 from neumai.DataConnectors.DataConnector import DataConnector
-from typing import List, Generator
+from typing import List, Generator, Optional
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Selector import Selector
 from neumai.Shared.Exceptions import PostgresConnectionException
 from decimal import Decimal
+from pydantic import Field
 import psycopg2
 import json
 
 class PostgresConnector(DataConnector):
-    """Postgres Connector \n
-    connector_information requires:\n
-    [ connection_string, query, batch_size]"""
+    """Postgres Connector."""
+
+    connection_string: str = Field(..., description="Connection string for the Postgres database.")
+
+    query: str = Field(..., description="Query to execute on the Postgres database.")
+
+    batch_size: Optional[int] = Field(1000, description="Batch size for processing data.")
     
+    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
+
     @property
     def connector_name(self) -> str:
         return "PostgresConnector"
-    
+
     @property
     def required_properties(self) -> List[str]:
         return ["connection_string", "query"]
@@ -51,11 +59,11 @@ class PostgresConnector(DataConnector):
             return super().default(obj)
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        connection_string = self.connector_information['connection_string']
-        query = self.connector_information['query']
+        connection_string = self.connection_string
+        query = self.query
         
         # Optional
-        batch_size = self.connector_information.get('batch_size', 1000)
+        batch_size = self.batch_size
 
         with psycopg2.connect(connection_string) as connection:
             with connection.cursor(cursor_factory=DictCursor, name='pipeline_id') as cursor:
@@ -81,18 +89,11 @@ class PostgresConnector(DataConnector):
         for row in data:
             yield LocalFile(in_mem_data=json.dumps(row), metadata=cloudFile.metadata)
 
-    def validate(self) -> bool:
-        try:
-            connection_string = self.connector_information['connection_string']
-            query = self.connector_information['query']
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
-        
+    def config_validation(self) -> bool:
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
-        
         try:
-            psycopg2.connect(connection_string)
+            psycopg2.connect(self.connection_string)
         except Exception as e:
             raise PostgresConnectionException(f"Connection to Postgres failed, check credentials. See Exception: {e}")      
         return True   

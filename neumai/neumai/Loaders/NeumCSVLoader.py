@@ -1,23 +1,35 @@
-from typing import List, Generator
+from typing import List, Generator, Optional, Dict
 from neumai.Shared.NeumDocument import NeumDocument
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Loaders.Loader import Loader
+from pydantic import Field
+from neumai.Shared.Selector import Selector
 import csv
 
 class NeumCSVLoader(Loader):
-    """" Neum CSV Loader """
+    """Neum CSV Loader."""
+
+    id_key: Optional[str] = Field(None, description="Optional ID key.")
+
+    source_column: Optional[str] = Field(None, description="Optional source column.")
+
+    encoding: Optional[str] = Field(None, description="Optional encoding type.")
+
+    csv_args: Optional[Dict] = Field(None, description="Optional additional CSV arguments.")
+
+    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for loader metadata")
 
     @property
     def loader_name(self) -> str:
         return "NeumCSVLoader"
-    
+
     @property
     def required_properties(self) -> List[str]:
         return []
 
     @property
     def optional_properties(self) -> List[str]:
-        return ["id_key" , "source_column" , "encoding", "csv_args"]
+        return ["id_key", "source_column", "encoding", "csv_args"]
     
     @property
     def available_metadata(self) -> List[str]:
@@ -27,7 +39,7 @@ class NeumCSVLoader(Loader):
     def available_content(self) -> List[str]:
         return ["custom"]
     
-    def validate(self) -> bool:
+    def config_validation(self) -> bool:
         return True   
 
     def load(self, file: LocalFile) -> Generator[NeumDocument, None, None]:

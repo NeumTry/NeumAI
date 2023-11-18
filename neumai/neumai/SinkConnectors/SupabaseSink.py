@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from neumai.SinkConnectors.SinkConnector import SinkConnector
 from neumai.Shared.NeumSinkInfo import NeumSinkInfo
 from neumai.Shared.NeumVector  import NeumVector
@@ -9,11 +9,15 @@ from neumai.Shared.Exceptions import(
     SupabaseIndexInfoException,
     SupabaseQueryException
 )
+from pydantic import Field
 import vecs
 
 class SupabaseSink(SinkConnector):
-    """ Supabase Sink\n
-    sink_information requires : [ database_connection ]"""
+    """Supabase Sink"""
+
+    database_connection: str = Field(..., description="Database connection for Supabase.")
+
+    collection_name: Optional[str] = Field(None, description="Optional collection name.")
 
     @property
     def sink_name(self) -> str:
@@ -28,23 +32,20 @@ class SupabaseSink(SinkConnector):
         return ['collection_name']
 
     def validation(self) -> bool:
-        """Validate connector setup"""
+        """config_validation connector setup"""
         import vecs
         try:
-            database_connection = self.sink_information['database_connection']
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
-        try:
-            vx = vecs.create_client(database_connection)
+            vx = vecs.create_client(self.database_connection)
         except Exception as e:
             raise SupabaseConnectionException(f"Supabase connection couldn't be initialized. See exception: {e}")
         return True 
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
-        database_connection = self.sink_information['database_connection']
+        database_connection = self.database_connection
         vx = vecs.create_client(database_connection)
         try:
-            collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
+            collection_name = self.collection_name
+            if collection_name == None: collection_name = f"pipeline_{pipeline_id}"
             dimensions = len(vectors_to_store[0].vector)
             db = vx.get_or_create_collection(name=collection_name, dimension=dimensions)
             to_upsert = []
@@ -59,16 +60,16 @@ class SupabaseSink(SinkConnector):
         return len(vectors_to_store)
     
     def search(self, vector: List[float], number_of_results:int, pipeline_id:str) -> List:
-        database_connection = self.sink_information['database_connection']
+        database_connection = self.database_connection
         vx = vecs.create_client(database_connection)
-        collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
+        collection_name = self.collection_name
+        if collection_name == None: collection_name = f"pipeline_{pipeline_id}"
         try:
             db = vx.get_collection(name=collection_name)
         except:
             raise SupabaseQueryException(f"Collection {collection_name} does not exist")
         finally:
             vx.disconnect()
-
         try:
             results = db.query(
                 data=vector,
@@ -88,13 +89,13 @@ class SupabaseSink(SinkConnector):
                 score=result[1]
             ))
         
-        vx.disconnect()
         return matches
     
     def info(self, pipeline_id: str) -> NeumSinkInfo:
-        database_connection = self.sink_information['database_connection']
+        database_connection = self.database_connection
         vx = vecs.create_client(database_connection)
-        collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
+        collection_name = self.collection_name
+        if collection_name == None: collection_name = f"pipeline_{pipeline_id}"
         try:
             db = vx.get_collection(name=collection_name)
         except:
@@ -104,5 +105,4 @@ class SupabaseSink(SinkConnector):
         
         number_of_vectors = db.table.select('count(*)')[0].count
 
-        vx.disconnect()
         return NeumSinkInfo(number_vectors_stored=number_of_vectors)
