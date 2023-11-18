@@ -11,7 +11,7 @@ class NeumClient(ABC):
     def createPipeline(self, pipeline:Pipeline):
         import requests
         
-        url = f"https://api.neum.ai/v1/pipelines"
+        url = f"https://api.neum.ai/v2/pipelines"
 
         # Headers
         headers = {
@@ -26,7 +26,7 @@ class NeumClient(ABC):
         import requests
         import json
 
-        url = f"https://api.neum.ai/v1/pipelines/{pipeline_id}"
+        url = f"https://api.neum.ai/v2/pipelines/{pipeline_id}"
 
         headers = {
             "accept": "application/json",
@@ -37,7 +37,7 @@ class NeumClient(ABC):
         return(json.loads(response.text))
     
     def triggerPipeline(self, pipeline_id:str, sync_type:TriggerSyncTypeEnum):
-        url = f"https://api.neum.ai/v1/pipelines/{pipeline_id}/trigger"
+        url = f"https://api.neum.ai/v2/pipelines/{pipeline_id}/trigger"
 
         # Headers
         headers = {
@@ -48,12 +48,13 @@ class NeumClient(ABC):
         response = requests.post(url, headers=headers, json={ "sync_type": sync_type.value })
         return json.loads(response.text)
 
-    def searchPipeline(self, pipeline_id:str, query:str, num_of_results:int = 3):
-        url = f"https://api.neum.ai/v1/pipelines/{pipeline_id}/search"
+    def searchPipeline(self, pipeline_id:str, query:str, num_of_results:int = 3, track:bool = False):
+        url = f"https://api.neum.ai/v2/pipelines/{pipeline_id}/search"
 
         payload = {
             "number_of_results": num_of_results,
-            "query": query
+            "query": query,
+            "collect_retrieval":track
         }
         headers = {
             "accept": "application/json",

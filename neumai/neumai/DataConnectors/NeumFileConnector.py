@@ -1,6 +1,6 @@
 from datetime import datetime
-from neumai.DataConnectors.DataConnector import DataConnector
 from typing import List, Generator
+from neumai.DataConnectors.DataConnector import DataConnector
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
 import tempfile
@@ -39,8 +39,8 @@ class NeumFileConnector(DataConnector):
         return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        available_metadata = {'url':self.connector_information['url']}
-        selected_metadata  = {k: available_metadata[k] for k in self.selector.to_metadata if k in available_metadata}
+        availableMetadata = {'url':self.connector_information['url']}
+        selected_metadata  = {k: availableMetadata[k] for k in self.selector.to_metadata if k in availableMetadata}
         yield CloudFile(file_identifier=self.connector_information['url'], metadata=selected_metadata, id=self.connector_information['url'])
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
@@ -62,7 +62,7 @@ class NeumFileConnector(DataConnector):
         try:
             self.connector_information['url']
         except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+            raise ValueError(f"Required properties not set. Required properties: {self.requiredProperties}")
         
         # Check for metadata
         if not all(x in self.available_metadata for x in self.selector.to_metadata):

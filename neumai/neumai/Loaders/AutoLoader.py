@@ -29,7 +29,7 @@ class AutoLoader(Loader):
         return []
 
     @property
-    def availableContent(self) -> List[str]:
+    def available_content(self) -> List[str]:
         return []
 
     def load(self, file:LocalFile) -> Generator[NeumDocument, None, None]:

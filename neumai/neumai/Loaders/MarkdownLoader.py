@@ -26,7 +26,7 @@ class MarkdownLoader(Loader):
         return []
 
     @property
-    def availableContent(self) -> List[str]:
+    def available_content(self) -> List[str]:
         return []
 
     #Probably worth re-writing directly on top of pypdf to get access
