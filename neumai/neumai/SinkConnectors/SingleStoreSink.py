@@ -13,7 +13,25 @@ from pydantic import Field
 import singlestoredb as s2
 
 class SingleStoreSink(SinkConnector):
-    """SingleStore Sink"""
+    """
+    SingleStore Sink
+
+    This sink connector is used for integrating with SingleStore databases, enabling the output of data to a specified SingleStore table.
+
+    Attributes:
+    -----------
+    url : str
+        URL for connecting to the SingleStore database.
+
+    api_key : str
+        API key for authentication with the SingleStore service.
+
+    table : str
+        The name of the table within SingleStore where data needs to be stored. This table needs to be pre-created.
+
+    batch_size : Optional[str]
+        Optional size of row batches to be extracted and stored in SingleStore. Default is 1000.
+    """
 
     url: str = Field(..., description="URL for SingleStore.")
 

@@ -13,7 +13,25 @@ from pydantic import Field
 import pinecone
 
 class  PineconeSink(SinkConnector):
-    """ Pinecone Sink """
+    """
+    Pinecone Sink
+
+    A sink connector specifically designed for Pinecone, facilitating the output of processed data into a Pinecone environment.
+
+    Attributes:
+    -----------
+    api_key : str
+        API key for accessing the Pinecone service.
+
+    environment : str
+        The specific Pinecone environment to connect to.
+
+    index : str
+        The index in Pinecone where the data will be stored.
+
+    namespace : Optional[str]
+        Optional namespace within the Pinecone environment. Used for organizing data.
+    """
 
     api_key: str = Field(..., description="API key for Pinecone.")
 

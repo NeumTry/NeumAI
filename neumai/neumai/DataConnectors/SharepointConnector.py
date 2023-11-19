@@ -10,15 +10,34 @@ import tempfile
 import requests
 
 class SharepointConnector(DataConnector):
-    """Sharepoint Connector."""
+    """
+    Sharepoint Connector
+
+    Extracts all files from an Sharepoint site. 
+    
+    Attributes:
+    -----------
+
+    tenant_id : str
+        Sharepoint Tenant ID
+    site_id : str
+        Site ID for Sharepoint
+    client_id : str
+        App Registration Client ID
+    client_secret : str
+        App Registration Client secret
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
     
     tenant_id: str = Field(..., description="Tenant ID for Sharepoint.")
+
+    site_id: str = Field(..., description="Site ID for Sharepoint.")
 
     client_id: str = Field(..., description="Client ID for Sharepoint.")
 
     client_secret: str = Field(..., description="Client Secret for Sharepoint.")
-
-    site_id: str = Field(..., description="Site ID for Sharepoint.")
 
     selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
 

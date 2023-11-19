@@ -5,7 +5,19 @@ from pydantic import Field
 import replicate
 
 class ReplicateEmbed(EmbedConnector):
-    """Replicate Embed Connector."""
+    """
+    Replicate Embed Connector
+
+    A connector for embedding and processing data using Replicate's services. It's designed to work with the Replicate platform, requiring an API key and a specific model identifier for operations.
+
+    Attributes:
+    -----------
+    api_key : str
+        The API key for accessing the Replicate service. Necessary for authentication and using the Replicate API for data embedding and processing.
+
+    replicate_model : str
+        The model identifier for the Replicate service. Specifies the particular model to be used for data processing within the Replicate platform.
+    """
 
     api_key: str = Field(..., description="API key for the Replicate service.")
 

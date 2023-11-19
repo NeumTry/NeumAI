@@ -12,7 +12,22 @@ import psycopg2
 import json
 
 class PostgresConnector(DataConnector):
-    """Postgres Connector."""
+    """
+    Postgres Connector
+
+    Extracts data from any Postgres database using a given query.
+    
+    Attributes:
+    -----------
+
+    connection_string : str
+        Connection string for the Postgres database.
+    query : str
+        Query to be executed to pull data from the database. (i.e. Select * From TableName)
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
 
     connection_string: str = Field(..., description="Connection string for the Postgres database.")
 

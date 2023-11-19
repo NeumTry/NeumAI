@@ -8,16 +8,29 @@ from pydantic import Field
 from neumai.Shared.Exceptions import NeumFileException
 import tempfile
 
-class NeumFileConnector(DataConnector):
-    """Neum Simple File Connector."""
+class FileConnector(DataConnector):
+    """
+    File Connector
 
+    Allows user to load a publicly available file.
+    
+    Attributes:
+    -----------
+
+    url : str
+        The url poitning to the publicly available file
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
+    
     url: str = Field(..., description="URL required for the connector.")
 
     selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
 
     @property
     def connector_name(self) -> str:
-        return "NeumFileConnector"
+        return "FileConnector"
 
     @property
     def required_properties(self) -> List[str]:

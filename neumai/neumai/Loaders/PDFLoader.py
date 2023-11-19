@@ -5,9 +5,17 @@ from neumai.Loaders.Loader import Loader
 from langchain.document_loaders import PyPDFLoader
 
 class PDFLoader(Loader):
-    """" PDF Loader """
-    """" loader_information contains: """
-    """ [] """
+    """ 
+    PyPDF Loader
+
+    Loads PDF files leveraging PyPDF.
+
+    Attributes:
+    -----------
+
+    None
+
+    """
 
     @property
     def loader_name(self) -> str:

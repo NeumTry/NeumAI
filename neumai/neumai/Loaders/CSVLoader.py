@@ -6,14 +6,35 @@ from pydantic import Field
 from neumai.Shared.Selector import Selector
 import csv
 
-class NeumCSVLoader(Loader):
-    """Neum CSV Loader."""
+class CSVLoader(Loader):
+    """
+    CSV Loader
 
-    id_key: Optional[str] = Field(None, description="Optional ID key.")
+    A utility class for loading and processing CSV files. This loader is designed to handle various CSV formats and configurations, making it flexible for different data loading requirements.
+
+    Attributes:
+    -----------
+    id_key : Optional[str]
+        An optional ID key that can be used to identify unique records within the CSV file. If provided, it specifies the column name that contains unique identifiers.
+
+    source_column : Optional[str]
+        An optional source column name from which to load data. If specified, only this column will be used for further processing.
+
+    encoding : Optional[str]
+        An optional encoding type for reading the CSV file. This should be a valid encoding type understood by Python's CSV parser.
+
+    csv_args : Optional[Dict]
+        Optional additional arguments that can be passed to the CSV reader. This can include settings like delimiter, quotechar, etc.
+
+    selector : Optional[Selector]
+        An optional Selector object to define criteria for selecting, embedding, or modifying metadata in the data. Default is a Selector with empty 'to_embed' and 'to_metadata' lists.
+    """
+
+    id_key: Optional[str] = Field("id", description="Optional ID key.")
 
     source_column: Optional[str] = Field(None, description="Optional source column.")
 
-    encoding: Optional[str] = Field(None, description="Optional encoding type.")
+    encoding: Optional[str] = Field("utf-8-sig", description="Optional encoding type.")
 
     csv_args: Optional[Dict] = Field(None, description="Optional additional CSV arguments.")
 
@@ -21,7 +42,7 @@ class NeumCSVLoader(Loader):
 
     @property
     def loader_name(self) -> str:
-        return "NeumCSVLoader"
+        return "CSVLoader"
 
     @property
     def required_properties(self) -> List[str]:
@@ -43,13 +64,11 @@ class NeumCSVLoader(Loader):
         return True   
 
     def load(self, file: LocalFile) -> Generator[NeumDocument, None, None]:
-        source_column = self.loader_information.get('source_coulmn', None)
-        encoding = self.loader_information.get('encoding', "utf-8-sig") # modify to use encoding
-        csv_args = self.loader_information.get('csv_args', None) # default to id
-        id_key = self.loader_information.get('id_key', 'id') # default to id
+        source_column = self.source_column
+        encoding = self.encoding# modify to use encoding
+        csv_args = self.csv_args # default to id
+        id_key = self.id_key # default to id
         selector = self.selector
-        embed_keys = selector.to_embed
-        metadata_keys = selector.to_metadata
 
         with open(file.file_path, newline="", encoding=encoding) as csvfile:
             csv_reader = csv.DictReader(csvfile, **csv_args)  # Use csv_args if provided

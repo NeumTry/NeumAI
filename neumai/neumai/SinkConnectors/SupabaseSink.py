@@ -13,7 +13,19 @@ from pydantic import Field
 import vecs
 
 class SupabaseSink(SinkConnector):
-    """Supabase Sink"""
+    """
+    Supabase Sink
+
+    A connector designed for exporting data to Supabase, a cloud-based database platform. It manages connections and data transfers to specific Supabase databases.
+
+    Attributes:
+    -----------
+    database_connection : str
+        Connection string or details required to connect to the Supabase database.
+
+    collection_name : Optional[str]
+        Optional name of the collection within Supabase where the data will be stored.
+    """
 
     database_connection: str = Field(..., description="Database connection for Supabase.")
 

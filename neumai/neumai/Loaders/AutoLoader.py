@@ -10,7 +10,17 @@ from neumai.Loaders.PDFLoader import PDFLoader
 from langchain.document_loaders import UnstructuredFileLoader
 
 class AutoLoader(Loader):
-    """ Auto Loader\n loader_information contains: [] """
+    """ 
+    Auto Loader
+
+    Automatically picks a loading strategy based on the type of file being provided.
+
+    Attributes:
+    -----------
+
+    None
+
+    """
 
     @property
     def loader_name(self) -> str:

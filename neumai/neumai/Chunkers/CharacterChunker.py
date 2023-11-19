@@ -5,7 +5,27 @@ from langchain.text_splitter import (CharacterTextSplitter)
 from pydantic import Field
 
 class CharacterChunker(Chunker):
-    """Character Chunker."""
+    """
+    Character Chunker
+
+    Chunk text data based on the number of characters. This chunker is designed to break down text into manageable pieces based on character count, making it suitable for processing large texts or for use in systems that require fixed-size input.
+
+    Attributes:
+    -----------
+
+    chunk_size : Optional[int]
+        The size of each chunk in terms of the number of characters. Default is 500 characters.
+
+    chunk_overlap : Optional[int]
+        The number of characters that will overlap between consecutive chunks. Default is 0, meaning no overlap.
+
+    batch_size : Optional[int]
+        The size of the batch for processing chunks. Specifies how many chunks are processed together. Default is 1000.
+
+    separator : Optional[str]
+        The separator to be used between chunks. Default is a double newline ("\n\n").
+    """
+    
 
     chunk_size: Optional[int] = Field(500, description="Optional chunk size.")
 

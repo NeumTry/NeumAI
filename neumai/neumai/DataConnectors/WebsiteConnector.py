@@ -9,8 +9,22 @@ from pydantic import Field
 import tempfile
 import requests
 
-class NeumWebsiteConnector(DataConnector):
-    """Neum Website Connector."""
+class WebsiteConnector(DataConnector):
+    """
+    Website Connector
+
+    Extracts data from a given website.
+    
+    Attributes:
+    -----------
+
+    url : str
+        Website URL
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
+
 
     url: str = Field(..., description="URL of the website to connect to.")
 
@@ -18,7 +32,7 @@ class NeumWebsiteConnector(DataConnector):
 
     @property
     def connector_name(self) -> str:
-        return "NeumWebsiteConnector"
+        return "WebsiteConnector"
 
     @property
     def required_properties(self) -> List[str]:

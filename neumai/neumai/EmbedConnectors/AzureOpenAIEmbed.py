@@ -5,7 +5,28 @@ from langchain.embeddings import azure_openai
 from pydantic import Field
 
 class AzureOpenAIEmbed(EmbedConnector):
-    """Azure OpenAI Embed Connector."""
+    """
+    Azure OpenAI Embed Connector
+
+    This class is designed for integrating with Azure's deployment of OpenAI, allowing for embedding and processing data using OpenAI's models hosted on Azure. It handles connections and data processing tasks with Azure OpenAI services.
+
+    Attributes:
+    -----------
+    deployment_name : str
+        The name of the Azure OpenAI deployment. Used to specify and connect to the particular Azure OpenAI service.
+
+    api_key : str
+        The API key for accessing the Azure OpenAI services. This key is necessary for authentication and usage of the services.
+
+    endpoint : str
+        The specific endpoint URL for the Azure OpenAI service. This is the entry point for sending requests to the Azure OpenAI API.
+
+    max_retries : Optional[int]
+        The maximum number of retries for the connection to the Azure OpenAI service. Default is 20 retries.
+
+    chunk_size : Optional[int]
+        The size of chunks for processing data, specified in terms of number of items. Default is 16.
+    """
 
     deployment_name: str = Field(..., description="Deployment name for Azure OpenAI.")
 

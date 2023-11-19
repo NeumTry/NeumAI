@@ -10,7 +10,47 @@ from pydantic import BaseModel, Field
 from uuid import uuid4
 
 class Pipeline(BaseModel):
-    """Pipeline managing the flow of data from sources through embedding to the sink, including configurations and state."""
+    """
+    Pipeline managing the flow of data from sources through embedding to the sink, including configurations and state.
+
+    This class orchestrates the movement and transformation of data, coordinating between source connectors, embedding processes, and sinks. It also handles pipeline configurations and maintains the state of the pipeline operations.
+
+    Attributes:
+    -----------
+    id : str
+        Unique identifier for the pipeline, generated using UUID4.
+    
+    sources : List[SourceConnector]
+        List of source connectors involved in the pipeline for data input.
+
+    embed : EmbedConnector
+        Embedding connector for processing data.
+
+    sink : SinkConnector
+        Sink connector for the final output of processed data.
+
+    name : Optional[str]
+        Name of the pipeline, providing a human-readable identifier.
+
+    created : Optional[float]
+        Timestamp of when the pipeline was created, represented as a float.
+
+    updated : Optional[float]
+        Timestamp of when the pipeline was last updated.
+
+
+    trigger_schedule : Optional[TriggerSchedule]
+        Scheduling details for triggering the pipeline execution.
+
+    latest_run : Optional[PipelineRun]
+        Information about the latest run of the pipeline.
+
+    owner : Optional[str]
+        Owner of the pipeline, indicating who manages or created it.
+
+    is_deleted : bool
+        Flag to indicate if the pipeline is marked as deleted. Default is False.
+    """
 
     id: str = Field(default_factory=lambda: str(uuid4()), description="Unique identifier for the pipeline")
 

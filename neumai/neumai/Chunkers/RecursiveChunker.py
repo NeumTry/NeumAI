@@ -5,7 +5,26 @@ from langchain.text_splitter import (RecursiveCharacterTextSplitter)
 from pydantic import Field
 
 class RecursiveChunker(Chunker):
-    """Recursive Chunker."""
+
+    """
+    Recursive Chunker for multi-level text data chunking.
+
+    This chunker is designed to perform text chunking recursively using a variety of specified separators. It's useful for complex chunking tasks where multiple layers of chunking are necessary.
+
+    Attributes:
+    -----------
+    chunk_size : Optional[int]
+        The optional chunk size, defining the maximum size of each chunk. Default is 500 characters.
+    
+    chunk_overlap : Optional[int]
+        The optional chunk overlap size, specifying how much overlap there should be between consecutive chunks. Default is 0 (no overlap).
+
+    batch_size : Optional[int]
+        The optional batch size for processing chunks. Defines the number of chunks to process in one batch. Default is 1000.
+
+    separators : Optional[List[str]]
+        A list of optional separators to be used for recursive chunking. Each separator defines a new level of chunking. Default separators include newline and space characters.
+    """
 
     chunk_size: Optional[int] = Field(500, description="Optional chunk size.")
 

@@ -6,10 +6,22 @@ from pydantic import Field
 from neumai.Shared.Selector import Selector
 import json
 
-class NeumJSONLoader(Loader):
-    """Neum JSON Loader."""
+class JSONLoader(Loader):
+    """
+    JSON Loader
 
-    id_key: Optional[str] = Field(None, description="Optional ID key.")
+    A class for loading and processing JSON data. This loader is tailored for handling JSON files, offering flexibility in how JSON data is ingested and used in various applications.
+
+    Attributes:
+    -----------
+    id_key : Optional[str]
+        An optional ID key for identifying unique records in the JSON data. If specified, it is used to denote a unique identifier within the JSON structure.
+
+    selector : Optional[Selector]
+        An optional Selector object used to define criteria for selecting, embedding, or modifying metadata in the JSON data. Default is a Selector with empty 'to_embed' and 'to_metadata' lists.
+    """
+
+    id_key: Optional[str] = Field('id', description="Optional ID key.")
 
     selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for loader metadata")
 
@@ -27,7 +39,7 @@ class NeumJSONLoader(Loader):
 
     @property
     def loader_name(self) -> str:
-        return "NeumJSONLoader"
+        return "JSONLoader"
     
     @property
     def available_metadata(self) -> List[str]:
@@ -42,7 +54,7 @@ class NeumJSONLoader(Loader):
 
     def load(self, file: LocalFile) -> Generator[NeumDocument, None, None]:
         """Load data into Document objects."""
-        id_key = self.loader_information.get('id_key', "id")
+        id_key = self.id_key
 
         json_data = None
         if file.file_path:
@@ -56,7 +68,7 @@ class NeumJSONLoader(Loader):
 
             for item in processed_json:
                 content = ''.join(item['data'])
-                metadata = item['metadata']
+                metadata: dict = item['metadata']
                 document_id = item['id']
                 metadata.update(file.metadata)
                 yield NeumDocument(content=content, metadata=metadata, id=document_id)

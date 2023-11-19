@@ -11,7 +11,26 @@ import tempfile
 import os
 
 class S3Connector(DataConnector):
-    """Neum File Connector."""
+    """
+    S3 Connector
+
+    Extracts files from an S3 Bucket
+    
+    Attributes:
+    -----------
+
+    aws_key_id : str
+        Access key ID to the S3 bucket
+    aws_access_key : str
+        Access key to the S3 bucket
+    bucket_name : str
+        Name of S3 bucket
+    prefix : Optional[str]
+        File prefix filter
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
     
     aws_key_id: str = Field(..., description="AWS Key ID for S3 access.")
 

@@ -15,7 +15,22 @@ from qdrant_client import QdrantClient
 from pydantic import Field
 
 class QdrantSink(SinkConnector):
-    """Qdrant Sink."""
+    """
+    Qdrant Sink
+
+    A sink connector for Qdrant, designed to facilitate data output into a Qdrant storage system.
+
+    Attributes:
+    -----------
+    url : str
+        URL for accessing the Qdrant service.
+
+    api_key : str
+        API key required for authenticating with the Qdrant service.
+
+    collection_name : Optional[str]
+        Optional name of the collection in Qdrant where the data will be stored.
+    """
 
     url: str = Field(..., description="URL for Qdrant.")
 

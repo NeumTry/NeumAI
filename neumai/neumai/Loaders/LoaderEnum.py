@@ -4,8 +4,8 @@ class LoaderEnum(str, Enum):
     autoloader = "autoloader"
     htmlloader = "htmlloader"
     markdownloader = "markdownloader"
-    neumcsvloader = "neumcsvloader"
-    neumjsonloader = "neumjsonloader"
+    csvloader = "csvloader"
+    jsonloader = "jsonloader"
     pdfloader = "pdfloader"
 
     def as_chunker_enum(loader_name: str):

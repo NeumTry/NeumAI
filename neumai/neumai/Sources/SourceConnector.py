@@ -12,7 +12,25 @@ from neumai.Shared.CloudFile import CloudFile
 
 # Assuming DataConnector, Chunker, RecursiveChunker, Loader, and AutoLoader are defined elsewhere
 class SourceConnector(BaseModel):
-    """Source constructor that includes the data connections, chunkers, loaders, etc."""
+    """
+    Source Connector
+
+    This class acts as a constructor for source connectors, encompassing various components like data connectors, chunkers, and loaders. It facilitates the initial stages of data processing by managing the connection to data sources, breaking down content, and loading data for further processing.
+
+    Attributes:
+    -----------
+    data_connector : DataConnector
+        A connector to the data source. This component is responsible for establishing and managing the connection to the source of the data.
+
+    chunker : Chunker
+        The chunker to be used for breaking down the content. It determines how the data is segmented for processing. Default is set to RecursiveChunker, which recursively breaks down the content based on specified rules.
+
+    loader : Loader
+        The loader responsible for loading data from files or specific data types. It handles the retrieval and initial processing of data from its source. Default is set to AutoLoader, which automatically determines the appropriate method for loading data.
+
+    custom_metadata : Dict
+        A dictionary for custom metadata that can be added to the vector. This allows for the inclusion of additional, user-defined information in the data processing pipeline.
+    """
 
     data_connector: DataConnector = Field(..., description="Connector to data source")
 

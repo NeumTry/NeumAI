@@ -11,7 +11,22 @@ import os
 from pydantic import Field
 
 class AzureBlobConnector(DataConnector):
-    """Azure Blob data connector"""
+    """
+    Azure Blob data connector
+
+    Extracts data from a Azure Blob container. 
+    
+    Attributes:
+    -----------
+
+    connection_string : str
+        Connection string to the Azure Blob
+    container_name : str
+        Name of the Azure Blob container you want to extract data from
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
 
     connection_string: str = Field(..., description="Connection string to connect to Azure Blob [required]")
 

@@ -12,15 +12,34 @@ import os
 
 
 class SupabaseStorageConnector(DataConnector):
-    """Supabase File Connector."""
-    
-    bucket: str = Field(..., description="Bucket name in Supabase.")
+    """
+    Supabase Storage Connector
 
-    folder: str = Field(..., description="Folder name in the bucket.")
+    Extracts files from Supabase bucket / folder
+    
+    Attributes:
+    -----------
+
+    url : str
+        URL to Supabase project
+    key : str
+        Anon Access key to the project
+    bucket : str
+        Name of the storage bucket
+    folder : str
+        Folder name within the bucket. (Pass empty string if no bucket.)
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
 
     url: str = Field(..., description="URL for Supabase access.")
 
     key: str = Field(..., description="Access key for Supabase.")
+    
+    bucket: str = Field(..., description="Bucket name in Supabase.")
+
+    folder: str = Field(..., description="Folder name in the bucket.")
 
     selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
 

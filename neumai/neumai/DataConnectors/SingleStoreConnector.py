@@ -12,13 +12,30 @@ import json
 
 
 class SingleStoreConnector(DataConnector):
-    """SingleStore Connector."""
+    """
+    SingleStore Connector
+
+    Extracts rows from Single Store database
     
-    url: str = Field(..., description="URL for SingleStore.")
+    Attributes:
+    -----------
+
+    connection_string : str
+        Connection string to Single Store database (i.e. \<user\>:\<password\>@\<host\>:\<port\>/\<database_name\>)
+    query : str
+        Query to extract data from database (i.e. Select * From TableName)
+    batch_size : Optional[int]
+        Number of rows to process per batch
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
+    
+    connection_string: str = Field(..., description="Connection string to Single Store database.")
 
     query: str = Field(..., description="Query to be executed.")
 
-    batch_size: Optional[int] = Field(1000, description="Batch size for processing.")
+    batch_size: Optional[int] = Field(1000, description="Number of rows to process per batch.")
 
     selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
 
@@ -59,11 +76,11 @@ class SingleStoreConnector(DataConnector):
             return super().default(obj)
 
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        url = self.url
+        connection_string = self.connection_string
         query = self.query
         batch_size = self.batch_size
         
-        with s2.connect(url, results_type="dict") as conn:
+        with s2.connect(connection_string, results_type="dict") as conn:
             with conn.cursor() as cur:
                 batch_rows = []
                 cur.execute(query)
@@ -93,7 +110,7 @@ class SingleStoreConnector(DataConnector):
     
     def config_validation(self) -> bool:
         try: 
-            s2.connect(self.url, results_type="dict")
+            s2.connect(self.connection_string, results_type="dict")
         except Exception as e:
             raise SinglestoreConnectionException(f"There was a problem connecting to Singlestore. See Exception: {e}")
         return True 

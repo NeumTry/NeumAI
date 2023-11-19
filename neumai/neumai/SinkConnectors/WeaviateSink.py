@@ -14,7 +14,37 @@ from weaviate.util import generate_uuid5, _capitalize_first_letter
 import weaviate
 
 class WeaviateSink(SinkConnector):
-    """Weaviate Sink."""
+    """
+    Weaviate Sink
+
+    A sink connector specifically designed for integrating with Weaviate, an open-source, ML-powered search engine. This connector enables efficient data output to a Weaviate instance, supporting various configuration options to optimize the data transfer process.
+
+    Attributes:
+    -----------
+    url : str
+        The URL for accessing the Weaviate instance. This should be the endpoint where Weaviate is hosted.
+
+    api_key : str
+        The API key for authenticating with the Weaviate service. This key is necessary for secure communication with the Weaviate instance.
+
+    class_name : Optional[str]
+        An optional class name within Weaviate to which the data will be associated. Specifies the schema or type of data being stored.
+
+    num_workers : Optional[int]
+        The optional number of worker threads to use for data processing and uploading. Default is 1.
+
+    shard_count : Optional[int]
+        The optional number of shards to use for distributing data within Weaviate. Default is 1.
+
+    batch_size : Optional[int]
+        The optional size of batches for data processing and upload. Defines how many data items are processed together. Default is 100.
+
+    is_dynamic_batch : Optional[bool]
+        An optional flag to enable dynamic batching. If set to True, batch sizes may be adjusted dynamically based on network conditions and load. Default is False.
+
+    batch_connection_error_retries : Optional[int]
+        The optional number of retries in case of a batch connection error. Specifies how many times the connector should attempt to resend a batch in case of a connection error. Default is 3 retries.
+    """
 
     url: str = Field(..., description="URL for Weaviate.")
 

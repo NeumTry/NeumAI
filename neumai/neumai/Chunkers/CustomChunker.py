@@ -6,7 +6,19 @@ from pydantic import Field
 from neumai.Shared.Exceptions import CustomChunkerException
 
 class CustomChunker(Chunker):
-    """Custom Chunker."""
+    """
+    Custom Chunker for specialized text data chunking.
+
+    This chunker is designed to handle specific chunking operations based on custom logic defined in the 'code' attribute. It allows for flexible and customized text processing, suitable for unique chunking requirements.
+
+    Attributes:
+    -----------
+    code : str
+        The custom code or logic required for the chunking operation. This should be a valid string representation of the chunking logic or algorithm.
+    
+    batch_size : Optional[int]
+        The optional batch size for chunking operations. Defines the number of items to process in one batch. Default is 1000.
+    """
 
     code: str = Field(..., description="Code required for the chunker.")
 
