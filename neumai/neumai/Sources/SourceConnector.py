@@ -1,4 +1,4 @@
-from typing import List, Generator, Dict
+from typing import List, Generator, Dict, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field, validator
 from neumai.DataConnectors.DataConnector import DataConnector
@@ -39,7 +39,7 @@ class SourceConnector(BaseModel):
 
     loader: Loader = Field(default=AutoLoader(), description="Loader to load data from file / data type")
 
-    custom_metadata: Dict = Field(default_factory=dict, description="Custom metadata to be added to the vector")
+    custom_metadata: Optional[Dict] = Field({}, description="Custom metadata to be added to the vector")
 
     def list_files_full(self) -> Generator[CloudFile, None, None]:
         yield from self.data_connector.connect_and_list_full()
@@ -88,7 +88,7 @@ class SourceConnector(BaseModel):
             _type_: the json to return
         """
         json_to_return = {}
-        json_to_return['customMetadata'] = self.custom_metadata
+        json_to_return['custom_metadata'] = self.custom_metadata
         json_to_return['data_connector'] = self.data_connector.as_json()
         json_to_return['chunker'] = self.chunker.as_json()
         json_to_return['loader'] = self.loader.as_json()
