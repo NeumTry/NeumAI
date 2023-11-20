@@ -10,7 +10,7 @@
   </a>
 </div>
 
-![Neum AI Hero](https://uploads-ssl.webflow.com/6552c062a6c96c60086c77df/6552c4072666398cd7ed1961_Introduction.png)
+![Neum AI Hero](https://uploads-ssl.webflow.com/6552c062a6c96c60086c77df/6557cfde1ff0648321e5d3ba_Group%2066.png)
 
 **[Neum AI](https://neum.ai) is a data platform that helps developers leverage their data to contextualize Large Language Models through Retrieval Augmented Generation (RAG)** This includes
 extracting data from existing data sources like document storage and NoSQL, processing the contents into vector embeddings and ingesting the vector embeddings into vector databases for similarity search. 
