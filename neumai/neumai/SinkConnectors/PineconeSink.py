@@ -58,7 +58,7 @@ class  PineconeSink(SinkConnector):
         import pinecone
         try:
             pinecone.init(api_key=self.api_key, environment=self.environment)    
-            index = pinecone.Index(index_name=index)
+            index = pinecone.Index(index_name=self.index)
             index.describe_index_stats()
         except Exception as e:
             raise PineconeConnectionException(f"Pinecone connection couldn't be initialized. See exception: {e}")
