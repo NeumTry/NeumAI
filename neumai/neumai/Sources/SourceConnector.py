@@ -88,7 +88,7 @@ class SourceConnector(BaseModel):
             _type_: the json to return
         """
         json_to_return = {}
-        json_to_return['customMetadata'] = self.custom_metadata
+        json_to_return['custom_metadata'] = self.custom_metadata
         json_to_return['data_connector'] = self.data_connector.as_json()
         json_to_return['chunker'] = self.chunker.as_json()
         json_to_return['loader'] = self.loader.as_json()
