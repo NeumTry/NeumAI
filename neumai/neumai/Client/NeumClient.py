@@ -9,7 +9,7 @@ class NeumClient(ABC):
         self.api_key = api_key
         self.endpoint = endpoint
 
-    def createPipeline(self, pipeline:Pipeline):
+    def create_pipeline(self, pipeline:Pipeline):
         import requests
 
         url = f"{self.endpoint}/pipelines/"
@@ -26,7 +26,7 @@ class NeumClient(ABC):
         except Exception as e:
             print(f"Pipeline creation failed. Exception - {e}")
             
-    def getPipeline(self, pipeline_id:str):
+    def get_pipeline(self, pipeline_id:str):
         import requests
         import json
 
@@ -42,7 +42,7 @@ class NeumClient(ABC):
         except Exception as e:
             print(f"Pipeline fetching failed. Exception - {e}")
     
-    def triggerPipeline(self, pipeline_id:str, sync_type:TriggerSyncTypeEnum):
+    def trigger_pipeline(self, pipeline_id:str, sync_type:TriggerSyncTypeEnum):
         url = f"{self.endpoint}/pipelines/{pipeline_id}/trigger"
 
         # Headers
@@ -56,7 +56,7 @@ class NeumClient(ABC):
         except Exception as e:
             print(f"Pipeline trigger failed. Exception - {e}")
 
-    def searchPipeline(self, pipeline_id:str, query:str, num_of_results:int = 3, track:bool = False):
+    def search_pipeline(self, pipeline_id:str, query:str, num_of_results:int = 3, track:bool = False):
         url = f"{self.endpoint}/pipelines/{pipeline_id}/search"
 
         payload = {
