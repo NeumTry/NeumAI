@@ -60,7 +60,7 @@ class AzureBlobConnector(DataConnector):
     
     @property
     def compatible_loaders(self) -> List[str]:
-        return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
+        return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "CSVLoader", "JSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
         container = ContainerClient.from_connection_string(

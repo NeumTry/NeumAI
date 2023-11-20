@@ -27,7 +27,7 @@ class JSONLoader(Loader):
 
     @property
     def loader_name(self) -> str:
-        return "NeumJSONLoader"
+        return "JSONLoader"
 
     @property
     def required_properties(self) -> List[str]:

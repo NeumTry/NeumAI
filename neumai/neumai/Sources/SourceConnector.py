@@ -1,7 +1,8 @@
 from typing import List, Generator, Dict
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from neumai.DataConnectors.DataConnector import DataConnector
+from neumai.DataConnectors.DataConnectorEnum import DataConnectorEnum
 from neumai.Chunkers.Chunker import Chunker
 from neumai.Chunkers.RecursiveChunker import RecursiveChunker
 from neumai.Loaders.Loader import Loader
@@ -62,6 +63,16 @@ class SourceConnector(BaseModel):
         loader_validation = self.loader.loader_name in self.data_connector.compatible_loaders
         return core_validation and loader_validation
 
+    # @validator("data_connector", pre=True, always=True)
+    # def deserialize_abstract_property(cls, value):
+    #     connector_name = value.get("connector_name")
+    #     connector_name_enum = DataConnectorEnum.as_data_connector_enum(connector_name)
+    #     if connector_name_enum == "MyConcreteClass":
+    #         return MyConcreteClass(**value)
+
+    #     # Add cases for other concrete classes as needed
+    #     raise ValueError(f"Unknown discriminator value: {discriminator}")
+    
     def as_json(self):
         """Python does not have built in serialization. We need this logic to be able to respond in our API..
 
@@ -70,7 +81,7 @@ class SourceConnector(BaseModel):
         """
         json_to_return = {}
         json_to_return['customMetadata'] = self.custom_metadata
-        json_to_return['connector'] = self.data_connector.as_json()
+        json_to_return['data_connector'] = self.data_connector.as_json()
         json_to_return['chunker'] = self.chunker.as_json()
         json_to_return['loader'] = self.loader.as_json()
         return json_to_return

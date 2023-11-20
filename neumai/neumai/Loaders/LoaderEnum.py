@@ -8,7 +8,7 @@ class LoaderEnum(str, Enum):
     jsonloader = "jsonloader"
     pdfloader = "pdfloader"
 
-    def as_chunker_enum(loader_name: str):
+    def as_loader_enum(loader_name: str):
         if loader_name == None or loader_name == "":
             return None
         try:

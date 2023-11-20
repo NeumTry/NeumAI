@@ -112,7 +112,7 @@ class Pipeline(BaseModel):
             return True
         except Exception as e:
             raise e
-        
+    
     def run(self) -> int:
         # This method is meant for local development only. Not to be used in production.
         # The Neum AI framework provides parallelization constructs through yielding
@@ -160,6 +160,7 @@ class Pipeline(BaseModel):
 
         content_to_return['latest_run'] = self.latest_run.json()
         content_to_return['available_metadata'] = self.available_metadata()
+        content_to_return['is_deleted'] = self.is_deleted
 
         return content_to_return
 

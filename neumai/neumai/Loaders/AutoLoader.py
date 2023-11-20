@@ -2,8 +2,8 @@ from typing import List, Generator
 from neumai.Shared.NeumDocument import NeumDocument
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Loaders.Loader import Loader
-from neumai.Loaders.NeumCSVLoader import NeumCSVLoader
-from neumai.Loaders.NeumJSONLoader import NeumJSONLoader
+from neumai.Loaders.CSVLoader import CSVLoader
+from neumai.Loaders.JSONLoader import JSONLoader
 from neumai.Loaders.HTMLLoader import HTMLLoader
 from neumai.Loaders.MarkdownLoader import MarkdownLoader
 from neumai.Loaders.PDFLoader import PDFLoader
@@ -45,7 +45,7 @@ class AutoLoader(Loader):
     def load(self, file:LocalFile) -> Generator[NeumDocument, None, None]:
         """Load data into Document objects."""
         if "csv" in file.type:
-            loader = NeumCSVLoader()
+            loader = CSVLoader()
         elif "string" in file.type:
             yield NeumDocument(content=file.in_mem_data, metadata=file.metadata, id=file.id)
             return
@@ -56,7 +56,7 @@ class AutoLoader(Loader):
         elif "pdf" in file.type:
             loader = PDFLoader()
         elif "json" in file.type:
-            loader = NeumJSONLoader()
+            loader = JSONLoader()
         else:
             loader = UnstructuredFileLoader(file_path=file.file_path)
             documents = loader.load()

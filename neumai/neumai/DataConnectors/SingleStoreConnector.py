@@ -65,7 +65,7 @@ class SingleStoreConnector(DataConnector):
     
     @property
     def compatible_loaders(self) -> List[str]:
-        return ["NeumJSONLoader"]
+        return ["JSONLoader"]
     
     class CustomEncoder(json.JSONEncoder):
         def default(self, obj):

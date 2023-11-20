@@ -67,7 +67,7 @@ class SharepointConnector(DataConnector):
     
     @property
     def compatible_loaders(self) -> List[str]:
-        return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
+        return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "CSVLoader", "JSONLoader", "PDFLoader"]
     
     def process_folder(self, site_id:str, drive_id:str, folder_id:str, headers:dict) -> Generator[CloudFile, None, None]:
         import requests

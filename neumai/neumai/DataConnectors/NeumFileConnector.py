@@ -1,37 +1,19 @@
 from datetime import datetime
-from typing import List, Generator, Optional
+from typing import List, Generator
+import tempfile
 from neumai.DataConnectors.DataConnector import DataConnector
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
-from neumai.Shared.Selector import Selector
-from pydantic import Field
-from neumai.Shared.Exceptions import NeumFileException
-import tempfile
 
-class FileConnector(DataConnector):
-    """
-    File Connector
-
-    Allows user to load a publicly available file.
-    
-    Attributes:
-    -----------
-
-    url : str
-        The url poitning to the publicly available file
-    selector : Optional[Selector]
-        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
-    
-    """
-    
-    url: str = Field(..., description="URL required for the connector.")
-
-    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
+class NeumFileConnector(DataConnector):
+    """ Neum Simple File Connector \n
+    connector_information required:[ url ] \n
+    available metadata: [ url ]"""
 
     @property
     def connector_name(self) -> str:
-        return "FileConnector"
-
+        return "NeumFileConnector"
+    
     @property
     def required_properties(self) -> List[str]:
         return ["url"]
@@ -57,9 +39,9 @@ class FileConnector(DataConnector):
         return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "CSVLoader", "JSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        availableMetadata = {'url':self.url}
-        selected_metadata  = {k: availableMetadata[k] for k in self.selector.to_metadata if k in availableMetadata}
-        yield CloudFile(file_identifier=self.url, metadata=selected_metadata, id=self.url)
+        available_metadata = {'url':self.connector_information['url']}
+        selected_metadata  = {k: available_metadata[k] for k in self.selector.to_metadata if k in available_metadata}
+        yield CloudFile(file_identifier=self.connector_information['url'], metadata=selected_metadata, id=self.connector_information['url'])
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
         # Delta is not different, we are just getting one file. 
@@ -75,12 +57,13 @@ class FileConnector(DataConnector):
             temp_file.write(response.content)
             yield LocalFile(file_path=temp_file.name, metadata=cloudFile.metadata, id=cloudFile.id)
 
-    def config_validation(self) -> bool:
-        import requests
+    def validate(self) -> bool:
+        # Check for required properties
         try:
-            response = requests.get(self.url)
-        except Exception as e:
-            raise NeumFileException(f"Connection to file failed, check url. See Exception: {e}")     
+            self.connector_information['url']
+        except:
+            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+        
         # Check for metadata
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided") 
