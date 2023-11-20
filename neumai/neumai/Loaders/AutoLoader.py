@@ -2,15 +2,25 @@ from typing import List, Generator
 from neumai.Shared.NeumDocument import NeumDocument
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Loaders.Loader import Loader
-from neumai.Loaders.NeumCSVLoader import NeumCSVLoader
-from neumai.Loaders.NeumJSONLoader import NeumJSONLoader
+from neumai.Loaders.CSVLoader import CSVLoader
+from neumai.Loaders.JSONLoader import JSONLoader
 from neumai.Loaders.HTMLLoader import HTMLLoader
 from neumai.Loaders.MarkdownLoader import MarkdownLoader
 from neumai.Loaders.PDFLoader import PDFLoader
 from langchain.document_loaders import UnstructuredFileLoader
 
 class AutoLoader(Loader):
-    """ Auto Loader\n loader_information contains: [] """
+    """ 
+    Auto Loader
+
+    Automatically picks a loading strategy based on the type of file being provided.
+
+    Attributes:
+    -----------
+
+    None
+
+    """
 
     @property
     def loader_name(self) -> str:
@@ -35,7 +45,7 @@ class AutoLoader(Loader):
     def load(self, file:LocalFile) -> Generator[NeumDocument, None, None]:
         """Load data into Document objects."""
         if "csv" in file.type:
-            loader = NeumCSVLoader()
+            loader = CSVLoader()
         elif "string" in file.type:
             yield NeumDocument(content=file.in_mem_data, metadata=file.metadata, id=file.id)
             return
@@ -46,7 +56,7 @@ class AutoLoader(Loader):
         elif "pdf" in file.type:
             loader = PDFLoader()
         elif "json" in file.type:
-            loader = NeumJSONLoader()
+            loader = JSONLoader()
         else:
             loader = UnstructuredFileLoader(file_path=file.file_path)
             documents = loader.load()
@@ -56,5 +66,5 @@ class AutoLoader(Loader):
         
         yield from loader.load(file=LocalFile)
     
-    def validate(self) -> bool:
+    def config_validation(self) -> bool:
         return True   

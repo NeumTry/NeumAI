@@ -1,8 +1,8 @@
 from neumai.Loaders import (
     AutoLoader,
     MarkdownLoader,
-    NeumJSONLoader,
-    NeumCSVLoader,
+    JSONLoader,
+    CSVLoader,
     PDFLoader,
     HTMLLoader,
 )
@@ -21,10 +21,10 @@ def as_loader(dct:dict):
         return HTMLLoader(loader_information=loader_information, selector=selector)
     elif loader_name == LoaderEnum.markdownloader:
         return MarkdownLoader(loader_information=loader_information, selector=selector)
-    elif loader_name == LoaderEnum.neumjsonloader:
-        return NeumJSONLoader(loader_information=loader_information, selector=selector)
-    elif loader_name == LoaderEnum.neumcsvloader:
-        return NeumCSVLoader(loader_information=loader_information, selector=selector)
+    elif loader_name == LoaderEnum.JSONLoader:
+        return JSONLoader(loader_information=loader_information, selector=selector)
+    elif loader_name == LoaderEnum.CSVLoader:
+        return CSVLoader(loader_information=loader_information, selector=selector)
     elif loader_name == LoaderEnum.pdfloader:
         return PDFLoader(loader_information=loader_information, selector=selector)
     else: 

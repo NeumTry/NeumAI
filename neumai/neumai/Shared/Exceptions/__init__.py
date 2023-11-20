@@ -133,3 +133,11 @@ class WeaviateQueryException(Exception):
 class WebsiteConnectionException(Exception):
     """Raised if establishing a connection to a website fails"""
     pass
+
+class NeumFileException(Exception):
+    """Rasied if file couldn't be opened"""
+    pass
+
+class CustomChunkerException(Exception):
+    """Raised if provided code doesn't work with established format"""
+    pass

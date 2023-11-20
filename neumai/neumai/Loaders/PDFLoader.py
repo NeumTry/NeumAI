@@ -5,9 +5,17 @@ from neumai.Loaders.Loader import Loader
 from langchain.document_loaders import PyPDFLoader
 
 class PDFLoader(Loader):
-    """" PDF Loader """
-    """" loader_information contains: """
-    """ [] """
+    """ 
+    PyPDF Loader
+
+    Loads PDF files leveraging PyPDF.
+
+    Attributes:
+    -----------
+
+    None
+
+    """
 
     @property
     def loader_name(self) -> str:
@@ -39,5 +47,5 @@ class PDFLoader(Loader):
         for doc in documents:
             yield NeumDocument(id=file.id, content=doc.page_content, metadata=file.metadata)
     
-    def validate(self) -> bool:
+    def config_validation(self) -> bool:
         return True   

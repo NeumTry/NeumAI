@@ -7,16 +7,36 @@ from neumai.Shared.Exceptions import(
     QdrantQueryException
 )
 from neumai.SinkConnectors.SinkConnector import SinkConnector
-from typing import List
-
+from typing import List, Optional
 from qdrant_client.http.models import Distance, VectorParams
 from qdrant_client.http.models import PointStruct
 from qdrant_client.http.models import UpdateStatus
 from qdrant_client import QdrantClient
+from pydantic import Field
 
 class QdrantSink(SinkConnector):
-    """ Qdrant Sink\n
-    sink_information requires : [ 'url', 'api_key' ]"""
+    """
+    Qdrant Sink
+
+    A sink connector for Qdrant, designed to facilitate data output into a Qdrant storage system.
+
+    Attributes:
+    -----------
+    url : str
+        URL for accessing the Qdrant service.
+
+    api_key : str
+        API key required for authenticating with the Qdrant service.
+
+    collection_name : Optional[str]
+        Optional name of the collection in Qdrant where the data will be stored.
+    """
+
+    url: str = Field(..., description="URL for Qdrant.")
+
+    api_key: str = Field(..., description="API key for Qdrant.")
+
+    collection_name: Optional[str] = Field(None, description="Optional collection name.")
 
     @property
     def sink_name(self) -> str:
@@ -31,26 +51,27 @@ class QdrantSink(SinkConnector):
         return ['collection_name']
 
     def validation(self) -> bool:
-        """Validate connector setup"""
+        """config_validation connector setup"""
         from qdrant_client import QdrantClient
-        try:
-            url = self.sink_information["url"]
-            api_key = self.sink_information["api_key"]
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+        qdrant_client = QdrantClient(
+            url=self.url, 
+            api_key=self.api_key,
+        )
         return True 
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
-        url = self.sink_information["url"]
-        api_key = self.sink_information["api_key"]
-        collection_name = self.sink_information.get("collection_name", f"pipeline_{pipeline_id}")
+        url = self.url
+        api_key = self.api_key
+        collection_name = self.collection_name
+        if collection_name == None: f"pipeline_{pipeline_id}"
+
         qdrant_client = QdrantClient(
             url=url, 
             api_key=api_key,
         )
         qdrant_client.recreate_collection(
             collection_name=collection_name,
-            vectors_config=VectorParams(size=1536, distance=Distance.DOT)
+            vectors_config=VectorParams(size=len(vectors_to_store[0].vector), distance=Distance.DOT)
         )
         points = [PointStruct(id=vector.id, vector=vector.vector, payload=vector.metadata) for vector in vectors_to_store]
         operation_info = qdrant_client.upsert(
@@ -63,9 +84,11 @@ class QdrantSink(SinkConnector):
         raise QdrantInsertionException("Qdrant storing failed. Try again later.")
     
     def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List:
-        api_key = self.sink_information["api_key"]
-        url = self.sink_information['url']
-        collection_name = self.sink_information['collection_name']
+        url = self.url
+        api_key = self.api_key
+        collection_name = self.collection_name
+        if collection_name == None: f"pipeline_{pipeline_id}"
+
         try:
             qdrant_client = QdrantClient(
                 url=url, 
@@ -92,9 +115,11 @@ class QdrantSink(SinkConnector):
         return matches
     
     def info(self, pipeline_id: str) -> NeumSinkInfo:
-        api_key = self.sink_information["api_key"]
-        url = self.sink_information['url']
-        collection_name = self.sink_information['collection_name']
+        url = self.url
+        api_key = self.api_key
+        collection_name = self.collection_name
+        if collection_name == None: f"pipeline_{pipeline_id}"
+
         try:
             qdrant_client = QdrantClient(
                 url=url, 

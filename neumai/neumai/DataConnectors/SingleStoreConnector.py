@@ -1,19 +1,44 @@
 from datetime import datetime
 from neumai.DataConnectors.DataConnector import DataConnector
-from typing import List, Generator
+from typing import List, Generator, Optional
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Selector import Selector
 from neumai.Shared.Exceptions import SinglestoreConnectionException
 from decimal import Decimal
+from pydantic import Field
 import singlestoredb as s2
 import json
 
 
 class SingleStoreConnector(DataConnector):
-    """SingleStore Connector \n
-    connector_information requires:\n
-    [ url, query ]"""
+    """
+    SingleStore Connector
+
+    Extracts rows from Single Store database
     
+    Attributes:
+    -----------
+
+    connection_string : str
+        Connection string to Single Store database (i.e. \<user\>:\<password\>@\<host\>:\<port\>/\<database_name\>)
+    query : str
+        Query to extract data from database (i.e. Select * From TableName)
+    batch_size : Optional[int]
+        Number of rows to process per batch
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
+    
+    connection_string: str = Field(..., description="Connection string to Single Store database.")
+
+    query: str = Field(..., description="Query to be executed.")
+
+    batch_size: Optional[int] = Field(1000, description="Number of rows to process per batch.")
+
+    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
+
     @property
     def connector_name(self) -> str:
         return "SingleStoreConnector"
@@ -40,7 +65,7 @@ class SingleStoreConnector(DataConnector):
     
     @property
     def compatible_loaders(self) -> List[str]:
-        return ["NeumJSONLoader"]
+        return ["JSONLoader"]
     
     class CustomEncoder(json.JSONEncoder):
         def default(self, obj):
@@ -51,13 +76,11 @@ class SingleStoreConnector(DataConnector):
             return super().default(obj)
 
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        url = self.connector_information['url']
-        query = self.connector_information['query']
-        batch_size = 1000
-        if 'batch_size' in self.connector_information.keys():
-            batch_size = self.connector_information['batch_size']
+        connection_string = self.connection_string
+        query = self.query
+        batch_size = self.batch_size
         
-        with s2.connect(url, results_type="dict") as conn:
+        with s2.connect(connection_string, results_type="dict") as conn:
             with conn.cursor() as cur:
                 batch_rows = []
                 cur.execute(query)
@@ -85,14 +108,9 @@ class SingleStoreConnector(DataConnector):
          for row in data:
             yield LocalFile(in_mem_data=json.dumps(row), metadata=cloudFile.metadata)
     
-    def validate(self) -> bool:
-        try:
-            url = self.connector_information['url']
-            query = self.connector_information['query']
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
+    def config_validation(self) -> bool:
         try: 
-            s2.connect(url, results_type="dict")
+            s2.connect(self.connection_string, results_type="dict")
         except Exception as e:
             raise SinglestoreConnectionException(f"There was a problem connecting to Singlestore. See Exception: {e}")
         return True 

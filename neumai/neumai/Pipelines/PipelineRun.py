@@ -1,12 +1,13 @@
-from typing import Any
+from typing import Any, Optional
 from .TriggerSyncTypeEnum import TriggerSyncTypeEnum
+from pydantic import BaseModel
 
-class PipelineRunTaskDetails(object):
-    def __init__(self, completed_embedding_tasks: int, completed_storing_tasks: int, failed_embedding_tasks: int, failed_storing_tasks: int ):
-        self.completed_embedding_tasks = completed_embedding_tasks
-        self.completed_storing_tasks = completed_storing_tasks
-        self.failed_embedding_tasks = failed_embedding_tasks
-        self.failed_storing_tasks = failed_storing_tasks
+class PipelineRunTaskDetails(BaseModel):
+
+    completed_embedding_tasks: int
+    completed_storing_tasks: int
+    failed_embedding_tasks: int
+    failed_storing_tasks: int
 
     def toJson(self):
         json_to_return = {}
@@ -27,19 +28,14 @@ class PipelineRunTaskDetails(object):
             failed_storing_tasks=task_details.get("failed_storing_tasks", None),
         )
     
-class PipelineRunStatus(object):
-    def __init__(self, status: str, message: str = None, exception_detail :str = None):
-        self.status = status.lower()
-        self.message = message
-        self.exception_detail = exception_detail
+class PipelineRunStatus(BaseModel):
+    status: str
+    message: Optional[str] = None
+    exception_detail: Optional[str] = None
 
-    def toJson(self):
-        json_to_return = {}
-        json_to_return['status'] = self.status
-        json_to_return['message'] = self.message
-        json_to_return['exception_detail'] = self.exception_detail
-
-        return json_to_return
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.status = self.status.lower()
     
     def as_pipeline_run_status(detailed_status: dict):
         if detailed_status == None:
@@ -50,44 +46,18 @@ class PipelineRunStatus(object):
             exception_detail=detailed_status.get("exception_detail", None),
         )
     
-class PipelineRun(object):
-    def __init__(self, id: str, created: float, pipeline_id: str, trigger_type: str, sync_type: TriggerSyncTypeEnum, detailed_status:PipelineRunStatus = None, vectors_written=0, task_details: PipelineRunTaskDetails = None, last_updated:float = None, number_of_documents: int = None, finished_distributing:bool=False):
-        self.pipeline_id = pipeline_id
-        self.id = id
-        self.created = created
-        self.trigger_type = trigger_type    
-        self.detailed_status = detailed_status
-        self.sync_type = sync_type
-        self.vectors_written = vectors_written
-        self.task_details = task_details
-        self.last_updated = last_updated
-        self.number_of_documents = number_of_documents
-        self.finished_distributing = finished_distributing
-
-    def toJson(self):
-        """Python does not have built in serialization. We need this logic to be able to respond in our API..
-
-        Returns:
-            _type_: the json to return
-        """
-        json_to_return = {}
-        json_to_return['id'] = self.id
-        json_to_return['pipeline_id'] = self.pipeline_id
-        json_to_return['created'] = self.created
-        json_to_return['trigger_type'] = self.trigger_type
-        json_to_return['sync_type'] = self.sync_type
-        json_to_return['vectors_written'] = self.vectors_written
-        json_to_return['last_updated'] = self.last_updated
-        json_to_return['number_of_documents'] = self.number_of_documents
-        json_to_return['finished_distributing'] = self.finished_distributing
-        if self.task_details != None:
-            json_to_return['task_details'] = self.task_details.toJson()
-        if(self.detailed_status != None):
-            json_to_return['detailed_status'] = self.detailed_status.toJson()
-        else:
-            json_to_return['detailed_status'] = {"status":"None", "message":"", "exception_detail":None}
-
-        return json_to_return
+class PipelineRun(BaseModel):
+    id: str
+    created: float
+    pipeline_id: str
+    trigger_type: str
+    sync_type: TriggerSyncTypeEnum
+    detailed_status: Optional[PipelineRunStatus] = None
+    vectors_written: int = 0
+    task_details: Optional[PipelineRunTaskDetails] = None
+    last_updated: Optional[float] = None
+    number_of_documents: Optional[int] = None
+    finished_distributing: bool = False
                                                  
     def set_id(self, id: str):
         self.id = id
