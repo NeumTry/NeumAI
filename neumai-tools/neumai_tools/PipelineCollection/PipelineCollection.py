@@ -35,7 +35,7 @@ class PipelineCollection(BaseModel):
         # Re-rank results by score. Should add a callback option for re-rank
         return sorted(search_results, key=lambda x: x.score, reverse=True)[:number_of_results]
 
-    def search_separate(self, query:str, number_of_results:int)-> List[NeumSearchResult]:
+    def search_separate(self, query:str, number_of_results:int)-> List:
         """Search pipelines and provide raw results for each pipeline"""
         
         # Simple query of results
@@ -50,7 +50,7 @@ class PipelineCollection(BaseModel):
         # Re-rank results by score. Should add a callback option for re-rank
         return (search_results)
     
-    def search_routed(self, query:str, number_of_results:int)-> List[NeumSearchResult]:
+    def search_routed(self, query:str, number_of_results:int)-> List:
         """Routed search based on the contents available in a pipeline"""
-        # Need to add descriptions to the pipeline
+        # Need to add descriptions to the pipeline and generate a basic index on top of them
         raise NotImplementedError("In the works. Contact founders@tryneum.com for information")
