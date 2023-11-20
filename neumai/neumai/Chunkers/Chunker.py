@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from neumai.Shared.NeumDocument import NeumDocument
 from typing import List, Generator
 from pydantic import BaseModel
-
+import json
 class Chunker(ABC, BaseModel):
     
     @property
@@ -36,7 +36,7 @@ class Chunker(ABC, BaseModel):
         """
         json_to_return = {}
         json_to_return['chunker_name'] = self.chunker_name
-        json_to_return['chunker_information'] = self.json()
+        json_to_return['chunker_information'] = json.loads(self.json())
         return json_to_return
 
     def config(self):

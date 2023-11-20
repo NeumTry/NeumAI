@@ -4,6 +4,7 @@ from neumai.Shared.NeumDocument import NeumDocument
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.Selector import Selector
 from pydantic import BaseModel
+import json
 
 class Loader(ABC, BaseModel):    
     @property
@@ -47,7 +48,7 @@ class Loader(ABC, BaseModel):
         """
         json_to_return = {}
         json_to_return['loader_name'] = self.loader_name
-        json_to_return['loader_information'] = self.json()
+        json_to_return['loader_information'] = json.loads(self.json())
         return json_to_return
 
     def config(self):

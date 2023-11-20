@@ -2,11 +2,11 @@ from typing import List, Generator, Dict
 from datetime import datetime
 from pydantic import BaseModel, Field, validator
 from neumai.DataConnectors.DataConnector import DataConnector
-from neumai.DataConnectors.DataConnectorEnum import DataConnectorEnum
 from neumai.Chunkers.Chunker import Chunker
 from neumai.Chunkers.RecursiveChunker import RecursiveChunker
 from neumai.Loaders.Loader import Loader
 from neumai.Loaders.AutoLoader import AutoLoader
+from neumai.ModelFactories import ChunkerFactory, DataConnectorFactory, LoaderFactory
 from neumai.Shared.NeumDocument import NeumDocument
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
@@ -63,15 +63,23 @@ class SourceConnector(BaseModel):
         loader_validation = self.loader.loader_name in self.data_connector.compatible_loaders
         return core_validation and loader_validation
 
-    # @validator("data_connector", pre=True, always=True)
-    # def deserialize_abstract_property(cls, value):
-    #     connector_name = value.get("connector_name")
-    #     connector_name_enum = DataConnectorEnum.as_data_connector_enum(connector_name)
-    #     if connector_name_enum == "MyConcreteClass":
-    #         return MyConcreteClass(**value)
-
-    #     # Add cases for other concrete classes as needed
-    #     raise ValueError(f"Unknown discriminator value: {discriminator}")
+    @validator("data_connector", pre=True, always=True)
+    def deserialize_data_connector(cls, value):
+        if isinstance(value, dict):
+            return DataConnectorFactory.get_data_connector(value.get("connector_name"), value.get("connector_information"))
+        return value
+    
+    @validator("chunker", pre=True, always=True)
+    def deserialize_chunker(cls, value):
+        if isinstance(value, dict):
+            return ChunkerFactory.get_chunker(value.get("chunker_name"), value.get("chunker_information"))
+        return value
+        
+    @validator("loader", pre=True, always=True)
+    def deserialize_loader(cls, value):
+        if isinstance(value, dict):
+            return LoaderFactory.get_loader(value.get("loader_name"), value.get("loader_information"))
+        return value
     
     def as_json(self):
         """Python does not have built in serialization. We need this logic to be able to respond in our API..

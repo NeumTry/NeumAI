@@ -5,6 +5,7 @@ from neumai.Shared.CloudFile import CloudFile
 from neumai.Shared.Selector import Selector
 from datetime import datetime
 from pydantic import BaseModel
+import json
 
 class DataConnector(BaseModel, ABC):
 
@@ -70,7 +71,7 @@ class DataConnector(BaseModel, ABC):
         """
         json_to_return = {}
         json_to_return['connector_name'] = self.connector_name
-        json_to_return['connector_information'] = self.json()
+        json_to_return['connector_information'] = json.loads(self.json())
         return json_to_return
 
     def config(self):

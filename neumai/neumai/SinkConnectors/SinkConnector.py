@@ -4,6 +4,7 @@ from neumai.Shared.NeumSinkInfo import NeumSinkInfo
 from abc import ABC, abstractmethod
 from typing import List
 from pydantic import BaseModel
+import json
 
 class SinkConnector(ABC, BaseModel):
 
@@ -46,7 +47,7 @@ class SinkConnector(ABC, BaseModel):
         """
         json_to_return = {}
         json_to_return['sink_name'] = self.sink_name
-        json_to_return['sink_information'] = self.json()
+        json_to_return['sink_information'] = json.loads(self.json())
         return json_to_return
 
     def config(self):

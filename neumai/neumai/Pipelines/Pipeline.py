@@ -2,12 +2,14 @@ from .PipelineRun import PipelineRun
 from .TriggerSchedule import TriggerSchedule
 from neumai.SinkConnectors.SinkConnector import SinkConnector
 from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
+from neumai.ModelFactories import EmbedConnectorFactory, SinkConnectorFactory
 from neumai.Sources.SourceConnector import SourceConnector
 from neumai.Shared.NeumVector import NeumVector
 from neumai.Shared.NeumSearch import NeumSearchResult
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from uuid import uuid4
+import json
 
 class Pipeline(BaseModel):
     """
@@ -102,6 +104,18 @@ class Pipeline(BaseModel):
             available_metadata += source.loader.selector.to_metadata
         return available_metadata
 
+    @validator("embed", pre=True, always=True)
+    def deserialize_embed(cls, value):
+        if isinstance(value, dict):
+            return EmbedConnectorFactory.get_embed(value.get("embed_name"), value.get("embed_information"))
+        return value
+    
+    @validator("sink", pre=True, always=True)
+    def deserialize_sink(cls, value):
+        if isinstance(value, dict):
+            return SinkConnectorFactory.get_sink(value.get("sink_name"), value.get("sink_information"))
+        return value
+    
     def config_validation(self) -> bool:
         """Running validation for each connector"""
         try:
@@ -156,11 +170,12 @@ class Pipeline(BaseModel):
         if self.trigger_schedule == None:
             content_to_return['trigger_schedule'] = None
         else:
-            content_to_return['trigger_schedule'] = self.trigger_schedule.json()
+            content_to_return['trigger_schedule'] = json.loads(self.trigger_schedule.json())
 
-        content_to_return['latest_run'] = self.latest_run.json()
+        content_to_return['latest_run'] = json.loads(self.latest_run.json())
         content_to_return['available_metadata'] = self.available_metadata()
         content_to_return['is_deleted'] = self.is_deleted
+        content_to_return['owner'] = self.owner
 
         return content_to_return
 
