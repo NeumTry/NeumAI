@@ -1,4 +1,4 @@
-from typing import List, Generator, Dict
+from typing import List, Generator, Dict, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field, validator
 from neumai.DataConnectors.DataConnector import DataConnector
@@ -39,7 +39,7 @@ class SourceConnector(BaseModel):
 
     loader: Loader = Field(default=AutoLoader(), description="Loader to load data from file / data type")
 
-    custom_metadata: Dict = Field(default_factory=dict, description="Custom metadata to be added to the vector")
+    custom_metadata: Optional[Dict] = Field({}, description="Custom metadata to be added to the vector")
 
     def list_files_full(self) -> Generator[CloudFile, None, None]:
         yield from self.data_connector.connect_and_list_full()
