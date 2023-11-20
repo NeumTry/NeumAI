@@ -156,7 +156,10 @@ class WeaviateSink(SinkConnector):
         api_key = self.api_key
         url = self.url
         # Weaviate requires first letter to be capitalized
-        class_name = _capitalize_first_letter(self.sink_information.get('class_name', f"Pipeline_{pipeline_id.replace('-', '_')}"))
+        class_name = self.class_name
+        if class_name == None: class_name = f"pipeline_{pipeline_id.replace('-','_')}"
+        class_name = _capitalize_first_letter(class_name)
+
         client = weaviate.Client(
             url=url,
             auth_client_secret=weaviate.AuthApiKey(api_key=api_key),
@@ -192,7 +195,10 @@ class WeaviateSink(SinkConnector):
         api_key = self.api_key
         url = self.url
         
-        class_name = _capitalize_first_letter(self.sink_information.get('class_name', f"Pipeline_{pipeline_id.replace('-', '_')}"))
+        class_name = self.class_name
+        if class_name == None: class_name = f"pipeline_{pipeline_id.replace('-','_')}"
+        class_name = _capitalize_first_letter(class_name)
+        
         client = weaviate.Client(
             url=url,
             auth_client_secret=weaviate.AuthApiKey(api_key=api_key),
