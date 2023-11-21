@@ -29,9 +29,9 @@ It provides you a comprehensive solution for RAG that can scale with your applic
 
 ### Neum AI Cloud
 
-Sign up today at [dasboard.neum.ai](https://dashboard.neum.ai). See our [quickstart](https://docs.neum.ai/get-started/quickstart) to get started.
+Sign up today at [dashboard.neum.ai](https://dashboard.neum.ai). See our [quickstart](https://docs.neum.ai/get-started/quickstart) to get started.
 
-The Neum AI Cloud supports a large-scale, distrubted architecture to run millions of documents through vector embedding. For the full set of features see: [Cloud vs Local](https://neumai.mintlify.app/get-started/cloud-vs-local)
+The Neum AI Cloud supports a large-scale, distributed architecture to run millions of documents through vector embedding. For the full set of features see: [Cloud vs Local](https://neumai.mintlify.app/get-started/cloud-vs-local)
 
 ### Local Development
 
