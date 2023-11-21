@@ -45,19 +45,20 @@ To create your first data pipelines visit our [quickstart](https://docs.neum.ai/
 
 At a high level, a pipeline consists of one or multiple sources to pull data from, one embed connector to vectorize the content, and one sink connector to store said vectors.
 With this snippet of code we will craft all of these and run a pipeline:
-````md
-<details>
+<details open>
   <summary>Open snippet</summary>
+  
   ```python
-    from neumai.DataConnectors import WebsiteConnector
-    from neumai.Shared import Selector
+  
+    from neumai.DataConnectors.WebsiteConnector import WebsiteConnector
+    from neumai.Shared.Selector import Selector
     from neumai.Loaders.HTMLLoader import HTMLLoader
     from neumai.Chunkers.RecursiveChunker import RecursiveChunker
-    from neumai.Sources import SourceConnector
+    from neumai.Sources.SourceConnector import SourceConnector
     from neumai.EmbedConnectors import OpenAIEmbed
     from neumai.SinkConnectors import WeaviateSink
     from neumai.Pipelines import Pipeline
-  
+
     website_connector =  WebsiteConnector(
         url = "https://www.neum.ai/post/retrieval-augmented-generation-at-scale",
         selector = Selector(
@@ -94,10 +95,8 @@ With this snippet of code we will craft all of these and run a pipeline:
   
     for result in results:
       print(result.metadata)
-  
   ```
 </details>
-````
 
 ### Self-host
 
