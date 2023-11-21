@@ -45,55 +45,59 @@ To create your first data pipelines visit our [quickstart](https://docs.neum.ai/
 
 At a high level, a pipeline consists of one or multiple sources to pull data from, one embed connector to vectorize the content, and one sink connector to store said vectors.
 With this snippet of code we will craft all of these and run a pipeline:
-
-```python
-  from neumai.DataConnectors import WebsiteConnector
-  from neumai.Shared import Selector
-  from neumai.Loaders.HTMLLoader import HTMLLoader
-  from neumai.Chunkers.RecursiveChunker import RecursiveChunker
-  from neumai.Sources import SourceConnector
-  from neumai.EmbedConnectors import OpenAIEmbed
-  from neumai.SinkConnectors import WeaviateSink
-  from neumai.Pipelines import Pipeline
-
-  website_connector =  WebsiteConnector(
-      url = "https://www.neum.ai/post/retrieval-augmented-generation-at-scale",
-      selector = Selector(
-          to_metadata=['url']
-      )
-  )
-  source = SourceConnector(
-    data_connector = website_connector, 
-    loader = HTMLLoader(), 
-    chunker = RecursiveChunker()
-  )
-
-  openai_embed = OpenAIEmbed(
-    api_key = "<OPEN AI KEY>",
-  )
-
-  weaviate_sink = WeaviateSink(
-    url = "your-weaviate-url",
-    api_key = "your-api-key",
-    class_name = "your-class-name",
-  )
-
-  pipeline = Pipeline(
-    sources=[source], 
-    embed=openai_embed, 
-    sink=weaviate_sink
-  )
-  pipeline.run()
-
-  results = pipeline.search(
-    query="What are the challenges with scaling RAG?", 
-    number_of_results=3
-  )
-
-  for result in results:
-    print(result.metadata)
-
-```
+````md
+<details>
+  <summary>Open snippet</summary>
+  ```python
+    from neumai.DataConnectors import WebsiteConnector
+    from neumai.Shared import Selector
+    from neumai.Loaders.HTMLLoader import HTMLLoader
+    from neumai.Chunkers.RecursiveChunker import RecursiveChunker
+    from neumai.Sources import SourceConnector
+    from neumai.EmbedConnectors import OpenAIEmbed
+    from neumai.SinkConnectors import WeaviateSink
+    from neumai.Pipelines import Pipeline
+  
+    website_connector =  WebsiteConnector(
+        url = "https://www.neum.ai/post/retrieval-augmented-generation-at-scale",
+        selector = Selector(
+            to_metadata=['url']
+        )
+    )
+    source = SourceConnector(
+      data_connector = website_connector, 
+      loader = HTMLLoader(), 
+      chunker = RecursiveChunker()
+    )
+  
+    openai_embed = OpenAIEmbed(
+      api_key = "<OPEN AI KEY>",
+    )
+  
+    weaviate_sink = WeaviateSink(
+      url = "your-weaviate-url",
+      api_key = "your-api-key",
+      class_name = "your-class-name",
+    )
+  
+    pipeline = Pipeline(
+      sources=[source], 
+      embed=openai_embed, 
+      sink=weaviate_sink
+    )
+    pipeline.run()
+  
+    results = pipeline.search(
+      query="What are the challenges with scaling RAG?", 
+      number_of_results=3
+    )
+  
+    for result in results:
+      print(result.metadata)
+  
+  ```
+</details>
+````
 
 ### Self-host
 
