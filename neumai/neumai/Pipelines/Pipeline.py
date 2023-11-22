@@ -58,6 +58,8 @@ class Pipeline(BaseModel):
 
     name: Optional[str] = Field(None, description="Name of the pipeline")
 
+    description: Optional[str] = Field(None, description="Description of the data contained in the pipeline")
+
     created: Optional[float] = Field(None, description="Timestamp of when the pipeline was created")
 
     updated: Optional[float] = Field(None, description="Timestamp of when the pipeline was last updated")
