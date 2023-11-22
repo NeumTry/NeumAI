@@ -4,11 +4,10 @@ from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
 from neumai.Shared.Selector import Selector
 from datetime import datetime
+from pydantic import BaseModel
+import json
 
-class DataConnector(ABC):
-    def __init__(self, connector_information:dict = {}, selector:Selector = Selector(to_embed=[], to_metadata=[])) -> None:
-        self.connector_information = connector_information
-        self.selector = selector
+class DataConnector(BaseModel, ABC):
 
     @property
     @abstractmethod
@@ -59,12 +58,12 @@ class DataConnector(ABC):
         """Connect to source and download file into local storage"""
 
     @abstractmethod
-    def validate(self) -> bool:
-        """Validate if the connector is correctly configured"""
+    def config_validation(self) -> bool:
+        """config_validation if the connector is correctly configured"""
 
     # To do auto_sync logic.
 
-    def toJson(self):
+    def as_json(self):
         """Python does not have built in serialization. We need this logic to be able to respond in our API..
 
         Returns:
@@ -72,20 +71,7 @@ class DataConnector(ABC):
         """
         json_to_return = {}
         json_to_return['connector_name'] = self.connector_name
-        json_to_return['connector_information'] = self.connector_information
-        json_to_return['selector'] = self.selector.toJson()
-        return json_to_return
-    
-    def to_model(self):
-        """Python does not have built in serialization. We need this logic to be able to respond in our API..
-        This is different than toJson, here we use it to create a model, we don't want to return the api key in the body back. Eventualyl this should be its own class...
-        Returns:
-            _type_: the json to return
-        """
-        json_to_return = {}
-        json_to_return['connector_name'] = self.connector_name
-        json_to_return['connector_information'] = self.connector_information
-        json_to_return['selector'] = self.selector.to_model()
+        json_to_return['connector_information'] = json.loads(self.json())
         return json_to_return
 
     def config(self):

@@ -1,17 +1,46 @@
 from datetime import datetime
-from typing import List, Generator
+from typing import List, Generator, Optional
 import boto3
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Selector import Selector
 from neumai.Shared.Exceptions import S3ConnectionException
 from neumai.DataConnectors.DataConnector import DataConnector
+from pydantic import Field
 import tempfile
 import os
 
 class S3Connector(DataConnector):
-    """" Neum File Connector \n
-    connector_information contains: \n
-    [ aws_key_id, aws_access_key, bucket_name ]"""
+    """
+    S3 Connector
+
+    Extracts files from an S3 Bucket
+    
+    Attributes:
+    -----------
+
+    aws_key_id : str
+        Access key ID to the S3 bucket
+    aws_access_key : str
+        Access key to the S3 bucket
+    bucket_name : str
+        Name of S3 bucket
+    prefix : Optional[str]
+        File prefix filter
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
+    
+    aws_key_id: str = Field(..., description="AWS Key ID for S3 access.")
+
+    aws_access_key: str = Field(..., description="AWS Access Key for S3 access.")
+
+    bucket_name: str = Field(..., description="S3 bucket name.")
+
+    prefix: Optional[str] = Field(None, description="Optional prefix for S3 files.")
+
+    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
 
     @property
     def connector_name(self) -> str:
@@ -39,13 +68,13 @@ class S3Connector(DataConnector):
     
     @property
     def compatible_loaders(self) -> List[str]:
-        return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
+        return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "CSVLoader", "JSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
-        aws_key_id= self.connector_information['aws_key_id']
-        aws_access_key= self.connector_information['aws_access_key']
-        bucket_name= self.connector_information['bucket_name']
-        prefix = self.connector_information.get("prefix", "")
+        aws_key_id= self.aws_key_id
+        aws_access_key= self.aws_access_key
+        bucket_name= self.bucket_name
+        prefix = self.prefix
         session = boto3.Session(
             aws_access_key_id=aws_key_id,
             aws_secret_access_key=aws_access_key,
@@ -70,10 +99,10 @@ class S3Connector(DataConnector):
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
         # Connect to S3
-        aws_key_id= self.connector_information['aws_key_id']
-        aws_access_key= self.connector_information['aws_access_key']
-        bucket_name= self.connector_information['bucket_name']
-        prefix = self.connector_information.get("prefix", "")   
+        aws_key_id= self.aws_key_id
+        aws_access_key= self.aws_access_key
+        bucket_name= self.bucket_name
+        prefix = self.prefix
         session = boto3.Session(
             aws_access_key_id=aws_key_id,
             aws_secret_access_key=aws_access_key,
@@ -101,9 +130,9 @@ class S3Connector(DataConnector):
 
     def connect_and_download(self, cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
         # Connect to S3
-        aws_key_id= self.connector_information['aws_key_id']
-        aws_access_key= self.connector_information['aws_access_key']
-        bucket_name= self.connector_information['bucket_name']
+        aws_key_id= self.aws_key_id
+        aws_access_key= self.aws_access_key
+        bucket_name= self.bucket_name
         session = boto3.Session(
             aws_access_key_id=aws_key_id,
             aws_secret_access_key=aws_access_key,
@@ -115,24 +144,17 @@ class S3Connector(DataConnector):
             s3_client.download_file(bucket_name, cloudFile.file_identifier, file_path)
             yield LocalFile(file_path=file_path, metadata=cloudFile.metadata, id=cloudFile.id)
 
-    def validate(self) -> bool:
-        try:
-            aws_key_id= self.connector_information['aws_key_id']
-            aws_access_key= self.connector_information['aws_access_key']
-            bucket_name= self.connector_information['bucket_name']
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
-        
+    def config_validation(self) -> bool:      
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:
             session = boto3.Session(
-                aws_access_key_id=aws_key_id,
-                aws_secret_access_key=aws_access_key,
+                aws_access_key_id=self.aws_key_id,
+                aws_secret_access_key=self.aws_access_key,
             )
             client = session.client("s3")
-            client.head_bucket(Bucket=bucket_name)
+            client.head_bucket(Bucket=self.bucket_name)
         except Exception as e:
             raise S3ConnectionException(f"Connection to S3 failed, check key and key ID. See Exception: {e}")
         return True 

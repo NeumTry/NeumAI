@@ -1,17 +1,46 @@
 from datetime import datetime
-from typing import List, Generator
+from typing import List, Generator, Optional
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Selector import Selector
 from neumai.Shared.Exceptions import SharepointConnectionException
 from neumai.DataConnectors.DataConnector import DataConnector
+from pydantic import Field
 import tempfile
 import requests
 
 class SharepointConnector(DataConnector):
-    """" Sharepoint Connector \n
-    connector_information requires:\n
-    [ tenant_id, client_id, client_secret, site_id ]"""
+    """
+    Sharepoint Connector
+
+    Extracts all files from an Sharepoint site. 
     
+    Attributes:
+    -----------
+
+    tenant_id : str
+        Sharepoint Tenant ID
+    site_id : str
+        Site ID for Sharepoint
+    client_id : str
+        App Registration Client ID
+    client_secret : str
+        App Registration Client secret
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
+    
+    tenant_id: str = Field(..., description="Tenant ID for Sharepoint.")
+
+    site_id: str = Field(..., description="Site ID for Sharepoint.")
+
+    client_id: str = Field(..., description="Client ID for Sharepoint.")
+
+    client_secret: str = Field(..., description="Client Secret for Sharepoint.")
+
+    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
+
     @property
     def connector_name(self) -> str:
         return "SharepointConnector"
@@ -38,7 +67,7 @@ class SharepointConnector(DataConnector):
     
     @property
     def compatible_loaders(self) -> List[str]:
-        return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
+        return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "CSVLoader", "JSONLoader", "PDFLoader"]
     
     def process_folder(self, site_id:str, drive_id:str, folder_id:str, headers:dict) -> Generator[CloudFile, None, None]:
         import requests
@@ -106,10 +135,10 @@ class SharepointConnector(DataConnector):
         import requests
 
         #Required
-        tenant_id = self.connector_information['tenant_id']
-        client_id = self.connector_information['client_id']
-        client_secret = self.connector_information['client_secret']
-        site_id = self.connector_information['site_id']
+        tenant_id = self.tenant_id
+        client_id = self.client_id
+        client_secret = self.client_secret
+        site_id = self.site_id
 
         #Auth
         token_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
@@ -143,10 +172,10 @@ class SharepointConnector(DataConnector):
         import requests
 
         #Required
-        tenant_id = self.connector_information['tenant_id']
-        client_id = self.connector_information['client_id']
-        client_secret = self.connector_information['client_secret']
-        site_id = self.connector_information['site_id']
+        tenant_id = self.tenant_id
+        client_id = self.client_id
+        client_secret = self.client_secret
+        site_id = self.site_id
 
         #Auth
         token_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
@@ -187,24 +216,16 @@ class SharepointConnector(DataConnector):
             temp_file.write(file_r.content)
         yield LocalFile(file_path=temp_file.name, metadata=metadata, id=id, type=type)
     
-    def validate(self) -> bool:
-        try:
-            tenant_id = self.connector_information['tenant_id']
-            client_id = self.connector_information['client_id']
-            client_secret = self.connector_information['client_secret']
-            site_id = self.connector_information['site_id']
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
-        
+    def config_validation(self) -> bool:
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:
-            token_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
+            token_url = f"https://login.microsoftonline.com/{self.tenant_id}/oauth2/v2.0/token"
             token_data = {
                 'grant_type': 'client_credentials',
-                'client_id': client_id,
-                'client_secret': client_secret,
+                'client_id': self.client_id,
+                'client_secret': self.client_secret,
                 'scope': 'https://graph.microsoft.com/.default'
             }
             token_r = requests.post(token_url, headers={"Content-Type":"application/x-www-form-urlencoded"}, data=token_data)
@@ -216,7 +237,7 @@ class SharepointConnector(DataConnector):
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
-            doc_libraries_url = f"https://graph.microsoft.com/v1.0/sites/{site_id}/drives"
+            doc_libraries_url = f"https://graph.microsoft.com/v1.0/sites/{self.site_id}/drives"
             requests.get(doc_libraries_url, headers=headers)
         except Exception as e:
             raise SharepointConnectionException(f"Connection to Sharepoint failed, check credentials. See Exception: {e}")       

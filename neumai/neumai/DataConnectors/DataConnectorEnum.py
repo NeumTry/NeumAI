@@ -2,8 +2,8 @@ from enum import Enum
 
 class DataConnectorEnum(str, Enum):
     azureblobconnector = "azureblobconnector"
-    neumfileconnector = "neumfileconnector"
-    neumwebsiteconnector = "neumwebsiteconnector"
+    fileconnector = "fileconnector"
+    websiteconnector = "websiteconnector"
     postgresconnector = "postgresconnector"
     s3connector = "s3connector"
     sharepointconnector = "sharepointconnector"

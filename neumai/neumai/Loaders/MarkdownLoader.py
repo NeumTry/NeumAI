@@ -5,9 +5,17 @@ from neumai.Loaders.Loader import Loader
 from langchain.document_loaders import UnstructuredMarkdownLoader
 
 class MarkdownLoader(Loader):
-    """" Markdown Loader """
-    """" loader_information contains: """
-    """ [ ] """
+    """ 
+    Markdown Loader
+
+    Loads Markdown files leveraging Unstructure Markdown Loader.
+
+    Attributes:
+    -----------
+
+    None
+
+    """
 
     @property
     def loader_name(self) -> str:
@@ -38,5 +46,5 @@ class MarkdownLoader(Loader):
         for doc in documents:
             yield NeumDocument(id=file.id, content=doc.page_content, metadata=file.metadata)
 
-    def validate(self) -> bool:
+    def config_validation(self) -> bool:
         return True   

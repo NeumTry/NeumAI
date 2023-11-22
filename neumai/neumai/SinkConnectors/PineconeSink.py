@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from neumai.Shared.NeumSearch import NeumSearchResult
 from neumai.Shared.NeumSinkInfo import NeumSinkInfo
 from neumai.SinkConnectors.SinkConnector import SinkConnector
@@ -9,12 +9,38 @@ from neumai.Shared.Exceptions import (
     PineconeIndexInfoException,
     PineconeQueryException,
 )
+from pydantic import Field
 import pinecone
 
 class  PineconeSink(SinkConnector):
-    """ Pinecone Sink\n
-    sink_information requires : [ 'api_key', 'environment', 'index' ]"""
-        
+    """
+    Pinecone Sink
+
+    A sink connector specifically designed for Pinecone, facilitating the output of processed data into a Pinecone environment.
+
+    Attributes:
+    -----------
+    api_key : str
+        API key for accessing the Pinecone service.
+
+    environment : str
+        The specific Pinecone environment to connect to.
+
+    index : str
+        The index in Pinecone where the data will be stored.
+
+    namespace : Optional[str]
+        Optional namespace within the Pinecone environment. Used for organizing data.
+    """
+
+    api_key: str = Field(..., description="API key for Pinecone.")
+
+    environment: str = Field(..., description="Pinecone environment.")
+
+    index: str = Field(..., description="Index for Pinecone.")
+
+    namespace: Optional[str] = Field(None, description="Optional namespace.")
+
     @property
     def sink_name(self) -> str:
         return 'PineconeSink'
@@ -28,27 +54,23 @@ class  PineconeSink(SinkConnector):
         return ['namespace']
 
     def validation(self) -> bool:
-        """Validate connector setup"""
+        """config_validation connector setup"""
         import pinecone
         try:
-            api_key = self.sink_information['api_key']
-            environment = self.sink_information['environment']
-            index = self.sink_information['index']
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
-        try:
-            pinecone.init(api_key=api_key, environment=environment)    
-            index = pinecone.Index(index_name=index)
+            pinecone.init(api_key=self.api_key, environment=self.environment)    
+            index = pinecone.Index(index_name=self.index)
             index.describe_index_stats()
         except Exception as e:
             raise PineconeConnectionException(f"Pinecone connection couldn't be initialized. See exception: {e}")
         return True 
 
     def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
-        api_key =  self.sink_information['api_key']
-        environment = self.sink_information['environment']
-        index = self.sink_information['index']
-        namespace = self.sink_information.get("namespace", f"pipeline_{pipeline_id}")
+        api_key =  self.api_key
+        environment = self.environment
+        index = self.index
+        namespace = self.namespace
+        if namespace == None: namespace = f"pipeline_{pipeline_id}"
+
         try:
             pinecone.init(api_key=api_key, environment=environment)    
             index = pinecone.Index(index_name=index)
@@ -68,10 +90,12 @@ class  PineconeSink(SinkConnector):
     
     def search(self, vector: List[float], number_of_results:int, pipeline_id:str) -> List[NeumSearchResult]:
         import pinecone
-        api_key = self.sink_information["api_key"]
-        environment = self.sink_information['environment']
-        index = self.sink_information['index']
-        namespace = self.sink_information.get("namespace", f"pipeline_{pipeline_id}")
+        api_key =  self.api_key
+        environment = self.environment
+        index = self.index
+        namespace = self.namespace
+        if namespace == None: namespace = f"pipeline_{pipeline_id}"
+
         try:
             pinecone.init(      
                 api_key=api_key,      
@@ -88,10 +112,12 @@ class  PineconeSink(SinkConnector):
     
     def info(self, pipeline_id: str) -> NeumSinkInfo:
         import pinecone
-        api_key = self.sink_information["api_key"]
-        environment = self.sink_information['environment']
-        index = self.sink_information['index']
-        namespace = self.sink_information.get("namespace", f"pipeline_{pipeline_id}")
+        api_key =  self.api_key
+        environment = self.environment
+        index = self.index
+        namespace = self.namespace
+        if namespace == None: namespace = f"pipeline_{pipeline_id}"
+        
         try:
             pinecone.init(      
                 api_key=api_key,      

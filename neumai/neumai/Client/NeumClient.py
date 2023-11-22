@@ -5,13 +5,14 @@ import requests
 import json
 
 class NeumClient(ABC):
-    def __init__(self, api_key:str) -> None:
+    def __init__(self, api_key:str, endpoint:str = 'https://api.neum.ai/v2') -> None:
         self.api_key = api_key
+        self.endpoint = endpoint
 
     def createPipeline(self, pipeline:Pipeline):
         import requests
-        
-        url = f"https://api.neum.ai/v2/pipelines"
+
+        url = f"{self.endpoint}/pipelines"
 
         # Headers
         headers = {
@@ -19,37 +20,44 @@ class NeumClient(ABC):
             "Content-Type": "application/json"
         }
 
-        response = requests.post(url, headers=headers, json=pipeline.as_request())
-        return response.json()['id']
-
+        try: 
+            response = requests.post(url, headers=headers, json=pipeline.as_json())
+            return response.json()['id']
+        except Exception as e:
+            print(f"Pipeline creation failed. Exception - {e}")
+            
     def getPipeline(self, pipeline_id:str):
         import requests
         import json
 
-        url = f"https://api.neum.ai/v2/pipelines/{pipeline_id}"
+        url = f"{self.endpoint}/pipelines/{pipeline_id}"
 
         headers = {
             "accept": "application/json",
             "neum-api-key": self.api_key
         }
-
-        response = requests.get(url, headers=headers)
-        return(json.loads(response.text))
+        try:
+            response = requests.get(url, headers=headers)
+            return(json.loads(response.text))
+        except Exception as e:
+            print(f"Pipeline fetching failed. Exception - {e}")
     
     def triggerPipeline(self, pipeline_id:str, sync_type:TriggerSyncTypeEnum):
-        url = f"https://api.neum.ai/v2/pipelines/{pipeline_id}/trigger"
+        url = f"{self.endpoint}/pipelines/{pipeline_id}/trigger"
 
         # Headers
         headers = {
             "neum-api-key":self.api_key,
             "Content-Type": "application/json"
         }
-
-        response = requests.post(url, headers=headers, json={ "sync_type": sync_type.value })
-        return json.loads(response.text)
+        try:
+            response = requests.post(url, headers=headers, json={ "sync_type": sync_type.value })
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Pipeline trigger failed. Exception - {e}")
 
     def searchPipeline(self, pipeline_id:str, query:str, num_of_results:int = 3, track:bool = False):
-        url = f"https://api.neum.ai/v2/pipelines/{pipeline_id}/search"
+        url = f"{self.endpoint}/pipelines/{pipeline_id}/search"
 
         payload = {
             "number_of_results": num_of_results,
@@ -61,7 +69,8 @@ class NeumClient(ABC):
             "neum-api-key": self.api_key,
             "content-type": "application/json"
         }
-
-        response = requests.post(url, json=payload, headers=headers)
-
-        return json.loads(response.text)
+        try:
+            response = requests.post(url, json=payload, headers=headers)
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Pipeline trigger failed. Exception - {e}")

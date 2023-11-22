@@ -2,133 +2,79 @@ from .PipelineRun import PipelineRun
 from .TriggerSchedule import TriggerSchedule
 from neumai.SinkConnectors.SinkConnector import SinkConnector
 from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
+from neumai.ModelFactories import EmbedConnectorFactory, SinkConnectorFactory
 from neumai.Sources.SourceConnector import SourceConnector
-from neumai.EmbedConnectors.EmbedHelper import as_embed
-from neumai.SinkConnectors.SinkHelper import as_sink
 from neumai.Shared.NeumVector import NeumVector
 from neumai.Shared.NeumSearch import NeumSearchResult
-from typing import List
-import uuid
+from typing import List, Optional
+from pydantic import BaseModel, Field, validator
+from uuid import uuid4
+import json
 
-accepted_trigger_sync_types: List = []
-class Pipeline(object):
-    def __init__(self, 
-                sources:  List[SourceConnector],
-                embed: EmbedConnector, 
-                sink: SinkConnector, 
-                name:str = None,
-                id: str = str(uuid.uuid4()), 
-                created: float = None, 
-                updated: float = None,
-                trigger_schedule: TriggerSchedule = None, 
-                latest_run: PipelineRun = None, 
-                owner: str = None, 
-                is_deleted: bool = False):
-        self.id = id
-        self.name = name
-        self.created = created
-        self.updated = updated
-        self.sources = sources
-        self.embed = embed
-        self.sink = sink
-        self.trigger_schedule = trigger_schedule
-        self.latest_run = latest_run 
-        self.owner = owner
-        self.is_deleted = is_deleted
+class Pipeline(BaseModel):
+    """
+    Pipeline managing the flow of data from sources through embedding to the sink, including configurations and state.
 
-    def validate(self) -> bool:
-        """Running validation for each connector"""
-        try:
-            for source in self.sources:
-                source.validation()
-            self.embed.validation()
-            self.sink.validation()
-            return True
-        except Exception as e:
-            raise e
-        
-    def run(self) -> int:
-        # This method is meant for local development only. Not to be used in production.
-        # The Neum AI framework provides parallelization constructs through yielding
-        # These should be used to run pipelines at scale.
+    This class orchestrates the movement and transformation of data, coordinating between source connectors, embedding processes, and sinks. It also handles pipeline configurations and maintains the state of the pipeline operations.
 
-        total_vectors_stored = 0
-        for source in self.sources:
-            for cloudFile in source.list_files_full():
-                for localFile in source.download_files(cloudFile=cloudFile):
-                    for document in source.load_data(file=localFile):
-                        for chunks in source.chunk_data(document=document):
-                            embeddings, embeddings_info = self.embed.embed(documents=chunks)
-                            vectors_to_store = [NeumVector(id=str(uuid.uuid4()), vector=embeddings[i], metadata=chunks[i].metadata) for i in range(0,len(embeddings))]
-                            total_vectors_stored += self.sink.store(vectors_to_store=vectors_to_store, pipeline_id=self.id)
-
-        return total_vectors_stored
+    Attributes:
+    -----------
+    id : str
+        Unique identifier for the pipeline, generated using UUID4.
     
-    def search(self, query:str, number_of_results:int) -> List[NeumSearchResult]:
-        vector_for_query = self.embed.embed_query(query=query)
-        matches =  self.sink.search(vector=vector_for_query, number_of_results=number_of_results, pipeline_id=self.id)
-        return matches
+    sources : List[SourceConnector]
+        List of source connectors involved in the pipeline for data input.
 
-    def toPipelineModel(self):
-        content_to_return = {}
-        content_to_return['id'] = self.id
-        content_to_return['name'] = self.name
-        content = []
-        for source in self.sources:
-            content.append(source.to_model())
-        content_to_return['sources'] = content
-        content_to_return['embed'] = self.embed.to_model()
-        content_to_return['sink'] = self.sink.to_model()
-        content_to_return['created'] = self.created
-        content_to_return['updated'] = self.updated
-        if self.trigger_schedule == None:
-            content_to_return['trigger_schedule'] = None
-        else:
-            content_to_return['trigger_schedule'] = self.trigger_schedule.to_model()
+    embed : EmbedConnector
+        Embedding connector for processing data.
 
-        content_to_return['latest_run'] = self.latest_run.toJson()
-        content_to_return['available_metadata'] = self.available_metadata()
+    sink : SinkConnector
+        Sink connector for the final output of processed data.
 
-        return content_to_return
+    name : Optional[str]
+        Name of the pipeline, providing a human-readable identifier.
+
+    created : Optional[float]
+        Timestamp of when the pipeline was created, represented as a float.
+
+    updated : Optional[float]
+        Timestamp of when the pipeline was last updated.
+
+
+    trigger_schedule : Optional[TriggerSchedule]
+        Scheduling details for triggering the pipeline execution.
+
+    latest_run : Optional[PipelineRun]
+        Information about the latest run of the pipeline.
+
+    owner : Optional[str]
+        Owner of the pipeline, indicating who manages or created it.
+
+    is_deleted : bool
+        Flag to indicate if the pipeline is marked as deleted. Default is False.
+    """
+
+    id: str = Field(default_factory=lambda: str(uuid4()), description="Unique identifier for the pipeline")
+
+    name: Optional[str] = Field(None, description="Name of the pipeline")
+
+    created: Optional[float] = Field(None, description="Timestamp of when the pipeline was created")
+
+    updated: Optional[float] = Field(None, description="Timestamp of when the pipeline was last updated")
+
+    sources: List[SourceConnector] = Field(..., description="List of source connectors involved in the pipeline")
+
+    embed: EmbedConnector = Field(..., description="Embedding connector for data processing")
+
+    sink: SinkConnector = Field(..., description="Sink connector for final data output")
+
+    trigger_schedule: Optional[TriggerSchedule] = Field(None, description="Scheduling details for triggering the pipeline")
+
+    latest_run: Optional[PipelineRun] = Field(None, description="Information about the latest run of the pipeline")
+
+    owner: Optional[str] = Field(None, description="Owner of the pipeline")
     
-    def toJson(self):
-        """Python does not have built in serialization. We need this logic to be able to respond in our API..
-
-        Returns:
-            _type_: the json to return
-        """
-        json_to_return = {}
-        json_to_return['id'] = self.id
-        json_to_return['name'] = self.name
-        json_source = []
-        for source in self.sources:
-            json_source.append(source.toJson())
-        json_to_return['sources'] = json_source
-        json_to_return['embed'] = self.embed.toJson()
-        json_to_return['sink'] = self.sink.toJson()
-        json_to_return['owner'] = self.owner
-        json_to_return['created'] = self.created
-        json_to_return['updated'] = self.updated
-        json_to_return['is_deleted'] = self.is_deleted
-
-        if self.trigger_schedule == None:
-            json_to_return['trigger_schedule'] = None
-        else:
-            json_to_return['trigger_schedule'] = self.trigger_schedule.toJson()
-
-        json_to_return['latest_run'] = self.latest_run.toJson()
-        json_to_return['available_metadata'] = self.available_metadata()
-        return json_to_return
-
-    def as_request(self):
-        json_body = {}
-        json_source = []
-        for source in self.sources:
-            json_source.append(source.toJson())
-        json_body['sources'] = json_source
-        json_body['embed'] = self.embed.toJson()
-        json_body['sink'] = self.sink.toJson()
-        return json_body
+    is_deleted: bool = Field(False, description="Flag to indicate if the pipeline is marked as deleted")
 
     def set_id(self, id: str):
         self.id = id
@@ -148,29 +94,102 @@ class Pipeline(object):
     def available_metadata(self) -> List[str]:
         available_metadata = []
         for source in self.sources:
-            available_metadata += source.customMetadata.keys()
-            available_metadata += source.connector.selector.to_metadata
+            available_metadata += source.custom_metadata.keys()
+        # Check if data_connector exists and has a selector
+        if hasattr(source.data_connector, 'selector') and source.data_connector.selector:
+            available_metadata += source.data_connector.selector.to_metadata
+
+        # Check if loader exists and has a selector
+        if hasattr(source.loader, 'selector') and source.loader.selector:
             available_metadata += source.loader.selector.to_metadata
         return available_metadata
 
-    def as_pipeline(dct:dict):
-        if dct == None:
-            return None
+    @validator("embed", pre=True, always=True)
+    def deserialize_embed(cls, value):
+        if isinstance(value, dict):
+            return EmbedConnectorFactory.get_embed(value.get("embed_name"), value.get("embed_information"))
+        return value
+    
+    @validator("sink", pre=True, always=True)
+    def deserialize_sink(cls, value):
+        if isinstance(value, dict):
+            return SinkConnectorFactory.get_sink(value.get("sink_name"), value.get("sink_information"))
+        return value
+    
+    def config_validation(self) -> bool:
+        """Running validation for each connector"""
+        try:
+            for source in self.sources:
+                source.validation()
+            self.embed.validation()
+            self.sink.validation()
+            return True
+        except Exception as e:
+            raise e
+    
+    def run(self) -> int:
+        # This method is meant for local development only. Not to be used in production.
+        # The Neum AI framework provides parallelization constructs through yielding
+        # These should be used to run pipelines at scale.
+        try:
+            self.config_validation()
+        except Exception as e:
+            raise e
         
-        sources = dct.get("sources")
-        source_value = []
-        for s in sources:
-            source_value.append(SourceConnector.as_source_connector(s))
-        return Pipeline(
-            name=dct.get("name", None),
-            id=dct.get("id", None),
-            sources=source_value,
-            embed = as_embed(dct.get("embed")),
-            sink = as_sink(dct.get("sink")),
-            trigger_schedule=TriggerSchedule.as_trigger_schedule(dct.get("trigger_schedule", None)),
-            latest_run=PipelineRun.as_pipeline_run(dct.get("latest_run", None)),
-            created=dct.get("created", None),
-            updated=dct.get("updated", None),
-            owner=dct.get("owner", None),
-            is_deleted=dct.get("is_deleted", False)
-        )
+        try:
+            total_vectors_stored = 0
+            for source in self.sources:
+                for cloudFile in source.list_files_full():
+                    for localFile in source.download_files(cloudFile=cloudFile):
+                        for document in source.load_data(file=localFile):
+                            for chunks in source.chunk_data(document=document):
+                                embeddings, embeddings_info = self.embed.embed(documents=chunks)
+                                vectors_to_store = [NeumVector(id=str(uuid4()), vector=embeddings[i], metadata=chunks[i].metadata) for i in range(0,len(embeddings))]
+                                total_vectors_stored += self.sink.store(vectors_to_store=vectors_to_store, pipeline_id=self.id)
+            return total_vectors_stored
+        except Exception as e:
+            raise e
+    
+    def search(self, query:str, number_of_results:int) -> List[NeumSearchResult]:
+        vector_for_query = self.embed.embed_query(query=query)
+        matches =  self.sink.search(vector=vector_for_query, number_of_results=number_of_results, pipeline_id=self.id)
+        return matches
+
+    def as_pipeline_model(self):
+        content_to_return = {}
+        content_to_return['id'] = self.id
+        content_to_return['name'] = self.name
+        content = []
+        for source in self.sources:
+            content.append(source.as_json())
+        content_to_return['sources'] = content
+        content_to_return['embed'] = self.embed.as_json()
+        content_to_return['sink'] = self.sink.as_json()
+        content_to_return['created'] = self.created
+        content_to_return['updated'] = self.updated
+        if self.trigger_schedule == None:
+            content_to_return['trigger_schedule'] = None
+        else:
+            content_to_return['trigger_schedule'] = json.loads(self.trigger_schedule.json())
+
+        content_to_return['latest_run'] = json.loads(self.latest_run.json())
+        content_to_return['available_metadata'] = self.available_metadata()
+        content_to_return['is_deleted'] = self.is_deleted
+        content_to_return['owner'] = self.owner
+
+        return content_to_return
+
+    def as_json(self):
+        json_body = {}
+        json_body['name'] = self.name
+        json_source = []
+        for source in self.sources:
+            json_source.append(source.as_json())
+        json_body['sources'] = json_source
+        json_body['embed'] = self.embed.as_json()
+        json_body['sink'] = self.sink.as_json()
+        if self.trigger_schedule == None:
+            json_body['trigger_schedule'] = None
+        else:
+            json_body['trigger_schedule'] = json.loads(self.trigger_schedule.json())
+        return json_body

@@ -1,18 +1,47 @@
 from datetime import datetime
 from neumai.DataConnectors.DataConnector import DataConnector
-from typing import List, Generator
+from typing import List, Generator, Optional
 from supabase import create_client, Client
 from neumai.Shared.LocalFile import LocalFile
 from neumai.Shared.CloudFile import CloudFile
+from neumai.Shared.Selector import Selector
 from neumai.Shared.Exceptions import SupabaseConnectionException
+from pydantic import Field
 import tempfile
 import os
 
 
 class SupabaseStorageConnector(DataConnector):
-    """" Supabase File Connector \n
-    connector_information requires:\n
-    [ bucket, folder, url, key ]"""
+    """
+    Supabase Storage Connector
+
+    Extracts files from Supabase bucket / folder
+    
+    Attributes:
+    -----------
+
+    url : str
+        URL to Supabase project
+    key : str
+        Anon Access key to the project
+    bucket : str
+        Name of the storage bucket
+    folder : str
+        Folder name within the bucket. (Pass empty string if no bucket.)
+    selector : Optional[Selector]
+        Optional selector object to define what data data should be used to generate embeddings or stored as metadata with the vector.
+    
+    """
+
+    url: str = Field(..., description="URL for Supabase access.")
+
+    key: str = Field(..., description="Access key for Supabase.")
+    
+    bucket: str = Field(..., description="Bucket name in Supabase.")
+
+    folder: str = Field(..., description="Folder name in the bucket.")
+
+    selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
 
     @property
     def connector_name(self) -> str:
@@ -40,14 +69,15 @@ class SupabaseStorageConnector(DataConnector):
     
     @property
     def compatible_loaders(self) -> List[str]:
-        return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "NeumCSVLoader", "NeumJSONLoader", "PDFLoader"]
+        return ["AutoLoader", "HTMLLoader", "MarkdownLoader", "CSVLoader", "JSONLoader", "PDFLoader"]
     
     def connect_and_list_full(self) -> Generator[CloudFile, None, None]:
         # Connect to supabase
-        bucket = self.connector_information["bucket"]
-        folder = self.connector_information['folder']
-        url = self.connector_information['url']
-        key = self.connector_information['key']
+        bucket = self.bucket
+        folder = self.folder
+        url = self.url
+        key = self.key
+
         supabase: Client = create_client(url, key)
         #Process files
         file_list = supabase.storage.from_(bucket).list(folder)
@@ -59,10 +89,11 @@ class SupabaseStorageConnector(DataConnector):
 
     def connect_and_list_delta(self, last_run:datetime) -> Generator[CloudFile, None, None]:
         # Connect to supabase
-        bucket = self.connector_information["bucket"]
-        folder = self.connector_information['folder']
-        url = self.connector_information['url']
-        key = self.connector_information['key']
+        bucket = self.bucket
+        folder = self.folder
+        url = self.url
+        key = self.key
+
         supabase: Client = create_client(url, key)
         #Process files
         file_list = supabase.storage.from_(bucket).list(folder)
@@ -77,10 +108,10 @@ class SupabaseStorageConnector(DataConnector):
 
     def connect_and_download(self, cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
         # Connect to supabase
-        url = self.connector_information['url']
-        key = self.connector_information['key']
-        folder= self.connector_information['folder']
-        bucket = self.connector_information["bucket"]
+        bucket = self.bucket
+        folder = self.folder
+        url = self.url
+        key = self.key
 
         supabase: Client = create_client(url, key)
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -91,19 +122,12 @@ class SupabaseStorageConnector(DataConnector):
                 file.write(supabase_file)
             yield LocalFile(file_path=file_path, metadata=cloudFile.metadata, id=cloudFile.id)
 
-    def validate(self) -> bool:
-        try:
-            folder = self.connector_information['folder']
-            url = self.connector_information['url']
-            key = self.connector_information['key']
-        except:
-            raise ValueError(f"Required properties not set. Required properties: {self.required_properties}")
-        
+    def config_validation(self) -> bool:    
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
         
         try:
-            create_client(url, key)
+            create_client(self.url, self.key)
         except Exception as e:
             raise SupabaseConnectionException(f"Connection to Supabase failed, check credentials. See Exception: {e}")
         return True 
