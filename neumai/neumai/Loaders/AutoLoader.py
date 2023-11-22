@@ -64,7 +64,7 @@ class AutoLoader(Loader):
                 yield NeumDocument(id=file.id, content=doc.page_content, metadata=file.metadata)
             return 
         
-        yield from loader.load(file=LocalFile)
+        yield from loader.load(file=file)
     
     def config_validation(self) -> bool:
         return True   

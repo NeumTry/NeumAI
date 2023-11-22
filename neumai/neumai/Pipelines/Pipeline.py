@@ -155,6 +155,7 @@ class Pipeline(BaseModel):
         matches =  self.sink.search(vector=vector_for_query, number_of_results=number_of_results, pipeline_id=self.id)
         return matches
 
+    # Todo standardize the model serialization as we are mixing FE and BE concepts into the SDK
     def as_pipeline_model(self):
         content_to_return = {}
         content_to_return['id'] = self.id
@@ -171,8 +172,10 @@ class Pipeline(BaseModel):
             content_to_return['trigger_schedule'] = None
         else:
             content_to_return['trigger_schedule'] = json.loads(self.trigger_schedule.json())
-
-        content_to_return['latest_run'] = json.loads(self.latest_run.json())
+        if self.latest_run == None:
+            content_to_return['latest_run'] = None
+        else:
+            content_to_return['latest_run'] = json.loads(self.latest_run.json())
         content_to_return['available_metadata'] = self.available_metadata()
         content_to_return['is_deleted'] = self.is_deleted
         content_to_return['owner'] = self.owner
