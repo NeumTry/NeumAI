@@ -29,9 +29,9 @@ It provides you a comprehensive solution for RAG that can scale with your applic
 
 ### Neum AI Cloud
 
-Sign up today at [dasboard.neum.ai](https://dashboard.neum.ai). See our [quickstart]() to get started.
+Sign up today at [dashboard.neum.ai](https://dashboard.neum.ai). See our [quickstart](https://docs.neum.ai/get-started/quickstart) to get started.
 
-The Neum AI Cloud supports a large-scale, distrubted architecture to run millions of documents through vector embedding. For the full set of features see: [Cloud vs Local](https://neumai.mintlify.app/get-started/cloud-vs-local)
+The Neum AI Cloud supports a large-scale, distributed architecture to run millions of documents through vector embedding. For the full set of features see: [Cloud vs Local](https://neumai.mintlify.app/get-started/cloud-vs-local)
 
 ### Local Development
 
@@ -41,7 +41,62 @@ Install the [`neumai`](https://pypi.org/project/neumai/) package:
 pip install neumai
 ```
 
-To create your first data pipelines visit our [quickstart]().
+To create your first data pipelines visit our [quickstart](https://docs.neum.ai/get-started/quickstart).
+
+At a high level, a pipeline consists of one or multiple sources to pull data from, one embed connector to vectorize the content, and one sink connector to store said vectors.
+With this snippet of code we will craft all of these and run a pipeline:
+<details open>
+  <summary>Open snippet</summary>
+  
+  ```python
+  
+    from neumai.DataConnectors.WebsiteConnector import WebsiteConnector
+    from neumai.Shared.Selector import Selector
+    from neumai.Loaders.HTMLLoader import HTMLLoader
+    from neumai.Chunkers.RecursiveChunker import RecursiveChunker
+    from neumai.Sources.SourceConnector import SourceConnector
+    from neumai.EmbedConnectors import OpenAIEmbed
+    from neumai.SinkConnectors import WeaviateSink
+    from neumai.Pipelines import Pipeline
+
+    website_connector =  WebsiteConnector(
+        url = "https://www.neum.ai/post/retrieval-augmented-generation-at-scale",
+        selector = Selector(
+            to_metadata=['url']
+        )
+    )
+    source = SourceConnector(
+      data_connector = website_connector, 
+      loader = HTMLLoader(), 
+      chunker = RecursiveChunker()
+    )
+  
+    openai_embed = OpenAIEmbed(
+      api_key = "<OPEN AI KEY>",
+    )
+  
+    weaviate_sink = WeaviateSink(
+      url = "your-weaviate-url",
+      api_key = "your-api-key",
+      class_name = "your-class-name",
+    )
+  
+    pipeline = Pipeline(
+      sources=[source], 
+      embed=openai_embed, 
+      sink=weaviate_sink
+    )
+    pipeline.run()
+  
+    results = pipeline.search(
+      query="What are the challenges with scaling RAG?", 
+      number_of_results=3
+    )
+  
+    for result in results:
+      print(result.metadata)
+  ```
+</details>
 
 ### Self-host
 

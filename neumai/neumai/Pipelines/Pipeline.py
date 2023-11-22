@@ -184,10 +184,15 @@ class Pipeline(BaseModel):
 
     def as_json(self):
         json_body = {}
+        json_body['name'] = self.name
         json_source = []
         for source in self.sources:
             json_source.append(source.as_json())
         json_body['sources'] = json_source
         json_body['embed'] = self.embed.as_json()
         json_body['sink'] = self.sink.as_json()
+        if self.trigger_schedule == None:
+            json_body['trigger_schedule'] = None
+        else:
+            json_body['trigger_schedule'] = json.loads(self.trigger_schedule.json())
         return json_body

@@ -12,7 +12,7 @@ class NeumClient(ABC):
     def create_pipeline(self, pipeline:Pipeline):
         import requests
 
-        url = f"{self.endpoint}/pipelines/"
+        url = f"{self.endpoint}/pipelines"
 
         # Headers
         headers = {
