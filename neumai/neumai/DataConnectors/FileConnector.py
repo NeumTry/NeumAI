@@ -82,7 +82,6 @@ class FileConnector(DataConnector):
 
         # Download file
         with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
-            print(response.content)
             temp_file.write(response.content)
             yield LocalFile(file_path=temp_file.name, metadata=cloudFile.metadata, id=cloudFile.id, type=file_extension)
 
