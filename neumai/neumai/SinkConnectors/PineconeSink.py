@@ -70,6 +70,7 @@ class  PineconeSink(SinkConnector):
         index = self.index
         namespace = self.namespace
         if namespace == None: namespace = f"pipeline_{pipeline_id}"
+        if environment == "gcp-starter": namespace = None
 
         try:
             pinecone.init(api_key=api_key, environment=environment)    
