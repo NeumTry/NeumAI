@@ -155,6 +155,7 @@ class Pipeline(BaseModel):
         matches =  self.sink.search(vector=vector_for_query, number_of_results=number_of_results, pipeline_id=self.id)
         return matches
 
+    # Todo standardize the model serialization as we are mixing FE and BE concepts into the SDK
     def as_pipeline_model(self):
         content_to_return = {}
         content_to_return['id'] = self.id
