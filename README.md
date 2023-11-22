@@ -101,7 +101,7 @@ With this snippet of code we will craft all of these and run a pipeline:
 ### Available Connectors
 For an up-to-date list please visit our [docs](https://docs.neum.ai/components/sourceConnector)
 
-### Source connectors
+#### Source connectors
 1. Postgres
 2. Hosted Files
 3. Websites
@@ -111,17 +111,16 @@ For an up-to-date list please visit our [docs](https://docs.neum.ai/components/s
 7. Singlestore
 8. Supabase Storage
 
-### Embed Connectors
+#### Embed Connectors
 1. OpenAI embeddings
 2. Azure OpenAI embeddings
 
-### Sink Connectors
+#### Sink Connectors
 1. Supabase postgres
 2. Weaviate
 3. Qdrant
 4. Pinecone
 5. Singlestore
-
 
 ### Self-host
 
