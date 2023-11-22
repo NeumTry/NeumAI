@@ -46,7 +46,7 @@ To create your first data pipelines visit our [quickstart](https://docs.neum.ai/
 At a high level, a pipeline consists of one or multiple sources to pull data from, one embed connector to vectorize the content, and one sink connector to store said vectors.
 With this snippet of code we will craft all of these and run a pipeline:
 <details open>
-  <summary>Open snippet</summary>
+  <summary>Creating and running a pipeline</summary>
   
   ```python
   
@@ -97,6 +97,31 @@ With this snippet of code we will craft all of these and run a pipeline:
       print(result.metadata)
   ```
 </details>
+
+### Available Connectors
+For an up-to-date list please visit our [docs](https://docs.neum.ai/components/sourceConnector)
+
+### Source connectors
+1. Postgres
+2. Hosted Files
+3. Websites
+4. S3
+5. Azure Blob
+6. Sharepoint
+7. Singlestore
+8. Supabase Storage
+
+### Embed Connectors
+1. OpenAI embeddings
+2. Azure OpenAI embeddings
+
+### Sink Connectors
+1. Supabase postgres
+2. Weaviate
+3. Qdrant
+4. Pinecone
+5. Singlestore
+
 
 ### Self-host
 
