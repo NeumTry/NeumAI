@@ -71,7 +71,8 @@ class FileConnector(DataConnector):
         import os
         from urllib.parse import urlparse
 
-        response = requests.get(cloudFile.file_identifier, stream=True)
+        headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"}
+        response = requests.get(cloudFile.file_identifier, headers=headers)
 
         # Parse the URL to get the path
         path = urlparse(cloudFile.file_identifier).path
@@ -81,6 +82,7 @@ class FileConnector(DataConnector):
 
         # Download file
         with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            print(response.content)
             temp_file.write(response.content)
             yield LocalFile(file_path=temp_file.name, metadata=cloudFile.metadata, id=cloudFile.id, type=file_extension)
 
