@@ -62,7 +62,7 @@ class SingleStoreSink(SinkConnector):
             raise SinglestoreConnectionException(f"There was a problem connecting to Singlestore. See Exception: {e}")
         return True 
 
-    def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
+    def store(self, vectors_to_store:List[NeumVector]) -> int:
         batch_size = self.batch_size
         url = self.url
         table = self.table
@@ -108,7 +108,7 @@ class SingleStoreSink(SinkConnector):
         
         return len(vectors_to_store), None
     
-    def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List[NeumSearchResult]:
+    def search(self, vector: List[float], number_of_results: int) -> List[NeumSearchResult]:
         url = self.url
         table = self.table
 
@@ -128,7 +128,7 @@ class SingleStoreSink(SinkConnector):
         except Exception as e:
             raise SinglestoreQueryException(f"Failed to query single store. Exception - {e}")
 
-    def info(self, pipeline_id: str) -> NeumSinkInfo:
+    def info(self) -> NeumSinkInfo:
         url = self.url
         table = self.table
 

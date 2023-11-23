@@ -28,15 +28,15 @@ class QdrantSink(SinkConnector):
     api_key : str
         API key required for authenticating with the Qdrant service.
 
-    collection_name : Optional[str]
-        Optional name of the collection in Qdrant where the data will be stored.
+    collection_name : str
+        Name of the collection in Qdrant where the data will be stored.
     """
 
     url: str = Field(..., description="URL for Qdrant.")
 
     api_key: str = Field(..., description="API key for Qdrant.")
 
-    collection_name: Optional[str] = Field(None, description="Optional collection name.")
+    collection_name: str = Field(..., description="Collection name.")
 
     @property
     def sink_name(self) -> str:
@@ -44,11 +44,11 @@ class QdrantSink(SinkConnector):
     
     @property
     def required_properties(self) -> List[str]:
-        return ['url', 'api_key']
+        return ['url', 'api_key', 'collection_name']
 
     @property
     def optional_properties(self) -> List[str]:
-        return ['collection_name']
+        return []
 
     def validation(self) -> bool:
         """config_validation connector setup"""
@@ -59,11 +59,10 @@ class QdrantSink(SinkConnector):
         )
         return True 
 
-    def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
+    def store(self, vectors_to_store:List[NeumVector]) -> int:
         url = self.url
         api_key = self.api_key
         collection_name = self.collection_name
-        if collection_name == None: f"pipeline_{pipeline_id}"
 
         qdrant_client = QdrantClient(
             url=url, 
@@ -83,11 +82,10 @@ class QdrantSink(SinkConnector):
             return  len(points)
         raise QdrantInsertionException("Qdrant storing failed. Try again later.")
     
-    def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List:
+    def search(self, vector: List[float], number_of_results: int) -> List:
         url = self.url
         api_key = self.api_key
         collection_name = self.collection_name
-        if collection_name == None: f"pipeline_{pipeline_id}"
 
         try:
             qdrant_client = QdrantClient(
@@ -114,11 +112,10 @@ class QdrantSink(SinkConnector):
             )
         return matches
     
-    def info(self, pipeline_id: str) -> NeumSinkInfo:
+    def info(self) -> NeumSinkInfo:
         url = self.url
         api_key = self.api_key
         collection_name = self.collection_name
-        if collection_name == None: f"pipeline_{pipeline_id}"
 
         try:
             qdrant_client = QdrantClient(

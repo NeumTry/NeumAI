@@ -81,7 +81,7 @@ class PostgresConnector(DataConnector):
         batch_size = self.batch_size
 
         with psycopg2.connect(connection_string) as connection:
-            with connection.cursor(cursor_factory=DictCursor, name='pipeline_id') as cursor:
+            with connection.cursor(cursor_factory=DictCursor, name='neumai') as cursor:
                 cursor.itersize = 1000  # fetch 1000 rows at a time
                 cursor.execute(query)
                 batch_rows = []

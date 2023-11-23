@@ -28,15 +28,15 @@ class SinkConnector(ABC, BaseModel):
         """config_validation sink setup"""
 
     @abstractmethod
-    def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
+    def store(self, vectors_to_store:List[NeumVector]) -> int:
         """Store vectors with a given service"""
 
     @abstractmethod
-    def search(self, vector:List[float], number_of_results:int, pipeline_id:str) -> List[NeumSearchResult]:
+    def search(self, vector:List[float], number_of_results:int) -> List[NeumSearchResult]:
         """Search vectors for a given service"""
     
     @abstractmethod
-    def info(self, pipeline_id:str) -> NeumSinkInfo:
+    def info(self) -> NeumSinkInfo:
         """Get information about what is stores in the sink"""
 
     def as_json(self):

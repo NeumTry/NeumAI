@@ -50,7 +50,7 @@ class WeaviateSink(SinkConnector):
 
     api_key: str = Field(..., description="API key for Weaviate.")
 
-    class_name: Optional[str] = Field(None, description="Optional class name.")
+    class_name: str = Field(..., description="Class name.")
 
     num_workers: Optional[int] = Field(1, description="Optional number of workers.")
 
@@ -91,17 +91,17 @@ class WeaviateSink(SinkConnector):
             raise WeaviateConnectionException(f"Weaviate couldn't be initialized. See exception: {e}")
         return True 
 
-    def _check_batch_result(self, results: Optional[List[dict[str, any]]], task_id: str, partial_failure: dict):
+    def _check_batch_result(self, results: Optional[List[dict[str, any]]], partial_failure: dict):
         if results is not None:
             for result in results:
                 if "result" in result and "errors" in result["result"]:
                     if "error" in result["result"]["errors"]:
-                        print(f"[ERROR] Task Id {task_id} encountered an error when batching to weaviate {result['result']}")
+                        print(f"[ERROR] Error when batching to weaviate {result['result']}")
                         partial_failure['did_fail'] = True
                         partial_failure['latest_failure'] = result["result"]["errors"]["error"]
                         partial_failure['number_of_failures'] += 1
 
-    def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> Tuple[List, dict]:
+    def store(self, vectors_to_store:List[NeumVector]) -> Tuple[List, dict]:
         url = self.url
         num_workers = self.num_workers
         shard_count = self.shard_count
@@ -109,7 +109,6 @@ class WeaviateSink(SinkConnector):
         is_dynamic_batch = self.is_dynamic_batch
         batch_connection_error_retries = self.batch_connection_error_retries
         class_name = self.class_name
-        if class_name == None: class_name = f"pipeline_{pipeline_id.replace('-','_')}"
         partial_failure = {'did_fail': False, 'latest_failure': None, 'number_of_failures': 0}
 
         if 'https' not in url:
@@ -133,7 +132,7 @@ class WeaviateSink(SinkConnector):
             
         with client.batch.configure(
             batch_size=batch_size,
-            callback=lambda results: self._check_batch_result(results, task_id, partial_failure),
+            callback=lambda results: self._check_batch_result(results, partial_failure),
             num_workers=num_workers,
             dynamic=is_dynamic_batch,
             connection_error_retries=batch_connection_error_retries
@@ -147,17 +146,15 @@ class WeaviateSink(SinkConnector):
                         uuid=generate_uuid5(vectors_to_store[i].id)
                     )
                 except Exception as e:
-                    print(f"[ERROR] Got exception from Weaviate when adding data object to batch for task {task_id} and batch # {i}. Exception: {str(e)}")
-                    raise WeaviateInsertionException(f"Error when adding data object to Weaviate. Error: {e}")
+                    raise WeaviateInsertionException(f"Error when adding data object to Weaviate. Error: {str(e)}")
 
         return len(vectors_to_store)
 
-    def search(self, vector: List[float], number_of_results: int, pipeline_id: str) -> List[NeumSearchResult]:
+    def search(self, vector: List[float], number_of_results: int) -> List[NeumSearchResult]:
         api_key = self.api_key
         url = self.url
         # Weaviate requires first letter to be capitalized
         class_name = self.class_name
-        if class_name == None: class_name = f"pipeline_{pipeline_id.replace('-','_')}"
         class_name = _capitalize_first_letter(class_name)
         client = weaviate.Client(
             url=url,
@@ -190,12 +187,11 @@ class WeaviateSink(SinkConnector):
             raise WeaviateQueryException(f"There was an error querying weaviate. Error {e}")
         return matches
 
-    def info(self, pipeline_id:str) -> NeumSinkInfo:
+    def info(self) -> NeumSinkInfo:
         api_key = self.api_key
         url = self.url
         
         class_name = self.class_name
-        if class_name == None: class_name = f"pipeline_{pipeline_id.replace('-','_')}"
         class_name = _capitalize_first_letter(class_name)
         client = weaviate.Client(
             url=url,
