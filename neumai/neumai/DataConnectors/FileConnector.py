@@ -68,12 +68,22 @@ class FileConnector(DataConnector):
     def connect_and_download(self, cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
         # Connect to random file location
         import requests
-        response = requests.get(cloudFile.file_identifier)
+        import os
+        from urllib.parse import urlparse
+
+        headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"}
+        response = requests.get(cloudFile.file_identifier, headers=headers)
+
+        # Parse the URL to get the path
+        path = urlparse(cloudFile.file_identifier).path
+
+        # Extract the file extension
+        file_extension = os.path.splitext(path)[1]
 
         # Download file
-        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
             temp_file.write(response.content)
-            yield LocalFile(file_path=temp_file.name, metadata=cloudFile.metadata, id=cloudFile.id)
+            yield LocalFile(file_path=temp_file.name, metadata=cloudFile.metadata, id=cloudFile.id, type=file_extension)
 
     def config_validation(self) -> bool:
         import requests

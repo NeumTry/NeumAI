@@ -29,7 +29,7 @@ class SupabaseSink(SinkConnector):
 
     database_connection: str = Field(..., description="Database connection for Supabase.")
 
-    collection_name: Optional[str] = Field(None, description="Optional collection name.")
+    collection_name: str = Field(..., description="Collection name.")
 
     @property
     def sink_name(self) -> str:
@@ -52,12 +52,11 @@ class SupabaseSink(SinkConnector):
             raise SupabaseConnectionException(f"Supabase connection couldn't be initialized. See exception: {e}")
         return True 
 
-    def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
+    def store(self, vectors_to_store:List[NeumVector]) -> int:
         database_connection = self.database_connection
         vx = vecs.create_client(database_connection)
         try:
             collection_name = self.collection_name
-            if collection_name == None: collection_name = f"pipeline_{pipeline_id}"
             dimensions = len(vectors_to_store[0].vector)
             db = vx.get_or_create_collection(name=collection_name, dimension=dimensions)
             to_upsert = []
@@ -71,11 +70,10 @@ class SupabaseSink(SinkConnector):
             vx.disconnect()
         return len(vectors_to_store)
     
-    def search(self, vector: List[float], number_of_results:int, pipeline_id:str) -> List:
+    def search(self, vector: List[float], number_of_results:int) -> List:
         database_connection = self.database_connection
         vx = vecs.create_client(database_connection)
         collection_name = self.collection_name
-        if collection_name == None: collection_name = f"pipeline_{pipeline_id}"
         try:
             db = vx.get_collection(name=collection_name)
         except:
@@ -103,11 +101,10 @@ class SupabaseSink(SinkConnector):
         
         return matches
     
-    def info(self, pipeline_id: str) -> NeumSinkInfo:
+    def info(self) -> NeumSinkInfo:
         database_connection = self.database_connection
         vx = vecs.create_client(database_connection)
         collection_name = self.collection_name
-        if collection_name == None: collection_name = f"pipeline_{pipeline_id}"
         try:
             db = vx.get_collection(name=collection_name)
         except:

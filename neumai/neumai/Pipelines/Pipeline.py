@@ -147,16 +147,17 @@ class Pipeline(BaseModel):
                             for chunks in source.chunk_data(document=document):
                                 embeddings, embeddings_info = self.embed.embed(documents=chunks)
                                 vectors_to_store = [NeumVector(id=str(uuid4()), vector=embeddings[i], metadata=chunks[i].metadata) for i in range(0,len(embeddings))]
-                                total_vectors_stored += self.sink.store(vectors_to_store=vectors_to_store, pipeline_id=self.id)
+                                total_vectors_stored += self.sink.store(vectors_to_store=vectors_to_store)
             return total_vectors_stored
         except Exception as e:
             raise e
     
     def search(self, query:str, number_of_results:int) -> List[NeumSearchResult]:
         vector_for_query = self.embed.embed_query(query=query)
-        matches =  self.sink.search(vector=vector_for_query, number_of_results=number_of_results, pipeline_id=self.id)
+        matches =  self.sink.search(vector=vector_for_query, number_of_results=number_of_results)
         return matches
 
+    # Todo standardize the model serialization as we are mixing FE and BE concepts into the SDK
     def as_pipeline_model(self):
         content_to_return = {}
         content_to_return['id'] = self.id
@@ -173,8 +174,10 @@ class Pipeline(BaseModel):
             content_to_return['trigger_schedule'] = None
         else:
             content_to_return['trigger_schedule'] = json.loads(self.trigger_schedule.json())
-
-        content_to_return['latest_run'] = json.loads(self.latest_run.json())
+        if self.latest_run == None:
+            content_to_return['latest_run'] = None
+        else:
+            content_to_return['latest_run'] = json.loads(self.latest_run.json())
         content_to_return['available_metadata'] = self.available_metadata()
         content_to_return['is_deleted'] = self.is_deleted
         content_to_return['owner'] = self.owner

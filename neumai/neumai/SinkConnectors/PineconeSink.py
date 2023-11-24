@@ -29,8 +29,8 @@ class  PineconeSink(SinkConnector):
     index : str
         The index in Pinecone where the data will be stored.
 
-    namespace : Optional[str]
-        Optional namespace within the Pinecone environment. Used for organizing data.
+    namespace : str
+        Namespace within the Pinecone environment. Used for organizing data.
     """
 
     api_key: str = Field(..., description="API key for Pinecone.")
@@ -39,7 +39,7 @@ class  PineconeSink(SinkConnector):
 
     index: str = Field(..., description="Index for Pinecone.")
 
-    namespace: Optional[str] = Field(None, description="Optional namespace.")
+    namespace: str = Field(..., description="Data namespace.")
 
     @property
     def sink_name(self) -> str:
@@ -47,11 +47,11 @@ class  PineconeSink(SinkConnector):
     
     @property
     def required_properties(self) -> List[str]:
-        return ['api_key', 'environment', 'index']
+        return ['api_key', 'environment', 'index', 'namespace']
 
     @property
     def optional_properties(self) -> List[str]:
-        return ['namespace']
+        return []
 
     def validation(self) -> bool:
         """config_validation connector setup"""
@@ -64,12 +64,12 @@ class  PineconeSink(SinkConnector):
             raise PineconeConnectionException(f"Pinecone connection couldn't be initialized. See exception: {e}")
         return True 
 
-    def store(self, pipeline_id: str, vectors_to_store:List[NeumVector], task_id:str = "") -> int:
+    def store(self, vectors_to_store:List[NeumVector]) -> int:
         api_key =  self.api_key
         environment = self.environment
         index = self.index
         namespace = self.namespace
-        if namespace == None: namespace = f"pipeline_{pipeline_id}"
+        if environment == "gcp-starter": namespace = None # short-term fix given gcp-starter limitation
 
         try:
             pinecone.init(api_key=api_key, environment=environment)    
@@ -88,13 +88,13 @@ class  PineconeSink(SinkConnector):
             raise PineconeInsertionException(f"Failed to store in Pinecone. Exception - {e}")
         return int(vectors_stored)
     
-    def search(self, vector: List[float], number_of_results:int, pipeline_id:str) -> List[NeumSearchResult]:
+    def search(self, vector: List[float], number_of_results:int) -> List[NeumSearchResult]:
         import pinecone
         api_key =  self.api_key
         environment = self.environment
         index = self.index
         namespace = self.namespace
-        if namespace == None: namespace = f"pipeline_{pipeline_id}"
+        if environment == "gcp-starter": namespace = None # short-term fix given gcp-starter limitation
 
         try:
             pinecone.init(      
@@ -110,13 +110,13 @@ class  PineconeSink(SinkConnector):
             matches.append(NeumSearchResult(id= result["id"], metadata=result["metadata"], score=result["score"]))
         return matches
     
-    def info(self, pipeline_id: str) -> NeumSinkInfo:
+    def info(self) -> NeumSinkInfo:
         import pinecone
         api_key =  self.api_key
         environment = self.environment
         index = self.index
         namespace = self.namespace
-        if namespace == None: namespace = f"pipeline_{pipeline_id}"
+        if environment == "gcp-starter": namespace = None # short-term fix given gcp-starter limitation
         
         try:
             pinecone.init(      
