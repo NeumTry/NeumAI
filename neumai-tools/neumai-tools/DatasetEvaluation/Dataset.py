@@ -84,4 +84,32 @@ class Dataset(BaseModel):
         return dataset_results
     
     def run_with_pipeline_collection_separate(self, pipeline_collection: PipelineCollection):
-        """"""
+        dataset_results_separate: dict[str,DatasetResults] = {}
+        for pipeline in pipeline_collection.pipelines:
+            dataset_results = DatasetResults()
+
+            for dataset_entry in self.dataset_entries:
+                # Generate results
+                result = pipeline.search(query=dataset_entry.query, number_of_results=1)[0]
+
+                # Calculate score -> cosine similarity between expected output and result
+                expected_output_vector = pipeline.embed.embed_query(query=dataset_entry.expected_output)
+                # Need to add vector to search result. For not will just re-calculate
+                result_vector = pipeline.embed.embed_query(query=result.metadata['text'])
+                # Normalize the vectors to unit vectors
+                expected_output_vector = expected_output_vector / np.linalg.norm(expected_output_vector)
+                expected_output_vector = result_vector / np.linalg.norm(result_vector)
+                # Calculate the dot product and return
+                similarity = np.dot(expected_output_vector, expected_output_vector)
+
+                dataset_result = DatasetResult(
+                    dataset_entry=dataset_entry, 
+                    raw_result=result,
+                    score=similarity
+                )
+
+                dataset_results.dataset_results.append(dataset_result)
+
+            dataset_results_separate[pipeline.id] = dataset_results
+            
+        return dataset_results_separate

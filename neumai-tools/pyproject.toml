@@ -16,7 +16,7 @@ langchain = "0.0.335"
 llama-index = "0.9.3"
 openai = "1.2.4"
 pandas = "2.1.0"
-neumai = "0.0.25"
+neumai = "^0.0.30"
 
 [build-system]
 requires = ["poetry-core"]
