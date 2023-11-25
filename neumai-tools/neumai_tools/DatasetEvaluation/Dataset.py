@@ -40,10 +40,10 @@ class Dataset(BaseModel):
             # Need to add vector to search result. For not will just re-calculate
             result_vector = pipeline.embed.embed_query(query=result.metadata['text'])
             # Normalize the vectors to unit vectors
-            expected_output_vector = expected_output_vector / np.linalg.norm(expected_output_vector)
-            expected_output_vector = result_vector / np.linalg.norm(result_vector)
+            expected_output_vector_norm = expected_output_vector / np.linalg.norm(expected_output_vector)
+            result_vector_norm = result_vector / np.linalg.norm(result_vector)
             # Calculate the dot product and return
-            similarity = np.dot(expected_output_vector, expected_output_vector)
+            similarity = np.dot(expected_output_vector_norm, result_vector_norm)
 
             dataset_result = DatasetResult(
                 dataset_entry=dataset_entry, 
@@ -68,10 +68,10 @@ class Dataset(BaseModel):
             # Need to add vector to search result. For not will just re-calculate
             result_vector = pipeline_collection.pipelines[0].embed.embed_query(query=result.metadata['text'])
             # Normalize the vectors to unit vectors
-            expected_output_vector = expected_output_vector / np.linalg.norm(expected_output_vector)
-            expected_output_vector = result_vector / np.linalg.norm(result_vector)
+            expected_output_vector_norm = expected_output_vector / np.linalg.norm(expected_output_vector)
+            result_vector_norm = result_vector / np.linalg.norm(result_vector)
             # Calculate the dot product and return
-            similarity = np.dot(expected_output_vector, expected_output_vector)
+            similarity = np.dot(expected_output_vector_norm, result_vector_norm)
 
             dataset_result = DatasetResult(
                 dataset_entry=dataset_entry, 
@@ -97,10 +97,10 @@ class Dataset(BaseModel):
                 # Need to add vector to search result. For not will just re-calculate
                 result_vector = pipeline.embed.embed_query(query=result.metadata['text'])
                 # Normalize the vectors to unit vectors
-                expected_output_vector = expected_output_vector / np.linalg.norm(expected_output_vector)
-                expected_output_vector = result_vector / np.linalg.norm(result_vector)
+                expected_output_vector_norm = expected_output_vector / np.linalg.norm(expected_output_vector)
+                result_vector_norm = result_vector / np.linalg.norm(result_vector)
                 # Calculate the dot product and return
-                similarity = np.dot(expected_output_vector, expected_output_vector)
+                similarity = np.dot(expected_output_vector_norm, result_vector_norm)
 
                 dataset_result = DatasetResult(
                     dataset_entry=dataset_entry, 

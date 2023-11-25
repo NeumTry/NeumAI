@@ -1,7 +1,7 @@
 from typing import List, Generator, Optional
 from neumai.Chunkers.Chunker import Chunker
 from neumai.Shared.NeumDocument import NeumDocument
-from neumai_tools import semantic_chunking
+from neumai_tools.SemanticHelpers import semantic_chunking
 from pydantic import Field
 from neumai.Shared.Exceptions import CustomChunkerException
 
