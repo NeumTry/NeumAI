@@ -26,11 +26,11 @@ class RecursiveChunker(Chunker):
         A list of optional separators to be used for recursive chunking. Each separator defines a new level of chunking. Default separators include newline and space characters.
     """
 
-    chunk_size: Optional[int] = Field(500, description="Optional chunk size.")
+    chunk_size: Optional[int] = Field(default=500, description="Optional chunk size.")
 
-    chunk_overlap: Optional[int] = Field(0, description="Optional chunk overlap.")
+    chunk_overlap: Optional[int] = Field(default=0, description="Optional chunk overlap.")
 
-    batch_size: Optional[int] = Field(1000, description="Optional batch size for processing.")
+    batch_size: Optional[int] = Field(default=1000, description="Optional batch size for processing.")
 
     separators: Optional[List[str]] = Field(["\n\n", "\n", " ", ""], description="Optional list of separators for chunking.")
 
