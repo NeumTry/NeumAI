@@ -45,56 +45,131 @@ To create your first data pipelines visit our [quickstart](https://docs.neum.ai/
 
 At a high level, a pipeline consists of one or multiple sources to pull data from, one embed connector to vectorize the content, and one sink connector to store said vectors.
 With this snippet of code we will craft all of these and run a pipeline:
-<details open>
-  <summary>Creating and running a pipeline</summary>
+<details open><summary>
+  
+  ### Creating and running a pipeline
+  </summary>
   
   ```python
   
-    from neumai.DataConnectors.WebsiteConnector import WebsiteConnector
-    from neumai.Shared.Selector import Selector
-    from neumai.Loaders.HTMLLoader import HTMLLoader
-    from neumai.Chunkers.RecursiveChunker import RecursiveChunker
-    from neumai.Sources.SourceConnector import SourceConnector
-    from neumai.EmbedConnectors import OpenAIEmbed
-    from neumai.SinkConnectors import WeaviateSink
-    from neumai.Pipelines import Pipeline
+  from neumai.DataConnectors.WebsiteConnector import WebsiteConnector
+  from neumai.Shared.Selector import Selector
+  from neumai.Loaders.HTMLLoader import HTMLLoader
+  from neumai.Chunkers.RecursiveChunker import RecursiveChunker
+  from neumai.Sources.SourceConnector import SourceConnector
+  from neumai.EmbedConnectors import OpenAIEmbed
+  from neumai.SinkConnectors import WeaviateSink
+  from neumai.Pipelines import Pipeline
 
-    website_connector =  WebsiteConnector(
-        url = "https://www.neum.ai/post/retrieval-augmented-generation-at-scale",
-        selector = Selector(
-            to_metadata=['url']
-        )
-    )
-    source = SourceConnector(
+  website_connector =  WebsiteConnector(
+      url = "https://www.neum.ai/post/retrieval-augmented-generation-at-scale",
+      selector = Selector(
+          to_metadata=['url']
+      )
+  )
+  source = SourceConnector(
       data_connector = website_connector, 
       loader = HTMLLoader(), 
       chunker = RecursiveChunker()
-    )
-  
-    openai_embed = OpenAIEmbed(
+  )
+
+  openai_embed = OpenAIEmbed(
       api_key = "<OPEN AI KEY>",
-    )
-  
-    weaviate_sink = WeaviateSink(
+  )
+
+  weaviate_sink = WeaviateSink(
       url = "your-weaviate-url",
       api_key = "your-api-key",
       class_name = "your-class-name",
-    )
-  
-    pipeline = Pipeline(
+  )
+
+  pipeline = Pipeline(
       sources=[source], 
       embed=openai_embed, 
       sink=weaviate_sink
-    )
-    pipeline.run()
-  
-    results = pipeline.search(
+  )
+  pipeline.run()
+
+  results = pipeline.search(
       query="What are the challenges with scaling RAG?", 
       number_of_results=3
-    )
-  
-    for result in results:
+  )
+
+  for result in results:
       print(result.metadata)
+  ```
+</details>
+
+<details><summary>
+
+  ### Creating and running a pipeline - Postgres connector
+  </summary>
+
+  ```python
+  
+  from neumai.DataConnectors.PostgresConnector import PostgresConnector
+  from neumai.Shared.Selector import Selector
+  from neumai.Loaders.JSONLoader import JSONLoader
+  from neumai.Chunkers.RecursiveChunker import RecursiveChunker
+  from neumai.Sources.SourceConnector import SourceConnector
+  from neumai.EmbedConnectors import OpenAIEmbed
+  from neumai.SinkConnectors import WeaviateSink
+  from neumai.Pipelines import Pipeline
+
+  website_connector =  PostgresConnector(
+      connection_string = 'postgres',
+      query = 'Select * from ...'
+  )
+  source = SourceConnector(
+      data_connector = website_connector, 
+      loader = JSONLoader(
+          id_key='<your id key of your jsons>',
+          selector=Selector(
+              to_embed=['property1_to_embed','property2_to_embed'],
+              to_metadata=['property3_to_include_in_metadata_in_vector']
+          )
+      ),
+      chunker = RecursiveChunker()
+  )
+
+  openai_embed = OpenAIEmbed(
+      api_key = "<OPEN AI KEY>",
+  )
+
+  weaviate_sink = WeaviateSink(
+      url = "your-weaviate-url",
+      api_key = "your-api-key",
+      class_name = "your-class-name",
+  )
+
+  pipeline = Pipeline(
+      sources=[source], 
+      embed=openai_embed, 
+      sink=weaviate_sink
+  )
+  pipeline.run()
+
+  results = pipeline.search(
+      query="...", 
+      number_of_results=3
+  )
+
+  for result in results:
+      print(result.metadata)
+  ```
+</details>
+
+<details><summary>
+  
+  ### Publishing pipeline to Neum Cloud
+  </summary>
+  
+  ```python
+  from neumai.Client.NeumClient import NeumClient
+  client = NeumClient(
+      api_key='<your neum api key, get it from https://dashboard.neum.ai',
+  )
+  client.create_pipeline(pipeline=pipeline)
   ```
 </details>
 
