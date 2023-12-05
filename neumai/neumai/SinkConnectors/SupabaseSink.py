@@ -23,7 +23,7 @@ class SupabaseSink(SinkConnector):
     database_connection : str
         Connection string or details required to connect to the Supabase database.
 
-    collection_name : Optional[str]
+    collection_name : str
         Optional name of the collection within Supabase where the data will be stored.
     """
 
@@ -37,11 +37,11 @@ class SupabaseSink(SinkConnector):
     
     @property
     def required_properties(self) -> List[str]:
-        return ['database_connection']
+        return ['database_connection', 'collection_name']
 
     @property
     def optional_properties(self) -> List[str]:
-        return ['collection_name']
+        return []
 
     def validation(self) -> bool:
         """config_validation connector setup"""
