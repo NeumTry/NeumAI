@@ -1,5 +1,5 @@
 import openai
-from langchain.docstore.document import Document
+from neumai.Shared.NeumDocument import NeumDocument
 from typing import (
     List,
 )
@@ -32,7 +32,7 @@ def semantic_chunking_strategy_code(text:str, chunking_strategy:str) -> str:
     messages = [
         {"role": "system", "content": ('You are helpful developer that writes python code.' + 
                                         'Output the code in this format: ```python def split_text_into_chunks(text): <Insert Code>```' +
-                                        'The function `split_text_into_chunks` should output an array of chunks.'
+                                        'The function `split_text_into_chunks` should output an array of text chunks.'
                                         'Implement the strategy provided by the user to help split text.')},
         {"role": "user", "content": chunking_strategy}
     ]
@@ -53,13 +53,13 @@ def semantic_chunking_code(text:str) -> str:
     chunking_code_exec = chunking_code.split("```python")[1].split("```")[0]
     return chunking_code_exec
 
-def semantic_chunking(documents:List[Document], chunking_code_exec: str) -> List[Document]:
+def semantic_chunking(documents:List[NeumDocument], chunking_code_exec: str) -> List[NeumDocument]:
     exec(chunking_code_exec, globals())
     result_doc = []
     for doc in documents:
         results = split_text_into_chunks(doc.page_content)
         for result in results:
-            result_doc.append(Document(page_content=result, metadata=doc.metadata))
+            result_doc.append(NeumDocument(id=doc.id, content=result, metadata=doc.metadata))
     return result_doc
 
 

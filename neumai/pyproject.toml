@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "neumai"
-version = "0.0.32"
+version = "0.0.33"
 description = "Package containing connectors for Neum AI."
 authors = ["David de Matheu <david@tryneum.com>"]
 license = "MIT"
@@ -15,7 +15,6 @@ tiktoken = "0.4.0"
 langchain = "0.0.335"
 openai = "1.2.4"
 pandas = "2.1.0"
-neumai-tools = "0.0.16"
 pinecone-client = "2.2.2"
 pydantic = "1.10.13"
 requests = "2.31.0"

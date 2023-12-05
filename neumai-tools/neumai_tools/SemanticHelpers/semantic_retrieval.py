@@ -1,6 +1,4 @@
-from typing import (
-    List,
-)
+from typing import List
 import openai
 import json
 from .file_prep import read_file_and_prepare_input
