@@ -242,6 +242,7 @@ Experimental
 - [ ]  Structured (SQL and GraphQL) search connector
 </details>
 
+## Neum Tools
 Additional tooling for Neum AI can be found here:
 
 - [neumai-tools](https://pypi.org/project/neumai-tools/): contains pre-processing tools for loading and chunking data before generating vector embeddings.
