@@ -25,6 +25,10 @@ It provides you a comprehensive solution for RAG that can scale with your applic
 - ♻ **Customizable data pre-processing** in the form of loading, chunking and selecting.
 - 🤝 **Cohesive data management** to support hybrid retrieval with metadata. Neum AI automatically augments and tracks metadata to provide rich retrieval experience.
 
+## Talk to us
+
+You can reach our team either through email ([founders@tryneum.com](mailto:founders@tryneum.com)), on [discord](https://discord.gg/mJeNZYRz4m) or by [scheduling a call wit us](https://calendly.com/neum-ai/neum-ai-demo?month=2023-12).
+
 ## Getting Started
 
 ### Neum AI Cloud
@@ -147,6 +151,7 @@ With this snippet of code we will craft all of these and run a pipeline:
       embed=openai_embed, 
       sink=weaviate_sink
   )
+
   pipeline.run()
 
   results = pipeline.search(
@@ -173,10 +178,18 @@ With this snippet of code we will craft all of these and run a pipeline:
   ```
 </details>
 
-### Available Connectors
+### Self-host
+
+If you are interested in deploying Neum AI to your own cloud contact us at [founders@tryneum.com](mailto:founders@tryneum.com).
+
+We have a sample backend architecture published on [GitHub](https://github.com/NeumTry/neum-at-scale) which you can use as a starting point.
+
+## Available Connectors
 For an up-to-date list please visit our [docs](https://docs.neum.ai/components/sourceConnector)
 
-#### Source connectors
+<details>
+
+### Source connectors
 1. Postgres
 2. Hosted Files
 3. Websites
@@ -186,25 +199,24 @@ For an up-to-date list please visit our [docs](https://docs.neum.ai/components/s
 7. Singlestore
 8. Supabase Storage
 
-#### Embed Connectors
+### Embed Connectors
 1. OpenAI embeddings
 2. Azure OpenAI embeddings
 
-#### Sink Connectors
+### Sink Connectors
 1. Supabase postgres
 2. Weaviate
 3. Qdrant
 4. Pinecone
 5. Singlestore
 
-### Self-host
-
-If you are interested in deploying Neum AI to your own cloud contact us at [founders@tryneum.com](mailto:founders@tryneum.com).
-
-We will publish soon an open-source self-host that leverages the framework's architecture to do high throughput data processing.
+</details>
 
 ## Roadmap
+Our roadmap is evolving with asks, so if there is anything missing feel free to open an issue or send us a message.
 
+<details>
+  
 Connectors
 - [ ]  MySQL - Source
 - [ ]  GitHub - Source
@@ -215,19 +227,20 @@ Connectors
 - [ ]  Chroma - Sink
 
 Search
-- [ ]  Retrieval feedback
+- [x]  Retrieval feedback
 - [ ]  Filter support
 - [ ]  Unified Neum AI filters
 - [ ]  Self-Query Retrieval (w/ Metadata attributes generation)
 
 Extensibility
-- [ ]  Langchain / Llama Index Document to Neum Document converter
+- [x]  Langchain / Llama Index Document to Neum Document converter
 - [ ]  Custom chunking and loading
 
 Experimental
 - [ ]  Async metadata augmentation
 - [ ]  Chat history connector
 - [ ]  Structured (SQL and GraphQL) search connector
+</details>
 
 Additional tooling for Neum AI can be found here:
 
