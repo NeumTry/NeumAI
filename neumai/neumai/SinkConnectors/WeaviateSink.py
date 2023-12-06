@@ -27,7 +27,7 @@ class WeaviateSink(SinkConnector):
     api_key : str
         The API key for authenticating with the Weaviate service. This key is necessary for secure communication with the Weaviate instance.
 
-    class_name : Optional[str]
+    class_name : str
         An optional class name within Weaviate to which the data will be associated. Specifies the schema or type of data being stored.
 
     num_workers : Optional[int]
@@ -68,11 +68,11 @@ class WeaviateSink(SinkConnector):
     
     @property
     def required_properties(self) -> List[str]:
-        return ['url', 'api_key']
+        return ['url', 'api_key', 'class_name']
 
     @property
     def optional_properties(self) -> List[str]:
-        return ['class_name', 'num_workers', 'shard_count', 'batch_size', 'is_dynamic_batch', 'batch_connection_error_retries']
+        return ['num_workers', 'shard_count', 'batch_size', 'is_dynamic_batch', 'batch_connection_error_retries']
 
     def validation(self) -> bool:
         """config_validation connector setup"""
@@ -176,13 +176,13 @@ class WeaviateSink(SinkConnector):
                     'vector' : vector
                 })
                 .with_limit(number_of_results)
-                .with_additional(['id','certainty'])
+                .with_additional(['id','certainty', 'vector'])
                 .do()
             )
 
             for result in search_result["data"]["Get"][class_name]:
                 # unify our api with the metadata.. or just return whatever metadata we have. (?)
-                matches.append(NeumSearchResult(id=result['_additional']['id'], score=result['_additional']['certainty'], metadata= {k: v for k, v in result.items() if k != "_additional"}))
+                matches.append(NeumSearchResult(id=result['_additional']['id'], score=result['_additional']['certainty'], metadata= {k: v for k, v in result.items() if k != "_additional"}, vector=result['_additional']['vector']))
         except Exception as e:
             raise WeaviateQueryException(f"There was an error querying weaviate. Error {e}")
         return matches

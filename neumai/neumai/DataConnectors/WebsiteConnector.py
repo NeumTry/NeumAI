@@ -72,7 +72,8 @@ class WebsiteConnector(DataConnector):
         yield from self.connect_and_list_full()
     
     def connect_and_download(self, cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
-            response = requests.get(cloudFile.file_identifier)
+            headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"}
+            response = requests.get(cloudFile.file_identifier, headers=headers)
             # Parse the HTML content
             soup = BeautifulSoup(response.content, 'html.parser')
             # Find the <body> element and extract its HTML content
