@@ -82,7 +82,7 @@ class QdrantSink(SinkConnector):
             return  len(points)
         raise QdrantInsertionException("Qdrant storing failed. Try again later.")
     
-    def search(self, vector: List[float], number_of_results: int, filter:dict = None) -> List:
+    def search(self, vector: List[float], number_of_results: int, filter:dict = {}) -> List:
         url = self.url
         api_key = self.api_key
         collection_name = self.collection_name

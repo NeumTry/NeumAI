@@ -70,7 +70,7 @@ class SupabaseSink(SinkConnector):
             vx.disconnect()
         return len(vectors_to_store)
     
-    def search(self, vector: List[float], number_of_results:int, filter:dict=None) -> List:
+    def search(self, vector: List[float], number_of_results:int, filter:dict={}) -> List:
         database_connection = self.database_connection
         vx = vecs.create_client(database_connection)
         collection_name = self.collection_name
@@ -86,6 +86,7 @@ class SupabaseSink(SinkConnector):
                 include_metadata=True,
                 include_value=True,
                 limit=number_of_results,
+                filters=filter
             )
         except Exception as e:
             raise SupabaseQueryException(f"Error querying vectors from Supabase. Exception: {e}")
