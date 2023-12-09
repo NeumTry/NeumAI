@@ -108,7 +108,7 @@ class SingleStoreSink(SinkConnector):
         
         return len(vectors_to_store), None
     
-    def search(self, vector: List[float], number_of_results: int) -> List[NeumSearchResult]:
+    def search(self, vector: List[float], number_of_results: int, filter:dict={}) -> List[NeumSearchResult]:
         url = self.url
         table = self.table
 
