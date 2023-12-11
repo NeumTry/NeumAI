@@ -1,7 +1,6 @@
 from typing import List, Generator, Optional
 from neumai.Chunkers.Chunker import Chunker
 from neumai.Shared.NeumDocument import NeumDocument
-from neumai_tools.SemanticHelpers import semantic_chunking
 from pydantic import Field
 from neumai.Shared.Exceptions import CustomChunkerException
 
@@ -37,6 +36,10 @@ class CustomChunker(Chunker):
         return ["batch_size"]
 
     def chunk(self, documents:List[NeumDocument]) -> Generator[List[NeumDocument], None, None]:
+        try:
+            from neumai_tools.SemanticHelpers import semantic_chunking
+        except ImportError:
+            raise ImportError("You must run " "`pip install neumai_tools")
         
         chunking_code_exec=self.code
         batch_size = self.batch_size
