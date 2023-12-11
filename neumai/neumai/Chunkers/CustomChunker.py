@@ -1,7 +1,6 @@
 from typing import List, Generator, Optional
 from neumai.Chunkers.Chunker import Chunker
 from neumai.Shared.NeumDocument import NeumDocument
-from neumai_tools.SemanticHelpers import semantic_chunking
 from pydantic import Field
 from neumai.Shared.Exceptions import CustomChunkerException
 
@@ -37,6 +36,10 @@ class CustomChunker(Chunker):
         return ["batch_size"]
 
     def chunk(self, documents:List[NeumDocument]) -> Generator[List[NeumDocument], None, None]:
+        try:
+            from neumai_tools.SemanticHelpers import semantic_chunking
+        except ImportError:
+            raise ImportError("You must run " "`pip install neumai-tools")
         
         chunking_code_exec=self.code
         batch_size = self.batch_size
@@ -60,6 +63,10 @@ class CustomChunker(Chunker):
             yield documents_to_embed
 
     def config_validation(self) -> bool:
+        try:
+            from neumai_tools.SemanticHelpers import semantic_chunking
+        except ImportError:
+            raise ImportError("You must run " "`pip install neumai-tools")
         try:
             chunks = semantic_chunking(documents=[NeumDocument(id="test", content="test", metadata={})], chunking_code_exec=self.code)
         except Exception as e:

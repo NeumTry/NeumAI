@@ -78,6 +78,9 @@ class WebsiteConnector(DataConnector):
             soup = BeautifulSoup(response.content, 'html.parser')
             # Find the <body> element and extract its HTML content
             body = soup.find('body')
+            # Some sites don't have a body, so instead just get all the text off it.
+            if body == None:
+                body = soup.get_text()
             body_html = str(body)  # Convert the body tag to a string to get its HTML content
             # Create a temporary file and write the extracted HTML to it
             with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode='w', encoding="utf-8") as temp:

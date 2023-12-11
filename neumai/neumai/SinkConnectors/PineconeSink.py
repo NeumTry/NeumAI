@@ -88,20 +88,25 @@ class  PineconeSink(SinkConnector):
             raise PineconeInsertionException(f"Failed to store in Pinecone. Exception - {e}")
         return int(vectors_stored)
     
-    def search(self, vector: List[float], number_of_results:int) -> List[NeumSearchResult]:
+    def search(self, vector: List[float], number_of_results:int, filter:dict = {}) -> List[NeumSearchResult]:
         import pinecone
         api_key =  self.api_key
         environment = self.environment
         index = self.index
         namespace = self.namespace
         if environment == "gcp-starter": namespace = None # short-term fix given gcp-starter limitation
-
         try:
             pinecone.init(      
                 api_key=api_key,      
                 environment=environment)    
             index = pinecone.Index(index)
-            results = index.query(vector=vector, top_k=number_of_results, namespace=namespace, include_values=False, include_metadata=True)["matches"]
+            results = index.query(
+                vector=vector, 
+                filter=filter,
+                top_k=number_of_results, 
+                namespace=namespace, 
+                include_values=False, 
+                include_metadata=True)["matches"]
         except Exception as e:
             raise PineconeQueryException(f"Failed to query pinecone. Exception - {e}")
         

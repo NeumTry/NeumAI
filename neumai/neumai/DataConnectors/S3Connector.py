@@ -38,7 +38,7 @@ class S3Connector(DataConnector):
 
     bucket_name: str = Field(..., description="S3 bucket name.")
 
-    prefix: Optional[str] = Field(None, description="Optional prefix for S3 files.")
+    prefix: Optional[str] = Field("", description="Optional prefix for S3 files.")
 
     selector: Optional[Selector] = Field(Selector(to_embed=[], to_metadata=[]), description="Selector for data connector metadata")
 
@@ -147,7 +147,6 @@ class S3Connector(DataConnector):
     def config_validation(self) -> bool:      
         if not all(x in self.available_metadata for x in self.selector.to_metadata):
             raise ValueError("Invalid metadata values provided")
-        
         try:
             session = boto3.Session(
                 aws_access_key_id=self.aws_key_id,

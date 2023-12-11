@@ -150,7 +150,7 @@ class WeaviateSink(SinkConnector):
 
         return len(vectors_to_store)
 
-    def search(self, vector: List[float], number_of_results: int) -> List[NeumSearchResult]:
+    def search(self, vector: List[float], number_of_results: int, filter:dict={}) -> List[NeumSearchResult]:
         api_key = self.api_key
         url = self.url
         # Weaviate requires first letter to be capitalized
@@ -169,16 +169,20 @@ class WeaviateSink(SinkConnector):
         full_class_schema_properties = [property['name'] for property in class_schema['properties']]
         matches = []
         try:
-            search_result = (
+            client_query = (
                 client.query
                 .get(class_name=class_name, properties=full_class_schema_properties)
-                .with_near_vector(content = {
-                    'vector' : vector
-                })
+                .with_near_vector(content={'vector': vector})
                 .with_limit(number_of_results)
-                .with_additional(['id','certainty', 'vector'])
-                .do()
+                .with_additional(['id', 'certainty', 'vector'])
             )
+
+            # Add .with_where(filter) only if filter is not empty
+            if filter:
+                client_query = client_query.with_where(filter)
+
+            # Final execution of the query
+            search_result = client_query.do()
 
             for result in search_result["data"]["Get"][class_name]:
                 # unify our api with the metadata.. or just return whatever metadata we have. (?)

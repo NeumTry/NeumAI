@@ -152,9 +152,9 @@ class Pipeline(BaseModel):
         except Exception as e:
             raise e
     
-    def search(self, query:str, number_of_results:int) -> List[NeumSearchResult]:
+    def search(self, query:str, number_of_results:int, filter:dict={}) -> List[NeumSearchResult]:
         vector_for_query = self.embed.embed_query(query=query)
-        matches =  self.sink.search(vector=vector_for_query, number_of_results=number_of_results)
+        matches =  self.sink.search(vector=vector_for_query, number_of_results=number_of_results, filter=filter)
         return matches
 
     # Todo standardize the model serialization as we are mixing FE and BE concepts into the SDK

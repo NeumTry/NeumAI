@@ -7,4 +7,4 @@ class NeumSearchResult(BaseModel):
     id:str = Field(..., description="Search result vector ID")
     metadata:dict = Field(...,description="Search result vector metadata")
     score:float =  Field(..., description="Search result similarity score")
-    vector: Optional[List[float]] = Field(..., description="Search result vector")
+    vector: Optional[List[float]] = Field(None, description="Search result vector")
