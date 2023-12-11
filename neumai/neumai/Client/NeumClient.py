@@ -42,6 +42,25 @@ class NeumClient(ABC):
         except Exception as e:
             print(f"Pipeline fetching failed. Exception - {e}")
     
+    def get_pipelines(self):
+        url = f"{self.endpoint}/pipelines/"
+
+        headers = {
+            "accept": "application/json",
+            "neum-api-key": self.api_key,
+            "content-type": "application/json"
+        }
+
+        try:
+            response = requests.get(url, headers=headers)
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Pipeline trigger failed. Exception - {e}")
+
+    def get_pipeline_runs(self, pipeline:str, pipeline_run_id:str):
+        
+    def get_pipeline_run(self, pipeline:str, pipeline_run_id:str):
+
     def trigger_pipeline(self, pipeline_id:str, sync_type:TriggerSyncTypeEnum):
         url = f"{self.endpoint}/pipelines/{pipeline_id}/trigger"
 
