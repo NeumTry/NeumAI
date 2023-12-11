@@ -56,13 +56,35 @@ class NeumClient(ABC):
         except Exception as e:
             print(f"Pipeline trigger failed. Exception - {e}")
 
-    def search_pipeline(self, pipeline_id:str, query:str, num_of_results:int = 3, track:bool = False):
+    def search_pipeline(self, pipeline_id:str, query:str, num_of_results:int = 3, track:bool = False, filter:dict = {}, requested_by:str = None):
         url = f"{self.endpoint}/pipelines/{pipeline_id}/search"
 
         payload = {
             "number_of_results": num_of_results,
             "query": query,
-            "collect_retrieval":track
+            "collect_retrieval":track,
+            "requested_by":requested_by,
+            "filter":filter
+        }
+        headers = {
+            "accept": "application/json",
+            "neum-api-key": self.api_key,
+            "content-type": "application/json"
+        }
+        try:
+            response = requests.post(url, json=payload, headers=headers)
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Pipeline trigger failed. Exception - {e}")
+    
+    def search_file(self, pipeline_id:str, file_id:str, query:str, num_of_results:int = 3, track:bool = False, requested_by:str = None):
+        url = f"{self.endpoint}/pipelines/{pipeline_id}/files/search?file_id={file_id}"
+
+        payload = {
+            "number_of_results": num_of_results,
+            "query": query,
+            "collect_retrieval":track,
+            "requested_by":requested_by,
         }
         headers = {
             "accept": "application/json",
