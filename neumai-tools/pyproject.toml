@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "neumai-tools"
-version = "0.0.17"
+version = "0.0.18"
 description = "Package containing helper tools for Neum AI."
 authors = ["David de Matheu <david@tryneum.com>"]
 license = "MIT"
@@ -16,7 +16,7 @@ langchain = "0.0.335"
 llama-index = "0.9.3"
 openai = "1.2.4"
 pandas = "2.1.0"
-neumai = "^0.0.33"
+neumai = ">0.0.34"
 
 [build-system]
 requires = ["poetry-core"]
