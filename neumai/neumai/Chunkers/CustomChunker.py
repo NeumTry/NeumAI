@@ -64,6 +64,10 @@ class CustomChunker(Chunker):
 
     def config_validation(self) -> bool:
         try:
+            from neumai_tools.SemanticHelpers import semantic_chunking
+        except ImportError:
+            raise ImportError("You must run " "`pip install neumai-tools")
+        try:
             chunks = semantic_chunking(documents=[NeumDocument(id="test", content="test", metadata={})], chunking_code_exec=self.code)
         except Exception as e:
             raise CustomChunkerException(f"Connection to Sharepoint failed, check credentials. See Exception: {e}")   
