@@ -39,7 +39,7 @@ class CustomChunker(Chunker):
         try:
             from neumai_tools.SemanticHelpers import semantic_chunking
         except ImportError:
-            raise ImportError("You must run " "`pip install neumai_tools")
+            raise ImportError("You must run " "`pip install neumai-tools")
         
         chunking_code_exec=self.code
         batch_size = self.batch_size
