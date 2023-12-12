@@ -55,11 +55,37 @@ class NeumClient(ABC):
             response = requests.get(url, headers=headers)
             return json.loads(response.text)
         except Exception as e:
-            print(f"Pipeline trigger failed. Exception - {e}")
+            print(f"Pipeline fetch failed. Exception - {e}")
 
-    def get_pipeline_runs(self, pipeline:str, pipeline_run_id:str):
-        
-    def get_pipeline_run(self, pipeline:str, pipeline_run_id:str):
+    def get_pipeline_runs(self, pipeline_id:str):
+        url = f"{self.endpoint}/pipelines/{pipeline_id}/runs"
+
+        headers = {
+            "accept": "application/json",
+            "neum-api-key": self.api_key,
+            "content-type": "application/json"
+        }
+
+        try:
+            response = requests.get(url, headers=headers)
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Pipeline runs fetch failed. Exception - {e}")
+
+    def get_pipeline_run(self, pipeline_id:str, pipeline_run_id:str):
+        url = f"{self.endpoint}/pipelines/{pipeline_id}/runs{pipeline_run_id}"
+
+        headers = {
+            "accept": "application/json",
+            "neum-api-key": self.api_key,
+            "content-type": "application/json"
+        }
+
+        try:
+            response = requests.get(url, headers=headers)
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Pipeline run fetch failed. Exception - {e}")
 
     def trigger_pipeline(self, pipeline_id:str, sync_type:TriggerSyncTypeEnum):
         url = f"{self.endpoint}/pipelines/{pipeline_id}/trigger"
@@ -94,7 +120,7 @@ class NeumClient(ABC):
             response = requests.post(url, json=payload, headers=headers)
             return json.loads(response.text)
         except Exception as e:
-            print(f"Pipeline trigger failed. Exception - {e}")
+            print(f"Pipeline search failed. Exception - {e}")
     
     def search_file(self, pipeline_id:str, file_id:str, query:str, num_of_results:int = 3, track:bool = False, requested_by:str = None):
         url = f"{self.endpoint}/pipelines/{pipeline_id}/files/search?file_id={file_id}"
@@ -114,7 +140,7 @@ class NeumClient(ABC):
             response = requests.post(url, json=payload, headers=headers)
             return json.loads(response.text)
         except Exception as e:
-            print(f"Pipeline trigger failed. Exception - {e}")
+            print(f"File search failed. Exception - {e}")
 
     def get_files(self, pipeline_id:str):
         url = f"{self.endpoint}/pipelines/{pipeline_id}/files"
@@ -129,7 +155,7 @@ class NeumClient(ABC):
             response = requests.get(url, headers=headers)
             return json.loads(response.text)
         except Exception as e:
-            print(f"Pipeline trigger failed. Exception - {e}")
+            print(f"Files fetch failed. Exception - {e}")
     
     def get_file(self, pipeline_id:str, file_id:str):
         url = f"{self.endpoint}/pipelines/{pipeline_id}/files?file_id={file_id}"
@@ -144,7 +170,7 @@ class NeumClient(ABC):
             response = requests.get(url, headers=headers)
             return json.loads(response.text)
         except Exception as e:
-            print(f"Pipeline trigger failed. Exception - {e}")
+            print(f"File fetch failed. Exception - {e}")
     
     def get_retrievals_by_file_id(self, pipeline_id:str, file_id:str):
         url = f"{self.endpoint}/retrievals/{pipeline_id}/files?file_id={file_id}"
@@ -159,7 +185,7 @@ class NeumClient(ABC):
             response = requests.get(url, headers=headers)
             return json.loads(response.text)
         except Exception as e:
-            print(f"Pipeline trigger failed. Exception - {e}")
+            print(f"Retrievals fetch failed. Exception - {e}")
 
     def get_retrievals_by_pipeline_id(self, pipeline_id:str):
         url = f"{self.endpoint}/retrievals/{pipeline_id}"
@@ -174,7 +200,7 @@ class NeumClient(ABC):
             response = requests.get(url, headers=headers)
             return json.loads(response.text)
         except Exception as e:
-            print(f"Pipeline trigger failed. Exception - {e}")
+            print(f"Retrievals fetch failed. Exception - {e}")
     
     def provide_retrieval_feedback(self, pipeline_id:str, retrieval_id:str, status:str):
         url = f"{self.endpoint}/retrievals/{pipeline_id}/{retrieval_id}"
@@ -192,4 +218,4 @@ class NeumClient(ABC):
             response = requests.post(url, json=payload, headers=headers)
             return json.loads(response.text)
         except Exception as e:
-            print(f"Pipeline trigger failed. Exception - {e}")
+            print(f"Retrieval feedback failed. Exception - {e}")
