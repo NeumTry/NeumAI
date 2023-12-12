@@ -95,6 +95,6 @@ class PipelineRun(BaseModel):
             task_details=PipelineRunTaskDetails.as_pipeline_run_task_details(dct.get("task_details", None)),
             last_updated=dct.get("last_updated", None),
             number_of_documents=dct.get("number_of_documents",None),
-            finished_distributing=dct.get("finished_distributing",None) # we could do something like in distributed tasks where we store the state of the DAG in the pipeline run object.. for now just doing finished_distributing
+            finished_distributing=dct.get("finished_distributing",None),# we could do something like in distributed tasks where we store the state of the DAG in the pipeline run object.. for now just doing finished_distributing
             processing_time=dct.get("processing_time", None)
         )
