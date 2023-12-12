@@ -111,16 +111,11 @@ class WeaviateSink(SinkConnector):
             url=url,
             auth_client_secret=weaviate.AuthApiKey(api_key=api_key),
         )
-        
-        try:
-            class_schema = client.schema.get(class_name)
-        except Exception as e:
-            raise WeaviateQueryException(f"There was an error retrieving the class schema from weaviate")
         client.batch.delete_objects(
-            class_name=class_schema,
+            class_name=class_name,
             where={
                 "path": ["_file_entry_id"],
-                "operator": "Equals",
+                "operator": "Equal",
                 "valueText": file_id
             },
         )
