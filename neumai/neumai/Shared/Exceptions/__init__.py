@@ -66,6 +66,18 @@ class QdrantQueryException(Exception):
     """Raised if querying Qdrant fails"""
     pass
 
+class MarqoInsertionException(Exception):
+    """Raised if inserting into Marqo fails"""
+    pass
+
+class MarqoIndexInfoException(Exception):
+    """Raised if getting index info from Marqo fails"""
+    pass
+
+class MarqoQueryException(Exception):
+    """Raised if querying Marqo fails"""
+    pass
+
 class PostgresConnectionException(Exception):
     """Raised if establishing a connection to a Postgres db fails"""
     pass
