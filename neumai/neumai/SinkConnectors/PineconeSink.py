@@ -64,6 +64,20 @@ class  PineconeSink(SinkConnector):
             raise PineconeConnectionException(f"Pinecone connection couldn't be initialized. See exception: {e}")
         return True 
 
+    def delete_vectors_with_file_id(self, file_id: str) -> bool:
+        api_key =  self.api_key
+        environment = self.environment
+        index = self.index
+        namespace = self.namespace
+        if environment == "gcp-starter":
+            raise Exception("Pinecone does not support deleting vectors by metadata in the gcp starter environment")
+        pinecone.init(      
+            api_key=api_key,      
+            environment=environment)    
+        index = pinecone.Index(index)
+        index.delete(filter={"_file_entry_id": {"$eq": file_id}}, namespace=namespace)
+        return True
+
     def store(self, vectors_to_store:List[NeumVector]) -> int:
         api_key =  self.api_key
         environment = self.environment

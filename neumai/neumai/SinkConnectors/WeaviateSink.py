@@ -101,6 +101,31 @@ class WeaviateSink(SinkConnector):
                         partial_failure['latest_failure'] = result["result"]["errors"]["error"]
                         partial_failure['number_of_failures'] += 1
 
+    def delete_vectors_with_file_id(self, file_id: str) -> bool:
+        api_key = self.api_key
+        url = self.url
+        # Weaviate requires first letter to be capitalized
+        class_name = self.class_name
+        class_name = _capitalize_first_letter(class_name)
+        client = weaviate.Client(
+            url=url,
+            auth_client_secret=weaviate.AuthApiKey(api_key=api_key),
+        )
+        
+        try:
+            class_schema = client.schema.get(class_name)
+        except Exception as e:
+            raise WeaviateQueryException(f"There was an error retrieving the class schema from weaviate")
+        client.batch.delete_objects(
+            class_name=class_schema,
+            where={
+                "path": ["_file_entry_id"],
+                "operator": "Equals",
+                "valueText": file_id
+            },
+        )
+        return True
+    
     def store(self, vectors_to_store:List[NeumVector]) -> Tuple[List, dict]:
         url = self.url
         num_workers = self.num_workers

@@ -52,6 +52,19 @@ class SupabaseSink(SinkConnector):
             raise SupabaseConnectionException(f"Supabase connection couldn't be initialized. See exception: {e}")
         return True 
 
+    def delete_vectors_with_file_id(self, file_id: str) -> bool:
+        database_connection = self.database_connection
+        vx = vecs.create_client(database_connection)
+        try:
+            collection_name = self.collection_name
+            db = vx.get_collection(name=collection_name)
+            db.delete(filters={"_file_entry_id": {"$eq": file_id}})
+        except Exception as e:
+            raise Exception(f"Supabase deletion failed. Exception {e}")
+        finally:
+            vx.disconnect()
+        return True
+    
     def store(self, vectors_to_store:List[NeumVector]) -> int:
         database_connection = self.database_connection
         vx = vecs.create_client(database_connection)

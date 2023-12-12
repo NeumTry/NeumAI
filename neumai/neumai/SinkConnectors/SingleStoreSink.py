@@ -62,6 +62,13 @@ class SingleStoreSink(SinkConnector):
             raise SinglestoreConnectionException(f"There was a problem connecting to Singlestore. See Exception: {e}")
         return True 
 
+    def delete_vectors_with_file_id(self, file_id: str) -> bool:
+        with s2.connect(self.url) as conn:
+            with conn.cursor() as cur:
+                delete_query = f"""DELETE FROM {self.table} WHERE _file_entry_id='{file_id}';"""
+                cur.execute(delete_query)
+        return True
+    
     def store(self, vectors_to_store:List[NeumVector]) -> int:
         batch_size = self.batch_size
         url = self.url
