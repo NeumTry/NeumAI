@@ -94,7 +94,9 @@ class WebsiteConnector(DataConnector):
         
         # Check to see that site exists
         try:
-            requests.get(self.url)
+            response = requests.get(self.url)
+            if not response.ok:
+                raise WebsiteConnectionException(f"File can't be accessed. Please make sure it is publicly available.")     
         except Exception as e:
             raise WebsiteConnectionException(f"Connection to website failed, check url. See Exception: {e}")      
         return True 
