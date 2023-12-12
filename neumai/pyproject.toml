@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "neumai"
-version = "0.0.34"
+version = "0.0.35"
 description = "Package containing connectors for Neum AI."
 authors = ["David de Matheu <david@tryneum.com>"]
 license = "MIT"
@@ -33,7 +33,7 @@ weaviate-client = "3.25.3"
 supabase = "2.0.3"
 boto3 = "1.28.81"
 beautifulsoup4 = "4.12.2"
-vecs = "0.3.0"
+vecs = "0.4.2"
 singlestoredb = "0.9.1"
 fastapi = ">0.98.0"
 

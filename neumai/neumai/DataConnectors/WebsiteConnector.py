@@ -74,6 +74,8 @@ class WebsiteConnector(DataConnector):
     def connect_and_download(self, cloudFile:CloudFile) -> Generator[LocalFile, None, None]:
             headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"}
             response = requests.get(cloudFile.file_identifier, headers=headers)
+            if not response.ok:
+                raise WebsiteConnectionException(f"File can't be accessed. Please make sure it is publicly available.")     
             # Parse the HTML content
             soup = BeautifulSoup(response.content, 'html.parser')
             # Find the <body> element and extract its HTML content
@@ -94,7 +96,9 @@ class WebsiteConnector(DataConnector):
         
         # Check to see that site exists
         try:
-            requests.get(self.url)
+            response = requests.get(self.url)
+            if not response.ok:
+                raise WebsiteConnectionException(f"File can't be accessed. Please make sure it is publicly available.")     
         except Exception as e:
             raise WebsiteConnectionException(f"Connection to website failed, check url. See Exception: {e}")      
         return True 

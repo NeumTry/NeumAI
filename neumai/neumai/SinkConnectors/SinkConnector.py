@@ -36,6 +36,10 @@ class SinkConnector(ABC, BaseModel):
         """Search vectors for a given service"""
     
     @abstractmethod
+    def delete_vectors_with_file_id(self, file_id:str ) -> bool:
+        """Deletes vectors for a specific file id"""
+    
+    @abstractmethod
     def info(self) -> NeumSinkInfo:
         """Get information about what is stores in the sink"""
 

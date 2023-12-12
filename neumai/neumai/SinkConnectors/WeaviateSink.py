@@ -101,6 +101,26 @@ class WeaviateSink(SinkConnector):
                         partial_failure['latest_failure'] = result["result"]["errors"]["error"]
                         partial_failure['number_of_failures'] += 1
 
+    def delete_vectors_with_file_id(self, file_id: str) -> bool:
+        api_key = self.api_key
+        url = self.url
+        # Weaviate requires first letter to be capitalized
+        class_name = self.class_name
+        class_name = _capitalize_first_letter(class_name)
+        client = weaviate.Client(
+            url=url,
+            auth_client_secret=weaviate.AuthApiKey(api_key=api_key),
+        )
+        client.batch.delete_objects(
+            class_name=class_name,
+            where={
+                "path": ["_file_entry_id"],
+                "operator": "Equal",
+                "valueText": file_id
+            },
+        )
+        return True
+    
     def store(self, vectors_to_store:List[NeumVector]) -> Tuple[List, dict]:
         url = self.url
         num_workers = self.num_workers

@@ -59,6 +59,9 @@ class QdrantSink(SinkConnector):
         )
         return True 
 
+    def delete_vectors_with_file_id(self, file_id: str) -> bool:
+        raise Exception("Qdrant doesn't have support to delete vectors by metadata")
+    
     def store(self, vectors_to_store:List[NeumVector]) -> int:
         url = self.url
         api_key = self.api_key
