@@ -89,6 +89,8 @@ class FileConnector(DataConnector):
         import requests
         try:
             response = requests.get(self.url)
+            if not response.ok:
+                raise NeumFileException(f"File can't be accessed. Please make sure it is publicly available.")     
         except Exception as e:
             raise NeumFileException(f"Connection to file failed, check url. See Exception: {e}")     
         # Check for metadata
