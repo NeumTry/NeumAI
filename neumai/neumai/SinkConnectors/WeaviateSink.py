@@ -105,7 +105,7 @@ class WeaviateSink(SinkConnector):
         api_key = self.api_key
         url = self.url
         # Weaviate requires first letter to be capitalized
-        class_name = self.class_name
+        class_name = self.class_name.replace("-","_")
         class_name = _capitalize_first_letter(class_name)
         client = weaviate.Client(
             url=url,
@@ -128,7 +128,8 @@ class WeaviateSink(SinkConnector):
         batch_size = self.batch_size
         is_dynamic_batch = self.is_dynamic_batch
         batch_connection_error_retries = self.batch_connection_error_retries
-        class_name = self.class_name
+        class_name = self.class_name.replace("-","_")
+        class_name = _capitalize_first_letter(class_name)
         partial_failure = {'did_fail': False, 'latest_failure': None, 'number_of_failures': 0}
 
         if 'https' not in url:
@@ -174,7 +175,7 @@ class WeaviateSink(SinkConnector):
         api_key = self.api_key
         url = self.url
         # Weaviate requires first letter to be capitalized
-        class_name = self.class_name
+        class_name = self.class_name.replace("-","_")
         class_name = _capitalize_first_letter(class_name)
         client = weaviate.Client(
             url=url,
@@ -215,7 +216,7 @@ class WeaviateSink(SinkConnector):
         api_key = self.api_key
         url = self.url
         
-        class_name = self.class_name
+        class_name = self.class_name.replace("-","_")
         class_name = _capitalize_first_letter(class_name)
         client = weaviate.Client(
             url=url,
