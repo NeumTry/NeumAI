@@ -202,6 +202,51 @@ class NeumClient(ABC):
         except Exception as e:
             print(f"Retrievals fetch failed. Exception - {e}")
     
+    def get_retrievals_by_pipeline_id_user_id(self, pipeline_id:str, user_id:str):
+        url = f"{self.endpoint}/retrievals/{pipeline_id}/user/{user_id}"
+
+        headers = {
+            "accept": "application/json",
+            "neum-api-key": self.api_key,
+            "content-type": "application/json"
+        }
+
+        try:
+            response = requests.get(url, headers=headers)
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Retrievals fetch failed. Exception - {e}")
+    
+    def get_retrievals_by_user_id(self, user_id:str):
+        url = f"{self.endpoint}/retrievals/user/{user_id}"
+
+        headers = {
+            "accept": "application/json",
+            "neum-api-key": self.api_key,
+            "content-type": "application/json"
+        }
+
+        try:
+            response = requests.get(url, headers=headers)
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Retrievals fetch failed. Exception - {e}")
+
+    def get_retrievals_by_file_id_user_id(self, pipeline_id:str, file_id:str, user_id:str):
+        url = f"{self.endpoint}/retrievals/{pipeline_id}/files?file_id={file_id}&user_id={user_id}"
+
+        headers = {
+            "accept": "application/json",
+            "neum-api-key": self.api_key,
+            "content-type": "application/json"
+        }
+
+        try:
+            response = requests.get(url, headers=headers)
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Retrievals fetch failed. Exception - {e}")
+
     def provide_retrieval_feedback(self, pipeline_id:str, retrieval_id:str, status:str):
         url = f"{self.endpoint}/retrievals/{pipeline_id}/{retrieval_id}"
 

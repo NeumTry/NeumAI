@@ -58,6 +58,7 @@ class PipelineRun(BaseModel):
     last_updated: Optional[float] = None
     number_of_documents: Optional[int] = None
     finished_distributing: bool = False
+    processing_time: Optional[float] = None
                                                  
     def set_id(self, id: str):
         self.id = id
@@ -76,6 +77,9 @@ class PipelineRun(BaseModel):
 
     def set_created(self, created: float):
         self.created = created
+
+    def set_processing_time(self, processing_time: float):
+        self.processing_time = processing_time
     
     def as_pipeline_run(dct:dict):
         if dct == None:
@@ -91,5 +95,6 @@ class PipelineRun(BaseModel):
             task_details=PipelineRunTaskDetails.as_pipeline_run_task_details(dct.get("task_details", None)),
             last_updated=dct.get("last_updated", None),
             number_of_documents=dct.get("number_of_documents",None),
-            finished_distributing=dct.get("finished_distributing",None) # we could do something like in distributed tasks where we store the state of the DAG in the pipeline run object.. for now just doing finished_distributing
+            finished_distributing=dct.get("finished_distributing",None),# we could do something like in distributed tasks where we store the state of the DAG in the pipeline run object.. for now just doing finished_distributing
+            processing_time=dct.get("processing_time", None)
         )
