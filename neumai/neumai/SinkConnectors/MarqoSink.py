@@ -141,11 +141,21 @@ class MarqoSink(SinkConnector):
             return  len(operation_info['items'])
         raise MarqoInsertionException("Marqo storing failed. Try again later.")
     
+    def _get_filter_string_from_filter_dict(self, filter_dict):
+        _filter_string = ""
+        for k,v in filter_dict.items():
+            _filter_string+=f"{k}:{v} AND "
+        if _filter_string.endswith(" AND "):
+            _filter_string = _filter_string.rstrip(" AND ")
+        return _filter_string
+    
     def search(self, vector: List[float], number_of_results: int, filter:dict = {}) -> List:
         url = self.url
         api_key = self.api_key
         index_name = self.index_name
 
+        filter_string = self._get_filter_string_from_filter_dict(filter_dict=filter)
+        
         try:
             marqo_client = marqo.Client(
                 url=url, 
@@ -156,6 +166,7 @@ class MarqoSink(SinkConnector):
                     'tensor':[{'vector': vector, 'weight' : 1}]
                 },
                 limit=number_of_results,
+                filter_string=filter_string if filter_string else None
             )
         except Exception as e:
             raise MarqoQueryException(f"Failed to query Marqo. Exception - {e}")
