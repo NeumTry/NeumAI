@@ -185,3 +185,10 @@ class MarqoSink(SinkConnector):
             return(NeumSinkInfo(number_vectors_stored=index_stats['numberOfVectors']))
         except Exception as e:
             raise MarqoIndexInfoException(f"Failed to get information from Marqo. Exception - {e}")
+    
+    def delete_vectors_with_file_id(self, file_id: str) -> bool:
+        marqo_client = marqo.Client(url=self.url, api_key=self.api_key)
+        deletion_info = marqo_client.index(self.index_name).delete_documents(ids=[file_id])
+        if not deletion_info:
+            raise Exception("Marqo doesn't have support to delete vectors by metadata")
+        return True
