@@ -1,0 +1,205 @@
+from neumai.Shared.NeumSinkInfo import NeumSinkInfo
+from neumai.Shared.NeumVector  import NeumVector
+from neumai.Shared.NeumSearch import NeumSearchResult
+from neumai.Shared.Exceptions import(
+    MarqoInsertionException,
+    MarqoIndexInfoException,
+    MarqoQueryException
+)
+from neumai.SinkConnectors.SinkConnector import SinkConnector
+from typing import List
+from pydantic import Field
+import marqo
+
+class MarqoSink(SinkConnector):
+    """
+    Marqo Sink
+
+    A sink connector for Marqo, designed to facilitate data output into a Marqo storage system.
+
+    Attributes:
+    -----------
+    url : str
+        URL for accessing the Marqo service.
+
+    api_key : str
+        API key required for authenticating with the Marqo service.
+
+    index_name : str
+        Name of the index in Marqo where the data will be stored.
+    """
+
+    url: str = Field(..., description="URL for Marqo.")
+
+    api_key: str = Field(default=None, description="API key for Marqo.")
+
+    index_name: str = Field(..., description="Index name.")
+
+    @property
+    def sink_name(self) -> str:
+        return 'MarqoSink'
+    
+    @property
+    def required_properties(self) -> List[str]:
+        return ['url', 'api_key', 'index_name']
+
+    @property
+    def optional_properties(self) -> List[str]:
+        return []
+
+    def validation(self) -> bool:
+        """config_validation connector setup"""
+        marqo_client = marqo.Client(url=self.url, api_key=self.api_key)
+        return True 
+    
+    def _create_index(
+        self,
+        index_name: str,
+        marqo_client,
+        embedding_dim,
+        similarity: str = 'cosinesimil',
+        recreate_index: bool = False,
+        ):
+        '''
+        Create a new index
+        :similarity: similarity function, it should be one of l1, l2, linf and cosinesimil
+        '''
+        if recreate_index:
+            if index_name in [i.index_name for i in marqo_client.get_indexes()['results']]:
+                marqo_client.delete_index(index_name)
+
+        if not index_name:
+            raise Exception('Index name must not be none')
+
+        if similarity not in ['cosinesimil', 'l1', 'l2', 'linf']:
+            raise Exception('Similarity function must be one of l1, l2, linf and cosinesimil')
+
+        if index_name in [i.index_name for i in marqo_client.get_indexes()['results']] and recreate_index==False:
+            raise Exception(f'Index {index_name} already exists, please use another name')
+
+        # Not using any model, providing own vectors
+        # https://docs.marqo.ai/1.4.0/API-Reference/Indexes/create_index/#no-model
+        marqo_client.create_index(
+        index_name=index_name,
+        settings_dict={
+                    'index_defaults': {
+                        'model': 'no_model',
+                        'model_properties': {
+                            'dimensions': embedding_dim
+                        },
+                        'ann_parameters':{
+                            'space_type': similarity
+                        }
+                    }
+                }
+        )
+
+    def store(self, vectors_to_store:List[NeumVector]) -> int:
+        url = self.url
+        api_key = self.api_key
+        index_name = self.index_name
+
+        marqo_client = marqo.Client(
+            url=url, 
+            api_key=api_key,
+        )
+        self._create_index(index_name=index_name,
+                          marqo_client=marqo_client,
+                          similarity="cosinesimil",
+                          embedding_dim=len(vectors_to_store[0].vector))
+        mod_vecs = []
+        for vec in vectors_to_store:
+            _id = vec.id
+            _vec = vec.vector
+            dic = {
+                    '_id': _id,
+                    'neum': {
+                        'vector': _vec
+                    }
+                }
+            # Using the two lines below, we can unroll the elements in metadata
+            # and add them separately
+            for k,v in vec.metadata.items():
+                dic[k] = v
+            # dic['metadata'] = vec.metadata
+            mod_vecs.append(
+                dic
+            )
+        operation_info = marqo_client.index(index_name).add_documents(
+            documents=mod_vecs,
+            mappings={
+                'neum': 
+                    {
+                    'type': 'custom_vector'
+                    }
+            },
+            tensor_fields=['neum'],
+            auto_refresh=True
+            )
+        
+        if(operation_info['errors'] == False):
+            return  len(operation_info['items'])
+        raise MarqoInsertionException("Marqo storing failed. Try again later.")
+    
+    def _get_filter_string_from_filter_dict(self, filter_dict):
+        _filter_string = ""
+        for k,v in filter_dict.items():
+            _filter_string+=f"{k}:{v} AND "
+        if _filter_string.endswith(" AND "):
+            _filter_string = _filter_string.rstrip(" AND ")
+        return _filter_string
+    
+    def search(self, vector: List[float], number_of_results: int, filter:dict = {}) -> List:
+        url = self.url
+        api_key = self.api_key
+        index_name = self.index_name
+
+        filter_string = self._get_filter_string_from_filter_dict(filter_dict=filter)
+        
+        try:
+            marqo_client = marqo.Client(
+                url=url, 
+                api_key=api_key,
+            )
+            search_result = marqo_client.index(index_name).search(
+                context={
+                    'tensor':[{'vector': vector, 'weight' : 1}]
+                },
+                limit=number_of_results,
+                filter_string=filter_string if filter_string else None
+            )
+        except Exception as e:
+            raise MarqoQueryException(f"Failed to query Marqo. Exception - {e}")
+        
+        matches = []
+        for result in search_result['hits']:
+            matches.append(
+                NeumSearchResult(
+                    id=result['_id'],
+                    metadata={k:result[k] for k in list(result.keys()) if k not in ['_id', '_score']},
+                    score=result['_score']
+                )
+            )
+        return matches
+    
+    def info(self) -> NeumSinkInfo:
+        url = self.url
+        api_key = self.api_key
+        index_name = self.index_name
+
+        try:
+            marqo_client = marqo.Client(
+                url=url, 
+                api_key=api_key,
+            )
+            index_stats = marqo_client.index(index_name).get_stats()
+            return(NeumSinkInfo(number_vectors_stored=index_stats['numberOfVectors']))
+        except Exception as e:
+            raise MarqoIndexInfoException(f"Failed to get information from Marqo. Exception - {e}")
+    
+    def delete_vectors_with_file_id(self, file_id: str) -> bool:
+        marqo_client = marqo.Client(url=self.url, api_key=self.api_key)
+        deletion_info = marqo_client.index(self.index_name).delete_documents(ids=[file_id])
+        if not deletion_info:
+            raise Exception("Marqo doesn't have support to delete vectors by metadata")
+        return True
