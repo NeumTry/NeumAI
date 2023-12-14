@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "neumai"
-version = "0.0.36"
+version = "0.0.37"
 description = "Package containing connectors for Neum AI."
 authors = ["David de Matheu <david@tryneum.com>"]
 license = "MIT"
@@ -36,6 +36,7 @@ beautifulsoup4 = "4.12.2"
 vecs = "0.4.2"
 singlestoredb = "0.9.1"
 fastapi = ">0.98.0"
+marqo = "2.1.0"
 
 [build-system]
 requires = ["poetry-core"]
