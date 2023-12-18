@@ -36,6 +36,9 @@ beautifulsoup4 = "4.12.2"
 vecs = "0.4.2"
 singlestoredb = "0.9.1"
 fastapi = ">0.98.0"
+lancedb = "0.3.6"
+pylance = "0.8.21"
+marqo = "2.1.0"
 
 [build-system]
 requires = ["poetry-core"]
