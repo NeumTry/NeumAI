@@ -7,7 +7,7 @@ from neumai.Shared.Exceptions import(
     LanceDBQueryException
 )
 from neumai.SinkConnectors.SinkConnector import SinkConnector
-from typing import List
+from typing import List, Optional
 from pydantic import Field
 
 import lancedb
@@ -48,8 +48,8 @@ class LanceDBSink(SinkConnector):
     """
 
     uri: str = Field(..., description="URI for LanceDB database")
-    api_key: str = Field(default=None, description="API key for LanceDB cloud")
-    region: str = Field(default=None, description="Region for use of LanceDB cloud")
+    api_key: Optional[str] = Field(default=None, description="API key for LanceDB cloud")
+    region: Optional[str] = Field(default=None, description="Region for use of LanceDB cloud")
     table_name: str = Field(..., description="Name of LanceDB table to use")
     create_index: bool = Field(
         default=False, 
