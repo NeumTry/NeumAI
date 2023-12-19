@@ -4,5 +4,6 @@ from .WeaviateSink import WeaviateSink
 from .SingleStoreSink import SingleStoreSink
 from .SupabaseSink import SupabaseSink
 from .MarqoSink import MarqoSink
+from .LanceDBSink import LanceDBSink
 from .SinkConnector import SinkConnector
 from .SinkConnectorEnum import SinkConnectorEnum

@@ -78,6 +78,18 @@ class MarqoQueryException(Exception):
     """Raised if querying Marqo fails"""
     pass
 
+class LanceDBInsertionException(Exception):
+    """Raised if inserting into LanceDB fails"""
+    pass
+
+class LanceDBIndexInfoException(Exception):
+    """Raised if getting index info from LanceDB fails"""
+    pass
+
+class LanceDBQueryException(Exception):
+    """Raised if querying LanceDB fails"""
+    pass
+
 class PostgresConnectionException(Exception):
     """Raised if establishing a connection to a Postgres db fails"""
     pass
