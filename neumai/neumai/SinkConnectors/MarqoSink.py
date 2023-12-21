@@ -7,9 +7,10 @@ from neumai.Shared.Exceptions import(
     MarqoQueryException
 )
 from neumai.SinkConnectors.SinkConnector import SinkConnector
-from typing import List
+from typing import List, Union, Any
 from pydantic import Field
 import marqo
+from neumai.SinkConnectors.filter_utils import FilterCondition, FilterOperator, string_to_filter_condition
 
 class MarqoSink(SinkConnector):
     """
@@ -94,6 +95,7 @@ class MarqoSink(SinkConnector):
                 }
         )
 
+
     def store(self, vectors_to_store:List[NeumVector]) -> int:
         url = self.url
         api_key = self.api_key
@@ -141,20 +143,66 @@ class MarqoSink(SinkConnector):
             return  len(operation_info['items'])
         raise MarqoInsertionException("Marqo storing failed. Try again later.")
     
-    def _get_filter_string_from_filter_dict(self, filter_dict):
+
+    def _get_marqo_filter(self, column: str, value: Any, operator: FilterOperator) -> str:
+        """A function to convert filters/conditions marqo DSL filter.
+
+        Args:
+            column (str): The field name to filter on(in terms of marqo)
+            value (Any): The value of the field name to process on
+            operator (FilterOperator): The filter operator to apply so as to filter
+
+        Raises:
+            Exception: Exception for operator not supported
+
+        Returns:
+            str: The marqo DSL filter string
+        """
+        if operator==FilterOperator.EQUAL.value:
+            return f"{column}:{value} AND "
+        elif operator==FilterOperator.LESS_THAN.value:
+            return f"{column}:[* TO {value-1}] AND "
+        elif operator==FilterOperator.LESS_THAN_OR_EQUAL.value:
+            return f"{column}:[* TO {value}] AND "
+        elif operator==FilterOperator.GREATER_THAN.value:
+            return f"{column}:[{value+1} TO *] AND "
+        elif operator==FilterOperator.GREATER_THAN_OR_EQUAL.value:
+            return f"{column}:[{value} TO *] AND "
+        else:
+            raise Exception(f"Operator {operator} is currently not supported")
+    
+
+    def _get_filter_string_from_filter_dict(self, filter_conditions):
         _filter_string = ""
-        for k,v in filter_dict.items():
-            _filter_string+=f"{k}:{v} AND "
+
+        if type(filter_conditions)==dict:
+            for k,v in filter_conditions.items():
+                _filter_string+=f"{k}:{v} AND "
+
+        elif type(filter_conditions)==list:
+            # If list of FilterConditions, use this block
+            for condition in filter_conditions:
+                key = condition.column.split(".")[-1]
+                operator = condition.operator
+
+                _filter_string+=self._get_marqo_filter(
+                    column=key, value=condition.value, operator=operator)
+                
         if _filter_string.endswith(" AND "):
             _filter_string = _filter_string.rstrip(" AND ")
         return _filter_string
     
-    def search(self, vector: List[float], number_of_results: int, filter:dict = {}) -> List:
+
+    def search(self, vector: List[float], number_of_results: int, filter: Union[dict, str] = {}) -> List:
         url = self.url
         api_key = self.api_key
         index_name = self.index_name
 
-        filter_string = self._get_filter_string_from_filter_dict(filter_dict=filter)
+        if type(filter)==str:
+            # Get a list of FilterConditions if the filter is in comma
+            # separated string form
+            filter = string_to_filter_condition(filter_string=filter)
+        filter_string = self._get_filter_string_from_filter_dict(filter_conditions=filter)
         
         try:
             marqo_client = marqo.Client(
