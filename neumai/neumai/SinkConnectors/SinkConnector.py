@@ -4,6 +4,7 @@ from neumai.Shared.NeumSinkInfo import NeumSinkInfo
 from abc import ABC, abstractmethod
 from typing import List
 from pydantic import BaseModel
+from neumai.SinkConnectors.filter_utils import FilterCondition
 import json
 
 class SinkConnector(ABC, BaseModel):
@@ -32,7 +33,7 @@ class SinkConnector(ABC, BaseModel):
         """Store vectors with a given service"""
 
     @abstractmethod
-    def search(self, vector:List[float], number_of_results:int, filter:List[dict]={}) -> List[NeumSearchResult]:
+    def search(self, vector:List[float], number_of_results:int, filter:List[FilterCondition]={}) -> List[NeumSearchResult]:
         """Search vectors for a given service"""
     
     @abstractmethod
