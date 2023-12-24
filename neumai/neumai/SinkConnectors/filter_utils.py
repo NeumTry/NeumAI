@@ -2,6 +2,23 @@ import re
 from enum import Enum
 from typing import Any, List
 
+OPERATOR_MAPPING = {
+        "EQUAL": "=",
+        "NOT_EQUAL": "!=",
+        "LESS_THAN": "<",
+        "LESS_THAN_OR_EQUAL": "<=",
+        "GREATER_THAN": ">",
+        "GREATER_THAN_OR_EQUAL": ">=",
+        "IN": "IN",
+        "NOT_IN": "NOT_IN",
+        "BETWEEN": "BETWEEN",
+        "NOT_BETWEEN": "NOT_BETWEEN",
+        "LIKE": "LIKE",
+        "NOT_LIKE": "NOT_LIKE",
+        "IS_NULL": "IS_NULL",
+        "IS_NOT_NULL": "IS_NOT_NULL"
+    }
+
 class FilterOperator(Enum):
     """
     Enum for filter operators.
@@ -29,8 +46,8 @@ class FilterCondition:
     lated to the corressponding sink's filter conditions.
     """
 
-    def __init__(self, column: str, operator: FilterOperator, value: Any):
-        self.column = column
+    def __init__(self, field: str, operator: FilterOperator, value: Any):
+        self.field = field
         self.operator = operator
         self.value = value
 
@@ -53,39 +70,45 @@ class FilterCondition:
             )
         """
 
-def string_to_filter_condition(filter_string: str) -> List[FilterCondition]:
+def dict_to_filter_condition(filter_dict: List[dict]) -> List[FilterCondition]:
     """Convert a filter string to a list of filter conditions
 
     Args:
-        filter_string (str): The filter string.
+        filter_dict (List[dict]): The filter dict list.
             Example:
-            `field1 <= value1, field2 != value2`
+            `
+            [
+                {
+                    'field': 'field1',
+                    'operator': 'op1',
+                    'value': 'val1'
+                },
+                {
+                    'field': 'field2',
+                    'operator': 'op2',
+                    'value': 'val2'
+                }
+            ]
+            `
     Returns:
         List[FilterCondition]: A list of filter-condition objects.
     """
 
-    # Parsing the string
-    conditions = filter_string.split(",")
-    
-    # We can later add more operations
-    ops = ['=', '!=', '<', '>', '<=', '>=']
-    r = re.compile( '|'.join( '(?:{})'.format(re.escape(o)) for o in sorted(ops, reverse=True, key=len)) )
-
     filter_conditions = []
-    for condition in conditions:
-        # condition would be like 
-        # `field1 <= value1`, or `field1<=value1` or `field1 <=value1` or `field1<= value1`
-        op = r.findall(condition)[0]
-        colval = condition.split(op)
-        column = colval[0].strip()
-        value = colval[1].strip()
+    for filter in filter_dict:
+        op = filter["operator"]
+        val = filter["value"]
+        field = filter["field"]
 
-        filter_conditions.append(
-            FilterCondition(
-                column=column,
-                operator=op,
-                value=value
+        try:
+            filter_conditions.append(
+                FilterCondition(
+                    field=field,
+                    operator=OPERATOR_MAPPING[op],
+                    value=val
+                )
             )
-        )
+        except:
+            raise ValueError(f"Not a valid filter operation - {op}\n Supported operators are - {list(OPERATOR_MAPPING.keys())}")
     return filter_conditions
         
