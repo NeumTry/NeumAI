@@ -10,7 +10,12 @@ from neumai.SinkConnectors.SinkConnector import SinkConnector
 from typing import List, Union, Any
 from pydantic import Field
 import marqo
-from neumai.SinkConnectors.filter_utils import FilterCondition, FilterOperator, string_to_filter_condition
+from neumai.SinkConnectors.filter_utils import (
+    FilterCondition, 
+    FilterOperator, 
+    dict_to_filter_condition,
+)
+
 
 class MarqoSink(SinkConnector):
     """
@@ -172,37 +177,28 @@ class MarqoSink(SinkConnector):
             raise Exception(f"Operator {operator} is currently not supported")
     
 
-    def _get_filter_string_from_filter_dict(self, filter_conditions):
+    def _get_filter_string_from_filter_condition(self, filter_conditions):
+
         _filter_string = ""
+        for condition in filter_conditions:
+            field = condition.field
+            operator = condition.operator
 
-        if type(filter_conditions)==dict:
-            for k,v in filter_conditions.items():
-                _filter_string+=f"{k}:{v} AND "
-
-        elif type(filter_conditions)==list:
-            # If list of FilterConditions, use this block
-            for condition in filter_conditions:
-                key = condition.column.split(".")[-1]
-                operator = condition.operator
-
-                _filter_string+=self._get_marqo_filter(
-                    column=key, value=condition.value, operator=operator)
+            _filter_string+=self._get_marqo_filter(
+                column=field, value=condition.value, operator=operator)
                 
         if _filter_string.endswith(" AND "):
             _filter_string = _filter_string.rstrip(" AND ")
         return _filter_string
     
 
-    def search(self, vector: List[float], number_of_results: int, filter: Union[dict, str] = {}) -> List:
+    def search(self, vector: List[float], number_of_results: int, filter: List[dict] = [{}]) -> List:
         url = self.url
         api_key = self.api_key
         index_name = self.index_name
 
-        if type(filter)==str:
-            # Get a list of FilterConditions if the filter is in comma
-            # separated string form
-            filter = string_to_filter_condition(filter_string=filter)
-        filter_string = self._get_filter_string_from_filter_dict(filter_conditions=filter)
+        filter = dict_to_filter_condition(filter)
+        filter_string = self._get_filter_string_from_filter_condition(filter_conditions=filter)
         
         try:
             marqo_client = marqo.Client(
