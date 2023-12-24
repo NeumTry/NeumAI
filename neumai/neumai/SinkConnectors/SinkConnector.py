@@ -32,7 +32,7 @@ class SinkConnector(ABC, BaseModel):
         """Store vectors with a given service"""
 
     @abstractmethod
-    def search(self, vector:List[float], number_of_results:int, filter:dict={}) -> List[NeumSearchResult]:
+    def search(self, vector:List[float], number_of_results:int, filter:List[dict]={}) -> List[NeumSearchResult]:
         """Search vectors for a given service"""
     
     @abstractmethod
