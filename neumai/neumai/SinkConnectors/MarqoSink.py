@@ -192,7 +192,7 @@ class MarqoSink(SinkConnector):
         return _filter_string
     
 
-    def search(self, vector: List[float], number_of_results: int, filter: List[FilterCondition] = [{}]) -> List:
+    def search(self, vector: List[float], number_of_results: int, filters: List[FilterCondition] = [{}]) -> List:
         url = self.url
         api_key = self.api_key
         index_name = self.index_name
