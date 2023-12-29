@@ -8,10 +8,12 @@ from neumai.Shared.Exceptions import(
 )
 from neumai.SinkConnectors.SinkConnector import SinkConnector
 from typing import List, Optional
+from neumai.SinkConnectors.filter_utils import FilterCondition, FilterOperator
 from qdrant_client.http.models import Distance, VectorParams
 from qdrant_client.http.models import PointStruct
 from qdrant_client.http.models import UpdateStatus
 from qdrant_client import QdrantClient
+from qdrant_client.http.models import Filter
 from pydantic import Field
 
 class QdrantSink(SinkConnector):
@@ -85,10 +87,57 @@ class QdrantSink(SinkConnector):
             return  len(points)
         raise QdrantInsertionException("Qdrant storing failed. Try again later.")
     
-    def search(self, vector: List[float], number_of_results: int, filter:dict = {}) -> List:
+    def filter_conditions_to_qdrant_filter(filters: List[FilterCondition]) -> dict:
+        if len(filters) > 1:
+            weaviate_filter = {
+                "operator":"And",
+                "operands" : []
+            }
+            for filter in filters:
+                weaviate_filter = {
+                    "path":[filter.field],
+                    "operator": filter.operator,
+                    "valueText": filter.value
+                }
+                weaviate_filter["operands"].append(weaviate_filter)
+        else:
+            neum_filter =  filters[0]
+            weaviate_filter = {
+                "path":[neum_filter.field],
+                "operator": neum_filter.operator,
+                "valueText": neum_filter.value
+            } 
+        return weaviate_filter
+    
+    def translate_to_qdrant(filter_conditions:List[FilterCondition]):
+        qdrant_filter = {"must": []}
+
+        for condition in filter_conditions:
+            if condition.operator == FilterOperator.EQUAL:
+                qdrant_filter["must"].append({"key": condition.field, "match": {"value": condition.value}})
+            elif condition.operator == FilterOperator.NOT_EQUAL:
+                # Qdrant doesn't have a direct "not equal" filter, so it's handled with must_not
+                qdrant_filter.setdefault("must_not", []).append({"key": condition.field, "match": {"value": condition.value}})
+            elif condition.operator in [FilterOperator.LESS_THAN, FilterOperator.LESS_THAN_OR_EQUAL,
+                                        FilterOperator.GREATER_THAN, FilterOperator.GREATER_THAN_OR_EQUAL]:
+                range_filter = {"key": condition.field, "range": {}}
+                if condition.operator == FilterOperator.LESS_THAN:
+                    range_filter["range"]["lt"] = condition.value
+                elif condition.operator == FilterOperator.LESS_THAN_OR_EQUAL:
+                    range_filter["range"]["lte"] = condition.value
+                elif condition.operator == FilterOperator.GREATER_THAN:
+                    range_filter["range"]["gt"] = condition.value
+                elif condition.operator == FilterOperator.GREATER_THAN_OR_EQUAL:
+                    range_filter["range"]["gte"] = condition.value
+                qdrant_filter["must"].append(range_filter)
+
+        return qdrant_filter
+
+    def search(self, vector: List[float], number_of_results: int, filter:List[FilterCondition]=[]) -> List:
         url = self.url
         api_key = self.api_key
         collection_name = self.collection_name
+        filters = self.translate_to_qdrant(filter)
 
         try:
             qdrant_client = QdrantClient(
@@ -100,6 +149,7 @@ class QdrantSink(SinkConnector):
                 query_vector=vector, 
                 with_payload= True,
                 limit=number_of_results,
+                query_filter=Filter(**filters)
             )
         except Exception as e:
             raise QdrantQueryException(f"Failed to query Qdrant. Exception - {e}")

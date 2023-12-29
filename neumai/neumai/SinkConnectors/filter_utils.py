@@ -1,6 +1,7 @@
 import re
 from enum import Enum
 from typing import Any, List
+from pydantic import BaseModel, Field
 
 OPERATOR_MAPPING = {
         "EQUAL": "=",
@@ -40,35 +41,15 @@ class FilterOperator(Enum):
     IS_NOT_NULL = "IS NOT NULL"
 
 
-class FilterCondition:
+class FilterCondition(BaseModel):
     """
     Base class for unified filter conditions, these need to be trans
     lated to the corressponding sink's filter conditions.
     """
+    field:str = Field(..., description="Field to be filtered")
+    operator:FilterOperator = Field(..., description="Operator for filter")
+    value:str = Field(..., description="Value to filter field")
 
-    def __init__(self, field: str, operator: FilterOperator, value: Any):
-        self.field = field
-        self.operator = operator
-        self.value = value
-
-    def __eq__(self, __value: object) -> bool:
-        if isinstance(__value, FilterCondition):
-            return (
-                self.column == __value.column
-                and self.operator == __value.operator
-                and self.value == __value.value
-            )
-        else:
-            return False
-
-    def __repr__(self) -> str:
-        return f"""
-            FilterCondition(
-                column={self.column},
-                operator={self.operator},
-                value={self.value}
-            )
-        """
 
 def dict_to_filter_condition(filter_dict: List[dict]) -> List[FilterCondition]:
     """Convert a filter string to a list of filter conditions

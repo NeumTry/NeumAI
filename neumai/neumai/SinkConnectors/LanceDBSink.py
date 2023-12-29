@@ -8,6 +8,7 @@ from neumai.Shared.Exceptions import(
 )
 from neumai.SinkConnectors.SinkConnector import SinkConnector
 from typing import List, Optional
+from neumai.SinkConnectors.filter_utils import FilterCondition
 from pydantic import Field
 
 import lancedb
@@ -100,7 +101,7 @@ class LanceDBSink(SinkConnector):
     
 
     def search(self, vector: List[float], 
-               number_of_results: int, filter: dict = {}) -> List[NeumSearchResult]:
+               number_of_results: int, filter: List[FilterCondition] = []) -> List[NeumSearchResult]:
 
         db = self._get_db_connection()
         tbl = db.open_table(self.table_name)

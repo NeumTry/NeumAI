@@ -177,7 +177,7 @@ class MarqoSink(SinkConnector):
             raise Exception(f"Operator {operator} is currently not supported")
     
 
-    def _get_filter_string_from_filter_condition(self, filter_conditions):
+    def _get_filter_string_from_filter_condition(self, filter_conditions:List[FilterCondition]):
 
         _filter_string = ""
         for condition in filter_conditions:
@@ -192,12 +192,10 @@ class MarqoSink(SinkConnector):
         return _filter_string
     
 
-    def search(self, vector: List[float], number_of_results: int, filter: List[dict] = [{}]) -> List:
+    def search(self, vector: List[float], number_of_results: int, filters: List[FilterCondition] = []) -> List:
         url = self.url
         api_key = self.api_key
         index_name = self.index_name
-
-        filter = dict_to_filter_condition(filter)
         filter_string = self._get_filter_string_from_filter_condition(filter_conditions=filter)
         
         try:

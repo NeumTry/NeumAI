@@ -9,6 +9,7 @@ from neumai.Shared.Exceptions import(
     WeaviateIndexInfoException,
     WeaviateQueryException
 )
+from neumai.SinkConnectors.filter_utils import FilterCondition
 from pydantic import Field
 from weaviate.util import generate_uuid5, _capitalize_first_letter
 import weaviate
@@ -171,7 +172,29 @@ class WeaviateSink(SinkConnector):
 
         return len(vectors_to_store)
 
-    def search(self, vector: List[float], number_of_results: int, filter:dict={}) -> List[NeumSearchResult]:
+    def filter_conditions_to_weaviate_filter(filters: List[FilterCondition]) -> dict:
+        if len(filters) > 1:
+            weaviate_filter = {
+                "operator":"And",
+                "operands" : []
+            }
+            for filter in filters:
+                weaviate_filter = {
+                    "path":[filter.field],
+                    "operator": filter.operator,
+                    "valueText": filter.value
+                }
+                weaviate_filter["operands"].append(weaviate_filter)
+        else:
+            neum_filter =  filters[0]
+            weaviate_filter = {
+                "path":[neum_filter.field],
+                "operator": neum_filter.operator,
+                "valueText": neum_filter.value
+            } 
+        return weaviate_filter
+
+    def search(self, vector: List[float], number_of_results: int, filter:List[FilterCondition]=[]) -> List[NeumSearchResult]:
         api_key = self.api_key
         url = self.url
         # Weaviate requires first letter to be capitalized
@@ -200,7 +223,8 @@ class WeaviateSink(SinkConnector):
 
             # Add .with_where(filter) only if filter is not empty
             if filter:
-                client_query = client_query.with_where(filter)
+                weaviate_filter = self.filter_conditions_to_weaviate_filter(filter)
+                client_query = client_query.with_where(weaviate_filter)
 
             # Final execution of the query
             search_result = client_query.do()
