@@ -9,6 +9,7 @@ from neumai.Shared.Exceptions import (
     PineconeIndexInfoException,
     PineconeQueryException,
 )
+from neumai.SinkConnectors.filter_utils import FilterCondition, FilterOperator
 from pydantic import Field
 import pinecone
 
@@ -102,13 +103,38 @@ class  PineconeSink(SinkConnector):
             raise PineconeInsertionException(f"Failed to store in Pinecone. Exception - {e}")
         return int(vectors_stored)
     
-    def search(self, vector: List[float], number_of_results:int, filter:dict = {}) -> List[NeumSearchResult]:
+    def translate_to_pinecone(filter_conditions:List[FilterCondition]):
+        query_parts = []
+
+        for condition in filter_conditions:
+            mongo_operator = {
+                FilterOperator.EQUAL: '$eq',
+                FilterOperator.NOT_EQUAL: '$ne',
+                FilterOperator.GREATER_THAN: '$gt',
+                FilterOperator.GREATER_THAN_OR_EQUAL: '$gte',
+                FilterOperator.LESS_THAN: '$lt',
+                FilterOperator.LESS_THAN_OR_EQUAL: '$lte',
+                FilterOperator.IN: '$in',
+            }.get(condition.operator, None)
+
+            if mongo_operator:
+                query_parts.append({condition.field: {mongo_operator: condition.value}})
+            else:
+                # Handle complex cases like IN, NOT IN, etc.
+                pass
+
+        return {"$and": query_parts}  # Combine using $and, can be changed to $or if needed
+
+    def search(self, vector: List[float], number_of_results:int, filter:List[FilterCondition] = []) -> List[NeumSearchResult]:
         import pinecone
         api_key =  self.api_key
         environment = self.environment
         index = self.index
         namespace = self.namespace
         if environment == "gcp-starter": namespace = None # short-term fix given gcp-starter limitation
+        
+        filters =  self.translate_to_pinecone(filter)
+
         try:
             pinecone.init(      
                 api_key=api_key,      
@@ -116,7 +142,7 @@ class  PineconeSink(SinkConnector):
             index = pinecone.Index(index)
             results = index.query(
                 vector=vector, 
-                filter=filter,
+                filter=filters,
                 top_k=number_of_results, 
                 namespace=namespace, 
                 include_values=False, 

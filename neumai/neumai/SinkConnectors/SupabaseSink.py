@@ -9,6 +9,7 @@ from neumai.Shared.Exceptions import(
     SupabaseIndexInfoException,
     SupabaseQueryException
 )
+from neumai.SinkConnectors.filter_utils import FilterCondition, FilterOperator
 from pydantic import Field
 import vecs
 
@@ -83,10 +84,35 @@ class SupabaseSink(SinkConnector):
             vx.disconnect()
         return len(vectors_to_store)
     
-    def search(self, vector: List[float], number_of_results:int, filter:dict={}) -> List:
+    def translate_to_supabase(filter_conditions:List[FilterCondition]):
+        query_parts = []
+
+        for condition in filter_conditions:
+            mongo_operator = {
+                FilterOperator.EQUAL: '$eq',
+                FilterOperator.NOT_EQUAL: '$ne',
+                FilterOperator.GREATER_THAN: '$gt',
+                FilterOperator.GREATER_THAN_OR_EQUAL: '$gte',
+                FilterOperator.LESS_THAN: '$lt',
+                FilterOperator.LESS_THAN_OR_EQUAL: '$lte',
+                FilterOperator.IN: '$in',
+            }.get(condition.operator, None)
+
+            if mongo_operator:
+                query_parts.append({condition.field: {mongo_operator: condition.value}})
+            else:
+                # Handle complex cases like IN, NOT IN, etc.
+                pass
+
+        return {"$and": query_parts}  # Combine using $and, can be changed to $or if needed
+
+    def search(self, vector: List[float], number_of_results:int, filter:List[FilterCondition]=[]) -> List:
         database_connection = self.database_connection
         vx = vecs.create_client(database_connection)
         collection_name = self.collection_name
+
+        filters = self.translate_to_supabase(filter)
+
         try:
             db = vx.get_collection(name=collection_name)
         except:
@@ -99,7 +125,7 @@ class SupabaseSink(SinkConnector):
                 include_metadata=True,
                 include_value=True,
                 limit=number_of_results,
-                filters=filter
+                filters=filters
             )
         except Exception as e:
             raise SupabaseQueryException(f"Error querying vectors from Supabase. Exception: {e}")

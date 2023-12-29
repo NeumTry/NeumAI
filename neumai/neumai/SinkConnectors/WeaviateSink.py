@@ -194,7 +194,7 @@ class WeaviateSink(SinkConnector):
             } 
         return weaviate_filter
 
-    def search(self, vector: List[float], number_of_results: int, filter:List[FilterCondition]={}) -> List[NeumSearchResult]:
+    def search(self, vector: List[float], number_of_results: int, filter:List[FilterCondition]=[]) -> List[NeumSearchResult]:
         api_key = self.api_key
         url = self.url
         # Weaviate requires first letter to be capitalized

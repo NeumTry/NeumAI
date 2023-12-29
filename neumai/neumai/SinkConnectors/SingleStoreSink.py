@@ -9,6 +9,7 @@ from neumai.Shared.Exceptions import(
 )
 from neumai.SinkConnectors.SinkConnector import SinkConnector
 from typing import List, Optional
+from neumai.SinkConnectors.filter_utils import FilterCondition, FilterOperator
 from pydantic import Field
 import singlestoredb as s2
 
@@ -115,15 +116,39 @@ class SingleStoreSink(SinkConnector):
         
         return len(vectors_to_store), None
     
-    def search(self, vector: List[float], number_of_results: int, filter:dict={}) -> List[NeumSearchResult]:
+    def translate_to_sql(filter_conditions:List[FilterCondition]):
+        query_parts = []
+        for condition in filter_conditions:
+            sql_operator = condition.operator.value
+            # Handle special formatting for IN, NOT IN, BETWEEN, etc.
+            if condition.operator in [FilterOperator.IN, FilterOperator.NOT_IN]:
+                values = '(' + ', '.join(map(str, condition.value.split(','))) + ')'
+            else:
+                values = condition.value
+
+            query_parts.append(f"{condition.field} {sql_operator} {values}")
+
+        conditions_str = " AND ".join(query_parts)
+        return conditions_str
+
+    def search(self, vector: List[float], number_of_results: int, filter:List[FilterCondition]=[]) -> List[NeumSearchResult]:
         url = self.url
         table = self.table
 
-        query = f"""SELECT id, text, dot_product(vector, json_array_pack('{vector}')) AS score
-        FROM {table}
-        ORDER BY score DESC
-        LIMIT {number_of_results}"""
+        if len(filter)>0:
+            list_of_fields = ",".join([f.field for f in filter])
+            query = f"""SELECT id, text, dot_product(vector, json_array_pack('{vector}')) AS score, {list_of_fields}
+            FROM {table}
+            WHERE {self.translate_to_sql(filter)}
+            ORDER BY score DESC
+            LIMIT {number_of_results}"""
         
+        else:
+            query = f"""SELECT id, text, dot_product(vector, json_array_pack('{vector}')) AS score
+            FROM {table}
+            ORDER BY score DESC
+            LIMIT {number_of_results}"""
+
         try:
             with s2.connect(url, results_type="dict") as conn:
                 with conn.cursor() as cur:
