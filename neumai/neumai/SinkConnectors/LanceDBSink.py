@@ -93,7 +93,7 @@ class LanceDBSink(SinkConnector):
                 dic[k] = v
             data.append(dic)
 
-        tbl = db.create_table(table_name, data=data)
+        tbl = db.create_table(table_name, data=data, mode="overwrite")
         if tbl:
             return len(tbl.to_pandas())
         raise LanceDBInsertionException("LanceDB storing failed. Try later")
