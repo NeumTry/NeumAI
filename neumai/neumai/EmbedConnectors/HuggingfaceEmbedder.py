@@ -8,7 +8,7 @@ class HuggingFaceEmbed(EmbedConnector):
     """
     Hugging Face Embed Connector
     """
-    model:str = Field(..., description="model ID for HuggingFace models")
+    model:str = Field(..., description="HuggingFace model ID or a URL to a deployed Inference Endpoint")
     token: str = Field(..., description="HuggingFace token")
 
     @property
