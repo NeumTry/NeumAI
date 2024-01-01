@@ -222,14 +222,15 @@ Connectors
 - [ ]  GitHub - Source
 - [ ]  Google Drive - Source
 - [ ]  Hugging Face - Embedding
-- [ ]  LanceDB - Sink
+- [x]  LanceDB - Sink
+- [x]  Marqo - Sink
 - [ ]  Milvus - Sink
 - [ ]  Chroma - Sink
 
 Search
 - [x]  Retrieval feedback
-- [ ]  Filter support
-- [ ]  Unified Neum AI filters
+- [x]  Filter support
+- [x]  Unified Neum AI filters
 - [ ]  Self-Query Retrieval (w/ Metadata attributes generation)
 
 Extensibility
