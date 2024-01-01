@@ -120,12 +120,12 @@ class  PineconeSink(SinkConnector):
             if mongo_operator:
                 query_parts.append({condition.field: {mongo_operator: condition.value}})
             else:
-                # Handle complex cases like IN, NOT IN, etc.
+                # TODO Handle complex cases like IN, NOT IN, etc.
                 pass
 
-        return {"$and": query_parts}  # Combine using $and, can be changed to $or if needed
+        return {"$and": query_parts}  # Combine using $and
 
-    def search(self, vector: List[float], number_of_results:int, filter:List[FilterCondition] = []) -> List[NeumSearchResult]:
+    def search(self, vector: List[float], number_of_results:int, filters:List[FilterCondition] = []) -> List[NeumSearchResult]:
         import pinecone
         api_key =  self.api_key
         environment = self.environment
@@ -133,7 +133,7 @@ class  PineconeSink(SinkConnector):
         namespace = self.namespace
         if environment == "gcp-starter": namespace = None # short-term fix given gcp-starter limitation
         
-        filters =  self.translate_to_pinecone(filter)
+        filters_pinecone =  self.translate_to_pinecone(filters)
 
         try:
             pinecone.init(      
@@ -142,7 +142,7 @@ class  PineconeSink(SinkConnector):
             index = pinecone.Index(index)
             results = index.query(
                 vector=vector, 
-                filter=filters,
+                filter=filters_pinecone,
                 top_k=number_of_results, 
                 namespace=namespace, 
                 include_values=False, 

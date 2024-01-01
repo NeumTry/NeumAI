@@ -133,11 +133,11 @@ class QdrantSink(SinkConnector):
 
         return qdrant_filter
 
-    def search(self, vector: List[float], number_of_results: int, filter:List[FilterCondition]=[]) -> List:
+    def search(self, vector: List[float], number_of_results: int, filters:List[FilterCondition]=[]) -> List:
         url = self.url
         api_key = self.api_key
         collection_name = self.collection_name
-        filters = self.translate_to_qdrant(filter)
+        filters_qdrant = self.translate_to_qdrant(filter)
 
         try:
             qdrant_client = QdrantClient(
@@ -149,7 +149,7 @@ class QdrantSink(SinkConnector):
                 query_vector=vector, 
                 with_payload= True,
                 limit=number_of_results,
-                query_filter=Filter(**filters)
+                query_filter=Filter(**filters_qdrant)
             )
         except Exception as e:
             raise QdrantQueryException(f"Failed to query Qdrant. Exception - {e}")
