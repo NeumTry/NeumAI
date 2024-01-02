@@ -231,6 +231,8 @@ Search
 - [x]  Retrieval feedback
 - [x]  Filter support
 - [x]  Unified Neum AI filters
+- [ ]  Smart routing (w/ embedding based classification)
+- [ ]  Smart routing (w/ LLM based classification)
 - [ ]  Self-Query Retrieval (w/ Metadata attributes generation)
 
 Extensibility
