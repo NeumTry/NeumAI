@@ -100,8 +100,7 @@ class LanceDBSink(SinkConnector):
         raise LanceDBInsertionException("LanceDB storing failed. Try later")
     
 
-    def search(self, vector: List[float], 
-               number_of_results: int, filter: List[FilterCondition] = []) -> List[NeumSearchResult]:
+    def search(self, vector: List[float], number_of_results: int, filters: List[FilterCondition] = []) -> List[NeumSearchResult]:
 
         db = self._get_db_connection()
         tbl = db.open_table(self.table_name)
@@ -115,8 +114,8 @@ class LanceDBSink(SinkConnector):
 
         try:
             search_results = tbl.search(query=vector)
-            for k,v in filter.items():
-                search_results = search_results.where(f"{k} = {v}")
+            for filter in filters:
+                search_results = search_results.where(f"{filter.field} {filter.operator.value} {filter.value}")
             search_results = search_results.limit(number_of_results).to_pandas()
 
         except Exception as e:

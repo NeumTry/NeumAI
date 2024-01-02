@@ -106,12 +106,11 @@ class SupabaseSink(SinkConnector):
 
         return {"$and": query_parts}  # Combine using $and, can be changed to $or if needed
 
-    def search(self, vector: List[float], number_of_results:int, filter:List[FilterCondition]=[]) -> List:
+    def search(self, vector: List[float], number_of_results:int, filters:List[FilterCondition]=[]) -> List:
         database_connection = self.database_connection
         vx = vecs.create_client(database_connection)
         collection_name = self.collection_name
-
-        filters = self.translate_to_supabase(filter)
+        filters_supabase = self.translate_to_supabase(filters)
 
         try:
             db = vx.get_collection(name=collection_name)
@@ -125,7 +124,7 @@ class SupabaseSink(SinkConnector):
                 include_metadata=True,
                 include_value=True,
                 limit=number_of_results,
-                filters=filters
+                filters=filters_supabase
             )
         except Exception as e:
             raise SupabaseQueryException(f"Error querying vectors from Supabase. Exception: {e}")

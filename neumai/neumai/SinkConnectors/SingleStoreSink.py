@@ -131,15 +131,15 @@ class SingleStoreSink(SinkConnector):
         conditions_str = " AND ".join(query_parts)
         return conditions_str
 
-    def search(self, vector: List[float], number_of_results: int, filter:List[FilterCondition]=[]) -> List[NeumSearchResult]:
+    def search(self, vector: List[float], number_of_results: int, filters:List[FilterCondition]=[]) -> List[NeumSearchResult]:
         url = self.url
         table = self.table
 
-        if len(filter)>0:
-            list_of_fields = ",".join([f.field for f in filter])
+        if len(filters)>0:
+            list_of_fields = ",".join([f.field for f in filters])
             query = f"""SELECT id, text, dot_product(vector, json_array_pack('{vector}')) AS score, {list_of_fields}
             FROM {table}
-            WHERE {self.translate_to_sql(filter)}
+            WHERE {self.translate_to_sql(filters)}
             ORDER BY score DESC
             LIMIT {number_of_results}"""
         
