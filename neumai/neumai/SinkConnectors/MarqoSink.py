@@ -196,7 +196,7 @@ class MarqoSink(SinkConnector):
         url = self.url
         api_key = self.api_key
         index_name = self.index_name
-        filter_string = self._get_filter_string_from_filter_condition(filter_conditions=filter)
+        filter_string = self._get_filter_string_from_filter_condition(filter_conditions=filters)
         
         try:
             marqo_client = marqo.Client(
