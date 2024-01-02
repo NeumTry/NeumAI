@@ -185,7 +185,7 @@ class MarqoSink(SinkConnector):
             operator = condition.operator
 
             _filter_string+=self._get_marqo_filter(
-                column=field, value=condition.value, operator=operator)
+                column=field, value=condition.value, operator=operator.value)
                 
         if _filter_string.endswith(" AND "):
             _filter_string = _filter_string.rstrip(" AND ")
