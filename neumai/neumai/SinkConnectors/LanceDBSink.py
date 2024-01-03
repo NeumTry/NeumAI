@@ -4,6 +4,7 @@ from neumai.Shared.NeumSearch import NeumSearchResult
 from neumai.Shared.Exceptions import(
     LanceDBInsertionException,
     LanceDBIndexInfoException,
+    LanceDBIndexCreationException,
     LanceDBQueryException
 )
 from neumai.SinkConnectors.SinkConnector import SinkConnector
@@ -36,10 +37,10 @@ class LanceDBSink(SinkConnector):
         Region for use of LanceDB cloud.
     table_name: str
         Name of LanceDB table to use
-    create_index: bool
-        LanceDB offers flat search as well as ANN search. If set to True, 
-        a vector index will be created for searching instead of a brute-force
-        knn search.
+    index_configs: dict
+        LanceDB offers flat search as well as ANN search. If provided, these
+        would be used to a create a vector index for searching instead of a 
+        brute-force knn search.
 
 
     Example usage:
@@ -52,9 +53,9 @@ class LanceDBSink(SinkConnector):
     api_key: Optional[str] = Field(default=None, description="API key for LanceDB cloud")
     region: Optional[str] = Field(default=None, description="Region for use of LanceDB cloud")
     table_name: str = Field(..., description="Name of LanceDB table to use")
-    create_index: bool = Field(
-        default=False, 
-        description="Boolean to decide whether to create an index or perform a flat search")
+    index_configs: dict = Field(
+        default=None, 
+        description="Dictionary of configuration options for index creation")
 
     # Check API reference for more details
     # - https://lancedb.github.io/lancedb/python/python/#lancedb.connect
@@ -105,12 +106,20 @@ class LanceDBSink(SinkConnector):
         db = self._get_db_connection()
         tbl = db.open_table(self.table_name)
 
-        if self.create_index:
+        if self.index_configs:
             # Some config options are there, need to figure 
             # out how to input them
             # For more details, refer to docs
             # - https://lancedb.github.io/lancedb/python/python/#lancedb.table.Table.create_index
-            tbl.create_index(metric="cosine", replace=True)
+            try:
+                tbl.create_index(
+                    metric=self.index_configs["metric"] if "metric" in self.index_configs else "cosine", 
+                    num_partitions=self.index_configs["num_partitions"] if "num_partitions" in self.index_configs else 256,
+                    num_sub_vectors=self.index_configs["num_sub_vectors"] if "num_sub_vectors" in self.index_configs else 96,
+                    accelerator=self.index_configs["accelerator"] if "accelerator" in self.index_configs else None,
+                    replace=True)
+            except Exception as e:
+                raise LanceDBIndexCreationException(f"LanceDB index creation failed. \nException - {e}")
 
         try:
             search_results = tbl.search(query=vector)
