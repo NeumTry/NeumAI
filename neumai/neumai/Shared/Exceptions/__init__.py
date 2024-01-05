@@ -90,6 +90,10 @@ class LanceDBQueryException(Exception):
     """Raised if querying LanceDB fails"""
     pass
 
+class LanceDBIndexCreationException(Exception):
+    """Raised when index creation fails in lanceDB"""
+    pass
+
 class PostgresConnectionException(Exception):
     """Raised if establishing a connection to a Postgres db fails"""
     pass
