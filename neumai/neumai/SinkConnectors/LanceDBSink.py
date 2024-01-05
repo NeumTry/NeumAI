@@ -25,6 +25,8 @@ class LanceDBSink(SinkConnector):
     LanceDB storage system. For details about LanceDB, refer to 
     https://github.com/lancedb/lancedb.
 
+    LanceDB supports flat search as well as ANN search.
+    For indexing, read here - https://lancedb.github.io/lancedb/ann_indexes/#creating-an-ivf_pq-index
 
     Attributes:
     -----------
@@ -37,10 +39,22 @@ class LanceDBSink(SinkConnector):
         Region for use of LanceDB cloud.
     table_name: str
         Name of LanceDB table to use
-    index_configs: dict
-        LanceDB offers flat search as well as ANN search. If provided, these
-        would be used to a create a vector index for searching instead of a 
+    create_index: bool
+        LanceDB offers flat search as well as ANN search. If set to True,
+        a vector index would be created for searching instead of a 
         brute-force knn search.
+    metric: str
+        The distance metric to use. By default it uses euclidean distance 'L2'. 
+        It also supports 'cosine' and 'dot' distance as well. Needs to be set if create_index is True.
+    num_partitions: int
+        The number of partitions of the index. 
+        Needs to be set if create_index is True. And needs to be altered as per data size.
+    num_sub_vectors: int
+        The number of sub-vectors (M) that will be created during 
+        Product Quantization (PQ). For D dimensional vector, it will be divided into 
+        M of D/M sub-vectors, each of which is presented by a single PQ code.
+    accelerator: str
+        The accelerator to use for the index creation process. Supports GPU and MPS.
 
 
     Example usage:
@@ -53,9 +67,11 @@ class LanceDBSink(SinkConnector):
     api_key: Optional[str] = Field(default=None, description="API key for LanceDB cloud")
     region: Optional[str] = Field(default=None, description="Region for use of LanceDB cloud")
     table_name: str = Field(..., description="Name of LanceDB table to use")
-    index_configs: dict = Field(
-        default=None, 
-        description="Dictionary of configuration options for index creation")
+    create_index: bool = Field(default=False, description="Boolean to create index or use flat search")
+    metric: str = Field(default="cosine", description="The distance metric to use in the index")
+    num_partitions: int = Field(default=256, description="The number of partitions of the index")
+    num_sub_vectors: int = Field(default=96, description="The number of sub-vectors (M) that will be created during Product Quantization (PQ)")
+    accelerator: str = Field(default=None, description="Specify to cuda or mps (on Apple Silicon) to enable GPU training.")
 
     # Check API reference for more details
     # - https://lancedb.github.io/lancedb/python/python/#lancedb.connect
@@ -106,17 +122,15 @@ class LanceDBSink(SinkConnector):
         db = self._get_db_connection()
         tbl = db.open_table(self.table_name)
 
-        if self.index_configs:
-            # Some config options are there, need to figure 
-            # out how to input them
+        if self.create_index:
             # For more details, refer to docs
             # - https://lancedb.github.io/lancedb/python/python/#lancedb.table.Table.create_index
             try:
                 tbl.create_index(
-                    metric=self.index_configs["metric"] if "metric" in self.index_configs else "cosine", 
-                    num_partitions=self.index_configs["num_partitions"] if "num_partitions" in self.index_configs else 256,
-                    num_sub_vectors=self.index_configs["num_sub_vectors"] if "num_sub_vectors" in self.index_configs else 96,
-                    accelerator=self.index_configs["accelerator"] if "accelerator" in self.index_configs else None,
+                    metric=self.metric, 
+                    num_partitions=self.num_partitions,
+                    num_sub_vectors=self.num_sub_vectors,
+                    accelerator=self.accelerator,
                     replace=True)
             except Exception as e:
                 raise LanceDBIndexCreationException(f"LanceDB index creation failed. \nException - {e}")
@@ -145,6 +159,7 @@ class LanceDBSink(SinkConnector):
                 )
             )
         return matches
+    
     
     def info(self) -> NeumSinkInfo:
         try:
