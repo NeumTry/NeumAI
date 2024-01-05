@@ -222,7 +222,7 @@ class WeaviateSink(SinkConnector):
             )
 
             # Add .with_where(filter) only if filter is not empty
-            if filter:
+            if filters:
                 weaviate_filter = self.filter_conditions_to_weaviate_filter(filters)
                 client_query = client_query.with_where(weaviate_filter)
 
