@@ -1,0 +1,37 @@
+---
+title: 'SupabaseSink'
+description: 'SupabaseSink is designed to store and search vectorized data within Supabase databases, enabling efficient similarity searches and data management.'
+---
+
+The `SupabaseSink` class provides the capabilities to interface with Supabase databases for the purpose of storing and querying vectorized data, which is essential for operations like semantic searches.
+
+## Properties
+
+Required properties:
+- `database_connection`: The connection string necessary to connect to the Supabase database.
+- `collection_name`: The name of the collection within the database where the vectors will be stored.
+
+<CodeGroup>
+```python Local Development
+from neumai.SinkConnectors import SupabaseSink
+
+# Initialize the SupabaseSink connector with the database connection string
+supabase_sink = SupabaseSink(
+    database_connection = "postgresql://postgres:<password>@<host>:<port>/postgres",
+    collection_name = "collection-name"
+)
+```
+
+```json Cloud
+{
+
+    "sink": {
+        "sink_name":"SupabaseSink",
+        "sink_information":{
+            "database_connection": "postgresql://postgres:<password>@<host>:<port>/postgres",
+            "collection_name": "collection-name"
+        }
+    }
+}
+```
+</CodeGroup>

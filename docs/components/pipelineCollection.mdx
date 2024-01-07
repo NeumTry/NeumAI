@@ -1,0 +1,56 @@
+---
+title: 'PipelineCollection'
+description: 'PipelineCollection object'
+---
+
+<Warning>These capabilities are currently in beta. Please contact [founders@tryneum.com](mailto:founders@tryneum.com) with any questions or asks.</Warning>
+
+## Overview
+
+Pipeline collections are a higher level abstraction that joins multiple pipelines as a single entity. This means that you can configure pipelines individually for different data source, pre-processing steps, etc. but still treat them as a group when it comes to triggering them to run as well as when searching them. 
+
+When it comes to search, pipeline collections support three search options:
+- Unified search where results from the pipelines are collected and re-ranked into a single response.
+- Separate search where results for each pipeline are returned raw with an assignment to what pipeline they came from.
+- (Coming soon) Routed search where the system uses the pipeline description to decide what pipelines to search given a query and re-rank the results.
+
+## Example
+
+For example, there are three pipelines that I have:
+- The first connects to S3 where I have files from customers
+- The second connects to Postgres where I am querying real-time metrics
+- The third connects to some static websites with content
+
+I can programatically build pipeline collections that have all three of my pipelines or only a subset. If I am exposing an experience to a customer, maybe I will only have a collection with customer data and static content vs if I am building an internal experience I can re-use the same pipelines I have but this time add my Postgress pipeline that has internal metrics. 
+
+## Intialize a pipeline collection
+
+```python
+from neumai.Pipelines.Pipeline import Pipeline
+from neumai_tools.PipelineCollection.PipelineCollection import PipelineCollection
+
+pipeline1 = Pipeline(...)
+pipeline2 = Pipeline(...)
+pipeline3 = Pipeline(...)
+
+collection = PipelineCollection(pipelines = [pipeline1, pipeline2, pipeline3])
+```
+
+## Run pipeline collection
+
+```python
+collection.run()
+```
+
+## Search pipeline collection
+```python
+# Unified
+collection.search_unified(query="", number_of_results=3)
+
+# Separate
+collection.search_separate(query="", number_of_results=3)
+
+# Router (Coming Soon)
+collection.search_routed(query="", number_of_results=3)
+
+```

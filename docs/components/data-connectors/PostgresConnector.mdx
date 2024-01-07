@@ -1,0 +1,51 @@
+---
+title: 'Postgres Connector'
+description: 'Retrieve data from PostgreSQL'
+---
+
+Connect to an existing PostgreSQL instance and extract data. Rows of data in PostgreSQL are extracted as JSON objects.
+
+<Note>Supports common implementations of PostgreSQL including Supabase </Note>
+
+## Properties
+
+Required properties:
+- `connection_string`: Connection string to the Postgres instance
+- `query`: SQL query to extract data (i.e. Select * From TableName)
+
+Optional properties:
+- `batch_size`: The size of batches of rows. Affects performance and latency.
+
+Compatible loaders:
+- NeumJSONLoader
+
+## Usage
+
+<CodeGroup>
+```python Local Development
+from neumai.DataConnectors import PostgresConnector
+from neumai.Shared import Selector
+
+postgres_connector =  PostgresConnector(
+    connection_string = "postgresql://postgres:<password>@<host>:<port>/postgres",
+    query = """ Select * From "TableName"; """
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "data_connector": {
+                "connector_name":"PostgresConnector",
+                "connector_information":{
+                    "connection_string":"<INSERT POSTGRES CONNECTION STRING>",
+                    "query":"Select * From TableName"
+                },
+            }
+        }
+    ]
+}
+```
+
+</CodeGroup>

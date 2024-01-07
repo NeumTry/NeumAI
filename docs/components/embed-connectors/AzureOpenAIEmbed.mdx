@@ -1,0 +1,41 @@
+---
+title: 'AzureOpenAIEmbed'
+description: 'The AzureOpenAIEmbed connector is designed to generate embeddings for text data using Azure OpenAI’s models, providing a bridge between Neum AI documents and OpenAI’s powerful embedding capabilities.'
+---
+
+The `AzureOpenAIEmbed` class serves as an interface to Azure's OpenAI embedding services. It is designed to create embeddings for textual data, which is essential for various machine learning tasks.
+
+## Properties
+
+Required properties:
+- `deployment_name`: The specific deployment of the OpenAI model to be used.
+- `api_key`: The API key for authentication with Azure OpenAI services.
+- `endpoint`: The endpoint URL for the Azure OpenAI API.
+
+<CodeGroup>
+```python Local Development
+from neumai.EmbedConnectors import AzureOpenAIEmbed
+
+azure_openai_embed = AzureOpenAIEmbed(
+    deployment_name = "<Insert AZURE OPEN AI DEPLOYMENT NAME>",
+    api_key = "<Insert Azure OPEN AI API Key>",
+    endpoint = "<Insert AZURE OPEN AI ENDPOINT>"
+)
+
+```
+
+```json Cloud
+{
+    # Add source connectors
+    "embed": {
+        "embed_name":"AzureOpenAIEmbed",
+        "embed_information":{
+            "deployment_name": "<Insert AZURE OPEN AI DEPLOYMENT NAME>",
+            "api_key": "<Insert Azure OPEN AI API Key>",
+            "endpoint": "<Insert AZURE OPEN AI ENDPOINT>"
+        }
+    }
+    # Add sink connector
+}
+```
+</CodeGroup>

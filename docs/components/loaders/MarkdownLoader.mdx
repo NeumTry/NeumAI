@@ -1,0 +1,36 @@
+---
+title: 'MarkdownLoader'
+description: 'MarkdownLoader specializes in converting markdown files into NeumDocument objects, suitable for integration with Neumai’s document processing pipeline.'
+---
+
+The `MarkdownLoader` is a component of the Neum AI ecosystem built to load markdown (.md) files. It leverages the `UnstructuredMarkdownLoader` for parsing and creating `NeumDocument` objects from markdown content.
+
+## Properties
+
+Required properties:
+- None
+
+Optional properties:
+- None
+
+<CodeGroup>
+```python Local Development
+from neumai.Loaders import MarkdownLoader
+
+markdown_loader = MarkdownLoader()
+```
+
+```json Cloud
+{
+    "sources":[
+        {   
+            # Add a data connector
+            "loader": {
+                "loader_name":"MarkdownLoader",
+                "loader_information": {}
+            }
+        }
+    ]
+}
+```
+</CodeGroup>

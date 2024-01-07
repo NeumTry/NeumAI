@@ -1,0 +1,125 @@
+---
+title: Connect to chatbot
+description: 'Connect Neum AI pipelines to your chatbot'
+---
+
+One of the most common use cases for semantic search, is connecting search results to a LLM as context. This process is often referred to as Retrieval Augmented Generation (RAG). By providing context to the LLM, we can supercharge the models to have proprietary and relevant information at their dispossal to improve the answer provided.
+
+Models by themselves would struggle with specific questions about a document or a meeting. By using RAG, we can extract that context from a variety of data sources and serve it to the model.
+
+## Prerequisites
+
+Before going further, you should have already completed the [quickstart](/get-start/quickstart). This means you have created your first pipeline using Neum AI and have queried its content using the `pipeline.search()` method.
+
+## Basic chatbot
+
+Let's start by using `GPT-4` to build a very simple bot. In the bot, we will generate answers based on a user input using `ChatCompletion` capabilities. The user query might be a question or order for the model to generate a response.
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="Open AI Key"
+)
+
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=[
+        {"role": "system", "content": f"You are a helpful assistant."},
+        {"role": "user", "content": "User Query"}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+The answers provided by the model, will be generated using the vast information the model was trained on, but might lack specifics on proprietary or relevant information that you might want. For example, if the user query is something like: "What was the summary of the meeting with X", the model will probably provide a bad an answer because it has not context about the meeting. 
+
+Enter RAG and Neum AI
+
+In the quickstart, you generated your first pipeline, to take data (in that case a website) and add it to a vector database for semantic search. We can leverage those capabilities to provide context to models based on the queries of user.
+
+## Query pipeline
+
+Lets do a quick refresher on querying data from a pipeline object. From the [quickstart](/get-start/quickstart) you have a `Pipeline` object. Using the pipeline object, we will search the contents extracted and stored by it. Make sure that before you query the pipeline, you have `run` it successfully using `pipeline.run()`
+
+```python
+pipeline = Pipeline(...) # Leverage the configuration from the quickstart or any other configuration you have
+
+results = pipeline.search(
+  query="User Query", # You can replace this query with any query from your users
+  number_of_results=3
+)
+
+print(results[0].toJson())
+
+```
+
+Output:
+```
+{
+    'id':"unique identifier for the vector",
+    'score': 0.1231231132, # float value
+    'metadata':{
+        'text':"text content that was embedded",
+        'other_metadata_1':"some metadata",
+        'other_metadata_2':"more metadata
+    }
+}
+```
+
+We will next process the results to extract the data that we will use to provide context to our LLM model.
+
+## Processing search results
+
+This will output `results` in the form of a [`NeumSearchResult`](/components/utilities/neum-search) object. Each of the `NeumSearchResult` objects contains an `id` for the vector retrieved, the `score` of the similarity search and the `metadata` which includes the contents that were embedded to generate the vector as well as any other metadata that was included.  A full list of available metadata for the pipeline can be accessed by querying `pipeline.available_metadata`.
+
+From the results, we can extract the text content that was attached to it.
+
+```python
+context = "\n".join(result.metadata['text'] for result in results)
+
+print(context)
+```
+
+The context will be a string containing all the retrieved results. You can format the context string further, but to be simple, we will just add a break between them. Now we can configure out context to be added to an LLM prompt.
+
+## Adding results to LLM prompt
+
+Going back to the simple chatbot we had, we will now augment it to use the context we are extracting using `pipeline.search()`. We have the context stored in a variable already.
+
+```python
+
+from openai import OpenAI
+
+client = OpenAI(
+  api_key="Open AI Key"
+)
+
+messages = [
+    {
+        "role":"system",
+        "content": f"You are a helpful assistant. Use this context to answer questions: {context}. Base your answers on the context."
+    },
+    {
+        "role":"user",
+        "content": "User query"
+    }
+]
+
+```
+
+From an order of operations, we taking the user query, extracting data base on it from our `Pipeline` and then using the context to improve the system prompt for the chatbot to properly answer the user query. Now we can generate a response from the LLM.
+
+```python
+response = client.chat.completions.create(
+  model="gpt-4",
+  messages=messages
+)
+
+print(response.choices[0].message.content)
+```
+
+You can repeat this process of getting user inputs, searching for context from the `Pipeline` object and providing the context in the system prompt of the chatbot over and over throughout a conversation, to make sure the chatbot has the corrrect context at every turn.
+
+<Note>Once you run the pipeline once, you don't need to run it again, unless you want to update the data.</Note>

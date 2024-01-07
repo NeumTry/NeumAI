@@ -1,0 +1,39 @@
+---
+title: 'SingleStoreSink'
+description: 'SingleStoreSink enables the storage, retrieval, and semantic search of vectorized data in SingleStore databases, suitable for high-performance data operations.'
+---
+
+The `SingleStoreSink` class is designed to interact with SingleStore databases, offering functionality for storing vectors and performing similarity searches.
+
+## Properties
+
+Required properties:
+- `url`: The connection URL to the SingleStore database.
+- `api_key`: The API key for accessing SingleStore services.
+- `collection_name`: The name of the collection (table) within the SingleStore database to operate upon.
+
+<CodeGroup>
+```python Local Development
+from neumai.SinkConnectors import SingleStoreSink
+
+# Configure the SingleStoreSink with the necessary connection information
+singlestore_sink = SingleStoreSink(
+    url = "your-singlestore-db-url",
+    api_key = "your-api-key",
+    collection_name = "collection-name"
+)
+```
+
+```json Cloud
+{
+    "sink": {
+        "sink_name":"SingleStoreSink",
+        "sink_information":{
+            "url": "your-singlestore-db-url",
+            "api_key": "your-api-key",
+            "collection_name": "collection-name"
+        }
+    }
+}
+```
+</CodeGroup>

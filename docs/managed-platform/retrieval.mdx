@@ -1,0 +1,59 @@
+---
+title: Data retrieval
+description: 'Support for data retrieval and feedback tracking'
+---
+
+<Warning>These capabilities are currently in beta. Please contact [founders@tryneum.com](mailto:founders@tryneum.com) with any questions or asks.</Warning>
+
+## Overview
+
+Neum AI Cloud provides capabilities to help query data that was extracted and transformed using Neum AI pipelines. This support goes beyond the pipeline search capabilities provided by the SDK to support different types of querying and tracking. Using the Neum AI Cloud, you can track queries made to your data and classify the retrieval information provided. The tracked queries and feedback provided on their retrieved information can be exported to be used as training material for model fine-tuning as well as ingested back into vector databases to serve as augment, high quality data. (By re-ingesting into the vector database the user query and the relevant data for that query, you can increase the quality of retrieval in subsequent cases where the same or similar query is provided.)
+
+<Note>Retrieval tracking is disabled by default.</Note>
+
+## Querying data
+
+Similar to querying a pipeline using the `search` method, the Neum AI cloud provides both REST APIs and Client APIs to query data. This APIs, natively support:
+
+    - Metadata filtering (automatically enabled by the metadata configured on the source connector)
+    - Query embedding generation (automatically enabled by the embed connector )
+    - Similarity search (automatically enabled by the sink connector)
+
+    <CardGroup cols={2}>
+        <Card title="REST API" icon="code" href="/platform-apis/endpoint/query-a-pipeline">
+            Use REST APIs to query your data.
+        </Card>
+        <Card title="Client" icon="window" href="/platform-apis/neum-client#search-pipeline">
+            Use the Python client to query your data.
+        </Card>
+    </CardGroup>
+
+## Retrieval tracking
+
+By default, retrieval tracking is disabled. To enable retrieval tracking set the parameter to `true`. When enabled the retrieval results will be tracked. To access this data your can use [APIs](/platform-apis/endpoint/get-pipeline-retrievals) to get all the tracked retrievals or go to the [dashboard.neum.ai](https://dashboard.neum.ai) to get the retrieval information.
+
+<CodeGroup>
+```json REST API
+// POST /v2/pipelines/{pipeline_id}/search
+{
+    "number_of_results": num_of_results,
+    "query": query,
+    "collect_retrieval": true
+}
+```
+```python Python client
+from neumai.Client.NeumClient import NeumClient
+neum_client = NeumClient(api_key = "<INSERT NEUM AI KEY>")
+neum_client.searchPipeline(
+    pipeline_id = "<PipelineId>",
+    query = "<Query>",
+    num_of_results = 3,
+    track = True
+)
+```
+
+</CodeGroup>
+
+## Providing retrieval feedback
+
+To classify retrieval data, you can leverage [APIs](/platform-apis/endpoint/post-feedback-retrieval) or go to  the [dashboard.neum.ai](https://dashboard.neum.ai). By setting that `status` of the retrieval, you can classify results as good or bad. Once classified, you can leverage the dataset to fine-tune models or simply to re-ingest as updated vectors using Neum AI.

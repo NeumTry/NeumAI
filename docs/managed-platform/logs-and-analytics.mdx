@@ -1,0 +1,17 @@
+---
+title: Logs and Analytics
+description: 'Learn how the Neum AI platform provides logs and analytics to see the performance of your pipelines'
+---
+
+The Neum AI platform tracks information across pipelines, files and users. These analytics provide high level observability as well as auditing capabilities.
+
+Captured data includes:
+
+- Data processing: What was processed? Was it successful? How long did it take?
+- File management: What files are available for search? What is their status?
+- File auditing: What files are being retrieved through search?
+- User auditing: What users are searching for information? What pipelines are they accessing and what files are they accessing within?
+
+<Note>You can opt-out of retrieval / search data capture by setting the track flag to `false` (default). No opt-out available for processing data captured during pipeline run.</Note>
+
+To access the captured data, use the provided [`NeumClient`](/platform-apis/neum-client). We have a sample [`Jupyter Notebook`](https://github.com/NeumTry/Neum-Analytics) showcasing the analytics provided.

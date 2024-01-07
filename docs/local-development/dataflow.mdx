@@ -1,0 +1,38 @@
+---
+title: Data Flow
+description: 'Learn about how data is handled and trasnformed within the Neum AI pipeline'
+---
+
+## Overview
+
+<img
+  className="rounded-lg"
+  src="/images/Data_Flow.png"
+  alt="Dataflow"
+/>
+
+Throughout the Neum AI pipeline, data is processed and passed through using built in abstractions. Across each core process, there are clear interfaces defined into the pipeline. In this document we will introduce those interfaces and talk about the flow of data throughout the different components and processes inside a Neum AI pipeline.
+
+At a high level:
+
+- Source Connector generated a Neum Document.
+- The Embed Connector takes the Neum Document and generates a Neum Vector
+- The Sink Connector takes the Neum Vector and stores it in the vector storage. At retrieval it generates a Neum Search Result.
+
+## Interfaces
+
+We have defined clear interfaces for the pipeline in order to provide extensibility in adding other loaders, chunkers, etc. as well as to ensure reliability of the system.
+
+- Neum Document ([Reference](/components/utilities/neum-document))
+
+    The Neum Document contains an `id` to uniquely identify a piece of content, the `content` itself, and the `metadata` associated with that content. The Neum Document is updated as the data is extracted from the data source, processed through loaders and chunked. To learn about this process in depth, see [Data Pre-processing](/local-development/data-preprocessing)
+
+    If you have used Langchain or LlamaIndex `Document` interfaces, this should be very familiar. The main difference is the addition of an `id` which is a key element needed as data is ingested into the vector storage and is later updated through real-time synchronization.
+
+- Neum Vector ([Reference](/components/utilities/neum-vector))
+
+    The Neum Vector contains an `id` to uniquely identify the vector, a `vector` property which holds the embeddings, and `metadata` associated with it. The Neum Vector gets generated out of a Neum Document when the content in the document is turned into a vector embedding. When generating the Neum Vector, the content is added into the metadata to have a single object to attach to the vector.
+
+- Neum Search Result ([Reference](/components/utilities/neum-search))
+
+    The Neum Search Result contains the vector `id`, the `metadata` associated with the vector and a `score` property that represents the similarity score against the given query. This interface is designed to be compatible with a wide range of vector storage systems.

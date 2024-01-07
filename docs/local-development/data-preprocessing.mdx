@@ -1,0 +1,77 @@
+---
+title: Data Pre-processing
+description: 'Learn about how data is extracted and pre-processed.'
+---
+
+## Overview
+
+<img
+  className="rounded-lg"
+  src="/images/Data_PreProcessing.png"
+  alt="Data PreProcessing"
+/>
+
+Data pre-processing happens inside of the `Source Connector`. Each Source Connector can be individually configured to extract data from a given data source and process that data. The main pre-processing units supported are `Loaders` and `Chunkers`. The goal of the pre-processing steps are to clean and organize your data to be ready for embedding and ingestion. It comes down to one key question: What data do I want to embed (i.e. `content`) and what data should I use to augment the vector to improve retrieval (i.e. `metadata`).
+
+## Extracting data
+
+The first step in pre-processing is extracting data from data sources. As part of this process we start the process of extracting content and metadata. In most cases, content will be the core data like the file or website scrape. We will also extract any metadata available at the source level like the last time a file was modified.
+
+## Loaders
+
+Loaders take the role of reading raw data and loading it into data structures that we can process in code. This could mean reading text from a file or loading a JSON into a dictionary. Loaders are organized by data type so that we can properly loader each type of data correctly. As part of the loading process, we will now do a similar extractiong of content and metadata but this time directly from the contents of the file. 
+
+<Info>Check out our experiments for tools that augment the loading process semantically.</Info>
+
+## Chunkers
+
+Once we have loaded our data and have categorized the data that is content vs the data that is metadata, now we can chunks up the content. The reason we chunk is to reduce the token size of the content. This will help us to:
+
+1. Ensure our retrieved data fits within our context window
+2. Be hyper-specific on the context that we want the model to know about. If we simply sent thousands of tokens into the model, its attention span gets confused and leads to worse performance.
+
+Ideally, we want chunks to be as specific and concise as possible.
+
+<Info>Check out our experimental tools to do semantic chunking.</Info>
+
+## Examples
+
+### SharePoint PDF File
+
+    <AccordionGroup>
+        <Accordion title="Data extraction" icon="ufo-beam">
+            **Connector:** SharePointConnector
+            **Content:** file <br/>
+            **Metadata:** name, lastModifiedDateTime, createdBy.user.email
+        </Accordion>
+
+        <Accordion title="Data loading" icon="truck-ramp-box">
+            **Loader:** PDFLoader <br/>
+            **Content:** N/A <br/>
+            **Metadata:** N/A
+        </Accordion>
+
+        <Accordion title="Data chunking" icon="split">
+            **Chunker:** RecursiveChunker
+        </Accordion>
+    </AccordionGroup>
+
+### PostgreSQL Table
+
+<AccordionGroup>
+  <Accordion title="Data extraction" icon="ufo-beam">
+    **Connector:** PostgresConnector
+    **Content:** row <br/>
+    **Metadata:** N/A
+  </Accordion>
+
+  <Accordion title="Data loading" icon="truck-ramp-box">
+    **Loader:** NeumJSONLoader (Postgres rows are loaded as JSON objects.) <br/>
+    **Content:** Column1, Column2 <br/>
+    **Metadata:** Column3, Column4, Column5, Column6
+  </Accordion>
+
+  <Accordion title="Data chunking" icon="split">
+    **Chunker:** RecursiveChunker
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,59 @@
+---
+title: 'File Connector'
+description: 'Process any public file'
+---
+
+The connector extracts and processes any publicly available file. Make sure the URL to the file provided is publicly available.
+
+## Properties
+
+Required properties:
+- `url`: URL to public file
+
+Available metadata
+- `url`: URL of file 
+
+Compatible loaders:
+- AutoLoader
+- HTMLLoader
+- MarkdownLoader
+- NeumCSVLoader
+- NeumJSONLoader
+- PDFLoader
+
+## Usage
+
+<CodeGroup>
+```python Local Development
+from neumai.DataConnectors import FileConnector
+from neumai.Shared import Selector
+
+file_connector =  FileConnector(
+    url = "https://www.neum.ai/secrets.pdf",
+    selector = Selector(
+        to_metadata=['url']
+    )
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "data_connector": {
+                "connector_name":"FileConnector",
+                "connector_information":{
+                    "url":"https://www.neum.ai/secrets.pdf",
+                    "selector": {
+                        "to_metadata": [
+                            "url"
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}
+```
+
+</CodeGroup>

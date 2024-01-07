@@ -1,0 +1,42 @@
+---
+title: 'OpenAIEmbed'
+description: 'The OpenAIEmbed connector is designed to generate embeddings for text data using OpenAI’s models, providing a bridge between Neum AI documents and OpenAI’s powerful embedding capabilities.'
+---
+
+The `OpenAIEmbed` class connects Neum AI documents to OpenAI’s embedding service. It provides the functionality to generate text embeddings, which are crucial for various applications such as semantic search and text similarity tasks.
+
+## Properties
+
+Required properties:
+- `api_key`: The API key for accessing OpenAI services.
+
+Optional properties:
+- `max_retries`: The maximum number of retries for generating embeddings in case of failures.
+- `chunk_size`: The number of documents to process in one batch when generating embeddings.
+
+<CodeGroup>
+```python Local Development
+from neumai.EmbedConnectors import OpenAIEmbed
+
+openai_embed = OpenAIEmbed(
+    api_key = "<OPEN AI KEY>",
+    max_retries = 20,
+    chunk_size = 1000
+)
+```
+
+```json Cloud
+{
+    # Add source connectors
+    "embed": {
+        "embed_name":"OpenAIEmbed",
+        "embed_information":{
+            "api_key": "<OPEN AI KEY>",
+            "max_retries": 20,
+            "chunk_size": 1000
+        }
+    }
+    # Add sink connector
+}
+```
+</CodeGroup>

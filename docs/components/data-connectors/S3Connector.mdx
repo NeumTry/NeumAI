@@ -1,0 +1,68 @@
+---
+title: 'S3 Connector'
+description: 'Retrieve data from S3'
+---
+
+Connect to an existing Azure Blob Storage and pull any data stored. To connect Azure Blob Storage you will need your credentials to access the resource including the connection string and container name you want to access.
+
+## Properties
+
+Required properties:
+- `aws_key_id`: AWS key ID with permission to S3 instance
+- `aws_access_key`: AWS access key with permission to S3 instance
+- `bucket_name`: Name of bucket for data extraction
+
+Optional properties:
+- `prefix`: File prefix to filter on
+
+Available metadata
+- `key`: Key / name of the file in S3
+- `last_modified`: Time of last modification
+- `metadata`: Attached metadata to the file.
+
+Compatible loaders:
+- AutoLoader
+- HTMLLoader
+- MarkdownLoader
+- NeumCSVLoader
+- NeumJSONLoader
+- PDFLoader
+
+## Usage
+
+<CodeGroup>
+```python Local Development
+from neumai.DataConnectors import S3Connector
+from neumai.Shared import Selector
+
+s3_connector =  S3Connector(
+    aws_key_id = "<INSER AWS ACCESS KEY ID>",
+    aws_access_key = "<INSER AWS ACCESS KEY>",
+    bucket_name = "<INSER BUCKER NAME IN S3>",
+    selector = Selector(
+        to_metadata=['key']
+    )
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "data_connector": {
+                "connector_name":"S3Connector",
+                "connector_information":{
+                    "aws_key_id":"<INSER AWS ACCESS KEY ID>",
+                    "aws_access_key":"<INSER AWS ACCESS KEY>",
+                    "bucket_name":"<INSER BUCKER NAME IN S3>",
+                    "selector": {
+                        to_metadata=['key']
+                    }
+                },
+            }
+        }
+    ]
+}
+```
+
+</CodeGroup>

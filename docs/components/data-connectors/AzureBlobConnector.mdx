@@ -1,0 +1,65 @@
+---
+title: 'Azure Blob Connector'
+description: 'Retrieve data from Azure Blob storage'
+---
+
+Connect to an existing Azure Blob Storage and pull any data stored. To connect Azure Blob Storage you will need your credentials to access the resource including the connection string and container name you want to access.
+
+## Properties
+
+Required properties:
+- `connection_string`: Connection string to the Azure Blob Storage
+- `container_name`: Name of the container in Azure Blob Storage
+
+Available metadata
+- `name`: Name of the blob 
+- `last_modified`: Time of last modification
+- `creation_time`: Time of blob creation
+- `last_access_on`: Time of last blob access
+
+Compatible loaders:
+- AutoLoader
+- HTMLLoader
+- MarkdownLoader
+- NeumCSVLoader
+- NeumJSONLoader
+- PDFLoader
+
+## Usage
+
+<CodeGroup>
+```python Local Development
+from neumai.DataConnectors import AzureBlobConnector
+from neumai.Shared import Selector
+
+azure_blob_connector =  AzureBlobConnector(
+    connection_string = "<INSERT AZURE BLOB CONNECTION STRING>",
+    container_name = "<INSER CONTAINER NAME IN BLOB STORAGE>",
+    selector = Selector(
+        to_metadata=['name']
+    )
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "data_connector": {
+                "connector_name":"AzureBlobConnector",
+                "connector_information":{
+                    "connection_string":"<INSERT AZURE BLOB CONNECTION STRING",
+                    "container_name":"<INSER CONTAINER NAME IN BLOB STORAGE",
+                    "selector": {
+                        "to_metadata": [
+                            "name"
+                        ]
+                    }
+                },
+            }
+        }
+    ]
+}
+```
+
+</CodeGroup>

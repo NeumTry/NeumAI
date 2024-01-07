@@ -1,0 +1,69 @@
+---
+title: 'Supabase Storage Connector'
+description: 'Retrieve data from a Supabase storage'
+---
+
+Connect to an existing Supabase project and pull data from storage. 
+
+## Properties
+
+Required properties:
+- `url`: Supabase project URL (i.e. https://...)
+- `key`: Supbase Anon Key
+- `bucket`: Supabase storage bucket to pull from
+- `folder`: Path to files. Provide folder name is files inside a folder or path is files in nested folders (i.e. "folder1/folder2")
+
+Available metadata
+- `name`: Name of the file
+- `created_at`: Timestamp of file creation
+- `updated_at`: Time of last modification
+- `last_accessed_at`: Last time file was accessed
+
+Compatible loaders:
+- AutoLoader
+- HTMLLoader
+- MarkdownLoader
+- NeumCSVLoader
+- NeumJSONLoader
+- PDFLoader
+
+## Usage
+
+<CodeGroup>
+```python Local Development
+from neumai.DataConnectors import SupabaseStorageConnector
+from neumai.Shared import Selector
+
+supabase_storage_connector =  SupabaseStorageConnector(
+    url = "<URL of Supabase project - https:...>",
+    key = "<Anon key for Supabase project>",
+    bucket = "<Bucket name in Supabase storage>",
+    folder = "<Folder path inside of bucket>",
+    selector = Selector(
+        to_metadata=['name']
+    )
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "data_connector": {
+                "connector_name":"SupabaseStorageConnector",
+                "connector_information":{
+                    "url":"<URL of Supabase project>",
+                    "key":"<Anon key for Supabase project>",
+                    "bucket":"<Bucket name in Supabase storage>",
+                    "folder":"<Folder path inside of bucket>",
+                    "selector": {
+                        to_metadata=['name']
+                    }
+                },
+            }
+        }
+    ]
+}
+```
+
+</CodeGroup>

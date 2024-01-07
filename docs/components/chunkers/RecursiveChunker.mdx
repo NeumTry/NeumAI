@@ -1,0 +1,51 @@
+---
+title: 'RecursiveChunker'
+description: 'The RecursiveChunker class is tailored for segmenting text into smaller chunks with a recursive approach, allowing for different levels of text granularity.'
+---
+
+The `RecursiveChunker` class specializes in dividing text into smaller, more manageable sections using a recursive method. This allows for various levels of granularity depending on the specified separators.
+
+## Properties
+
+Required properties:
+- None
+
+Optional properties:
+- `chunk_size`: The target size for each text chunk.
+- `chunk_overlap`: The amount of overlap desired between adjacent text chunks.
+- `batch_size`: The number of text chunks to process together.
+- `separators`: A list of strings used to split the text at different granularity levels.
+
+<CodeGroup>
+```python Local Development
+from neumai.Chunkers import RecursiveChunker
+from neumai.Shared import NeumDocument
+
+recursive_chunker = RecursiveChunker(
+    chunk_size = 500,
+    chunk_overlap = 50,
+    batch_size = 1000,
+    separators = ["\n\n", "\n", " ", ""]
+)
+
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            # Add Data Connector and Loader
+            "chunker": {
+                "chunker_name":"RecursiveChunker",
+                "chunker_information":{
+                    "chunk_size": 500,
+                    "chunk_overlap": 50,
+                    "batch_size": 1000,
+                    "separators": ["\n\n", "\n", " ", ""]
+                },
+            }
+        }
+    ]
+}
+```
+</CodeGroup>

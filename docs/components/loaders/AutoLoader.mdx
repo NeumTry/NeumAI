@@ -1,0 +1,35 @@
+---
+title: 'AutoLoader'
+description: 'AutoLoader is a utility class in the Neum AI framework designed to automatically select and use the appropriate loader based on the type of file it encounters.'
+---
+
+The `AutoLoader` class serves as an intelligent intermediary that selects the appropriate loader for a given file type. It supports various file types and delegates the loading process to specific loader classes.
+
+## Properties
+
+Required properties:
+- None 
+
+
+<CodeGroup>
+```python Local Development
+from neumai.Loaders import AutoLoader
+
+# Create an instance of AutoLoader
+auto_loader = AutoLoader()
+```
+
+```json Cloud
+{
+    "sources":[
+        {   
+            # Add a data connector
+            "loader": {
+                "loader_name":"AutoLoader",
+                "loader_information": {}
+            }
+        }
+    ]
+}
+```
+</CodeGroup>

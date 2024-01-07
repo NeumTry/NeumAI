@@ -1,0 +1,22 @@
+---
+title: 'Neum Document'
+description: 'Data interface for `Neum Document`'
+---
+
+The `NeumDocument` is the object used to organize data extracted for a given data source. It is analogous to similar constructs (i.e. `Document`) used in frameworks like Langchain and LlamaIndex.
+
+The goal of this interface is to abstract three properties:
+- `id` (str): This is a unique identifier for a given document. The id is constructed throughout the pre-processing of the data and used as the vector id within the vector database. It is used at synchronization to ensure vectors are not being re-computed and duplicated.
+- `content` (str): This value contains the content to be embdded. It can be a chunk / excerpt of the original text or can be a calculated value like a summary or entity extraction.
+- `metadata` (dict): This value contains the attached metadata for a given document. This can include values extracted from the data source or loader, as well as any calculated values.
+
+## Usage
+
+```python NeumDocument
+from neumai.Shared.NeumDocument import NeumDocument
+neum_document = NeumDocument(
+    id = 'abc', 
+    content = 'Hello',
+    metadata = {'createdDate':'2023-01-01'}
+)
+```

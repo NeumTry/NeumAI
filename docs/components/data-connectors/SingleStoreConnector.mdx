@@ -1,0 +1,49 @@
+---
+title: 'SingleStore Connector'
+description: 'Retrieve data from a SingleStore table'
+---
+
+Connect to an existing SingleStore database and extract the content. Data is extracted as JSON objects for each row in the table.
+
+## Properties
+
+Required properties:
+- `connection_string`: Connection URL to the SingleStore database (i.e. `<user>:<password>@<host>:<port>/<database_name>`)
+- `query`: SQL query to extract data (i.e. Select * From TableName)
+
+Optional properties:
+- `batch_size`: The size of batches of rows. Affects performance and latency.
+
+Compatible loaders:
+- NeumJSONLoader
+
+## Usage
+
+<CodeGroup>
+```python Local Development
+from neumai.DataConnectors import SingleStoreConnector
+from neumai.Shared import Selector
+
+singlestore_connector =  SingleStoreConnector(
+    connection_string = "<user>:<password>@<host>:<port>/<database_name>",
+    query = """ Select * From "TableName"; """
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "data_connector": {
+                "connector_name":"SingleStoreConnector",
+                "connector_information":{
+                    "connection_string":"<user>:<password>@<host>:<port>/<database_name>",
+                    "query":"Select * From TableName"
+                },
+            }
+        }
+    ]
+}
+```
+
+</CodeGroup>

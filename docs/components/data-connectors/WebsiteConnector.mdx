@@ -1,0 +1,55 @@
+---
+title: 'Website Connector'
+description: 'Scrape the contents of a website'
+---
+
+Basic website scraping. Works with most websites, but might fail with javascript heavy ones. This connector takes a given URL for a website and extracts the available text from it. Once extracted, the contents are outputted as an HTML.
+
+## Properties
+
+Required properties:
+- `url`: URL for website
+
+Available metadata
+- `url`: URL for website
+
+Compatible loaders:
+- AutoLoader
+- HTMLLoader
+
+## Usage
+
+<CodeGroup>
+```python Local Development
+from neumai.DataConnectors import WebsiteConnector
+from neumai.Shared import Selector
+
+website_connector =  WebsiteConnector(
+    url = "https://www.neum.ai/post/retrieval-augmented-generation-at-scale"
+    selector = Selector(
+        to_metadata=['url']
+    )
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "data_connector": {
+                "connector_name":"WebsiteConnector",
+                "connector_information":{
+                    "url":"https://www.neum.ai/post/retrieval-augmented-generation-at-scale",
+                    "selector": {
+                        "to_metadata": [
+                            "url"
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}
+```
+
+</CodeGroup>

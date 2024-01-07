@@ -1,0 +1,74 @@
+---
+title: Class Name
+description: 'Class Description'
+---
+
+Short description of connector
+
+## Properties
+
+Required properties:
+-a
+-b
+-c
+
+Optional properties:
+-a
+-b
+-c
+
+Available metadata:
+-a
+-b
+-c
+
+Available content:
+-a
+-b
+-c
+
+Compatible loaders:
+-a
+-b
+-c
+
+<CodeGroup>
+```python Local Development
+from neumai.DataConnectors import NeumWebsiteConnector
+from neumai.Shared import Selector
+
+neumWebsiteConnector =  NeumWebsiteConnector(
+    connector_information = {
+        "url":"https://www.neum.ai/post/retrieval-augmented-generation-at-scale"
+    },
+    selector = Selector(
+        to_embed=['website'],
+        to_metadata=['url']
+    )
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "connector": {
+                "connector_name":"NeumWebsiteConnector",
+                "connector_information":{
+                    "url":"https://www.neum.ai/post/retrieval-augmented-generation-at-scale"
+                },
+                "selector": {
+                    "to_embed": [
+                        "website"
+                    ],
+                    "to_metadata": [
+                        "url"
+                    ]
+                }
+            }
+        }
+    ]
+}
+```
+
+</CodeGroup>

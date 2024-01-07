@@ -1,0 +1,57 @@
+---
+title: 'WeaviateSink'
+description: 'WeaviateSink facilitates the storage and retrieval of vectorized data in the Weaviate vector database, allowing for efficient semantic search capabilities.'
+---
+
+The `WeaviateSink` class is designed to integrate with the Weaviate vector database, storing vectors produced from the Neum AI pipeline and retrieving them for semantic search operations.
+
+## Properties
+
+Required properties:
+- `url`: The URL of the Weaviate instance.
+- `api_key`: The API key for authentication with the Weaviate service.
+- `class_name`: The name of the class in Weaviate to store the data. Can be defined to any string you want.
+
+Optional properties:
+- `num_workers`: The number of workers used for batch processing.
+- `shard_count`: The number of shards for the Weaviate class.
+- `batch_size`: The number of vectors to store in a single batch.
+- `is_dynamic_batch`: A flag indicating if batching should adapt based on the response time of the Weaviate instance.
+- `batch_connection_error_retries`: The number of retries for batch connection errors.
+
+<CodeGroup>
+```python Local Development
+from neumai.SinkConnectors import WeaviateSink
+
+# Initialize the WeaviateSink connector with necessary information
+weaviate_sink = WeaviateSink(
+    url = "your-weaviate-url",
+    api_key = "your-api-key",
+    class_name = "your-class-name",
+    num_workers = 2,
+    shard_count = 4,
+    batch_size = 100,
+    is_dynamic_batch = True,
+    batch_connection_error_retries = 3
+)
+
+```
+
+```json Cloud
+{
+    "sink": {
+        "sink_name":"WeaviateSink",
+        "sink_information":{
+            "url": "your-weaviate-url",
+            "api_key": "your-api-key",
+            "class_name": "your-class-name",
+            "num_workers": 2,
+            "shard_count": 4,
+            "batch_size": 100,
+            "is_dynamic_batch": True,
+            "batch_connection_error_retries": 3
+        }
+    }
+}
+```
+</CodeGroup>

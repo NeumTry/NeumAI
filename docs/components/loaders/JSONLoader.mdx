@@ -1,0 +1,67 @@
+---
+
+title: 'JSONLoader'
+description: 'JSONLoader is designed to parse JSON files and convert them into NeumDocument objects, catering to complex data structures and nested JSON.'
+
+---
+
+The `JSONLoader` class handles the loading of JSON files into the Neum AI ecosystem by creating `NeumDocument` objects. It offers flexible data extraction, accommodating various JSON structures.
+
+## Properties
+
+Required properties:
+- None
+
+Optional properties:
+- `id_key`: The key used to identify the ID field within the JSON structure. Defaults to "id". Provide a value if you have a different key for your objects.
+
+Available metadata:
+- `custom`: Metadata fields can be customized based on the contents of the JSON object. Simply pass a list of columns. (i.e. ["field1" , "field2"])
+
+Available content:
+- `custom`: Content is dynamically derived from the JSON object based on specified keys or entire row data. Simply pass a list of columns. (i.e. ["field1" , "field2"])
+
+<Note>To access nested fields within the JSON objects, you can use a dot notation. For example: "field1.field2"</Note>
+
+<CodeGroup>
+```python Local Development
+from neumai.Shared import Selector
+from neumai.Loaders import JSONLoader
+
+json_loader = JSONLoader(
+    loader_information={
+        "id_key": "id"
+    },
+    selector=Selector(
+        to_embed=["data"],
+        to_metadata=["id", "category"]
+    )
+)
+
+```
+
+```json Cloud
+{
+    "sources":[
+        {   
+            # Add a data connector
+            "loader": {
+                "loader_name":"JSONLoader",
+                "loader_information":{
+                    "id_key": "id"
+                },
+                "selector": {
+                    "to_embed": [
+                        "data"
+                    ],
+                    "to_metadata": [
+                        "id",
+                        "category"
+                    ]
+                }
+            }
+        }
+    ]
+}
+```
+</CodeGroup>

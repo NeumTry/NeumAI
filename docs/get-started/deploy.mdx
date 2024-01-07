@@ -1,0 +1,75 @@
+---
+title: 'Deploy pipelines'
+description: 'Deploy your pipelines to Neum AI Cloud'
+---
+
+Neum AI provides a managed cloud enviornment to run and manage your pipelines. It offers capabilities like pipeline management, run scheduling, automatic synchronization as well as a high scale distributed architecture to run large jobs. Learn more about the difference between [Local and Cloud enviornments for Neum AI](/get-started/cloud-vs-local).
+
+<Note>Prerequisite: Make sure you have already configured you Neum AI pipeline in our [quickstart](/get-started/quickstart).</Note>
+
+<Note>You will need a Neum AI API Key. Get one by going to [dashboard.neum.ai](https://dashboard.neum.ai) and creating an account. It's free!</Note>
+
+## Test pipeline locally
+
+Before we deploy the pipeline to Neum AI Cloud, lets run a quick local test to make sure things are working as expected. 
+
+<Steps>
+  <Step title="Validate">
+    Run a local validation of the pipeline
+    
+    ```Python Local validation
+    print("Pipeline validation successful? " + pipeline.validate())
+    ```
+  </Step>
+  <Step title="Test pipeline">
+    Run a test to make sure the pipeline runs smoothly end to end
+    ```Python Local run
+    result = pipeline.run()
+    info = pipeline.sink.info()
+    print("Vectors written in pipeline run: " + result) 
+    print(info)
+    ```
+  </Step>
+  <Step title="Test search">
+    Finally, lets test the stored vectors
+    ```Python Local search
+    results = pipeline.search(query="What are the challenges with scaling RAG?", number_of_results=3)
+
+    for result in results:
+      print(result.metadata)
+    ```
+  </Step>
+</Steps>
+
+## Deploy pipeline to Neum AI Cloud
+
+To deploy the pipeline, we will leverage the built-in functions.
+
+<Note>You will need a Neum AI API Key. Get one by going to [dashboard.neum.ai](https://dashboard.neum.ai) and creating an account.</Note>
+
+```python Deploy to cloud
+from neumai.Client.NeumClient import NeumClient
+
+neumClient = NeumClient(api_key = '<INSERT NEUMAI API KEY>')
+neumClient.create_pipeline(pipeline=pipeline)
+```
+
+Once deployed, you can go to [Neum AI Cloud dashboard](dashboard.neum.ai) to see the status and pipeline information. Alternatively, you can programmatically query:
+
+### Get pipeline information 
+
+```python Deploy to cloud
+from neumai.Client.NeumClient import NeumClient
+
+neumClient = NeumClient(api_key = '<INSERT NEUMAI API KEY>')
+neumClient.get_pipeline(pipeline_id='<pipeline_id from above>')
+```
+
+### Search pipeline 
+
+```python Deploy to cloud
+from neumai.Client.NeumClient import NeumClient
+
+neumClient = NeumClient(api_key = '<INSERT NEUMAI API KEY>')
+neumClient.search_pipeline(pipeline_id='<pipeline_id from above>', query=<search query>)
+```

@@ -1,0 +1,41 @@
+---
+title: 'QdrantSink'
+description: 'QdrantSink integrates with Qdrant vector search engine to manage vector data, enabling powerful search capabilities and efficient data storage.'
+---
+
+The `QdrantSink` class provides functionality for storing and querying vector data within the Qdrant vector search engine, which is known for its performance in handling large-scale vector datasets.
+
+## Properties
+
+Required properties:
+- `url`: The connection URL to the Qdrant service.
+- `api_key`: The API key for authenticating with the Qdrant API.
+- `collection_name`: The name of the collection within Qdrant where the data will be stored. You can define the collection name to any string you want.
+
+Optional properties:
+
+<CodeGroup>
+```python Local Development
+from neumai.SinkConnectors import QdrantSink
+
+# Configure the QdrantSink with the necessary connection information
+qdrant_sink = QdrantSink(
+    url = "your-qdrant-url",
+    api_key = "your-api-key",
+    collection_name = "collection-name"
+)
+```
+
+```json Cloud
+{
+    "sink": {
+        "sink_name":"QdrantSink",
+        "sink_information":{
+            "url": "your-qdrant-url",
+            "api_key": "your-api-key",
+            "collection_name": "collection-name"
+        }
+    }
+}
+```
+</CodeGroup>

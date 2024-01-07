@@ -1,0 +1,210 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Neum AI",
+  "feedback": {"thumbsRating": true},
+  "logo": {
+    "dark": "/logo/Logo_White.svg",
+    "light": "/logo/Logo_Black.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#111827",
+    "light": "#1c64f2",
+    "dark": "#111827",
+    "anchors": {
+      "from": "#111827",
+      "to": "#1c64f2"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:founders@tryneum.com"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://dashboard.neum.ai"
+  },
+  "tabs": [
+    {
+      "name": "Components",
+      "url": "components"
+    },
+    {
+      "name": "Cloud",
+      "url": "platform-apis"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Community",
+      "icon": "discord",
+      "url": "https://discord.gg/mJeNZYRz4m"
+    },
+    {
+      "name": "Blog",
+      "icon": "newspaper",
+      "url": "https://neum.ai/blog"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "get-started/introduction",
+        "get-started/quickstart",
+        "get-started/chatbot",
+        "get-started/deploy",
+        "get-started/cloud-vs-local"
+      ]
+    },
+    {
+      "group": "Local development",
+      "pages": [
+        "local-development/pipeline-architecture",
+        "local-development/dataflow",
+        "local-development/data-preprocessing",
+        "local-development/search",
+        "local-development/evaluation"
+      ]
+    },
+    {
+      "group": "Cloud platform",
+      "pages": [
+        "managed-platform/neumai-cloud",
+        "managed-platform/pipeline-management",
+        "managed-platform/retrieval",
+        "managed-platform/logs-and-analytics"
+      ]
+    },
+    {
+      "group": "Integrations",
+      "pages": [
+        "integrations/langchain",
+        "integrations/llamaindex"
+      ]
+    },
+    {
+      "group": "Introduction",
+      "pages": [
+        "components/pipeline",
+        "components/pipelineCollection"
+      ]
+    },
+    {
+      "group": "Source Connectors",
+      "pages": [
+        "components/sourceConnector",
+        {
+          "group": "Data Connectors",
+          "pages": [
+            "components/data-connectors/WebsiteConnector",
+            "components/data-connectors/FileConnector",
+            "components/data-connectors/AzureBlobConnector",
+            "components/data-connectors/S3Connector",
+            "components/data-connectors/PostgresConnector",
+            "components/data-connectors/SharepointConnector",
+            "components/data-connectors/SingleStoreConnector",
+            "components/data-connectors/SupabaseStorageConnector"
+          ]
+        },
+        {
+          "group": "Loaders",
+          "pages": [
+            "components/loaders/AutoLoader",
+            "components/loaders/HTMLLoader",
+            "components/loaders/MarkdownLoader",
+            "components/loaders/CSVLoader",
+            "components/loaders/JSONLoader",
+            "components/loaders/PDFLoader"
+          ]
+        },
+        {
+          "group": "Chunkers",
+          "pages": [
+            "components/chunkers/CharacterChunker",
+            "components/chunkers/RecursiveChunker",
+            "components/chunkers/CustomChunker"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Embed Connectors",
+      "pages": [
+        "components/embed-connectors/OpenAIEmbed",
+        "components/embed-connectors/AzureOpenAIEmbed",
+        "components/embed-connectors/ReplicateEmbed"
+      ]
+    },
+    {
+      "group": "Sink Connectors",
+      "pages": [
+        "components/sink-connectors/PineconeSink",
+        "components/sink-connectors/QdrantSink",
+        "components/sink-connectors/SingleStoreSink",
+        "components/sink-connectors/SupabaseSink",
+        "components/sink-connectors/WeaviateSink"
+      ]
+    },
+    {
+      "group": "Utilities",
+      "pages": [
+        "components/utilities/selector",
+        "components/utilities/neum-document",
+        "components/utilities/neum-vector",
+        "components/utilities/neum-search"
+      ]
+    },
+    {
+      "group": "Platform APIs",
+      "pages": [
+        "platform-apis/introduction",
+        "platform-apis/neum-client"
+      ]
+    },
+    {
+      "group": "Pipeline Actions",
+      "pages": [
+        "platform-apis/endpoint/create-a-pipeline",
+        "platform-apis/endpoint/trigger-a-pipeline",
+        "platform-apis/endpoint/query-a-pipeline"
+      ]
+    },
+    {
+      "group": "Pipeline Management",
+      "pages": [
+        "platform-apis/endpoint/get-pipeline",
+        "platform-apis/endpoint/get-pipelines",
+        "platform-apis/endpoint/update-a-pipeline",
+        "platform-apis/endpoint/delete-a-pipeline",
+        "platform-apis/endpoint/get-pipeline-vector-info"
+      ]
+    },
+    {
+      "group": "Pipeline Run Management",
+      "pages": [
+        "platform-apis/endpoint/get-pipeline-run",
+        "platform-apis/endpoint/get-pipeline-runs",
+        "platform-apis/endpoint/cancel-a-pipeline-run"
+      ]
+    },
+    {
+      "group": "Query Retrievals",
+      "pages": [
+        "platform-apis/endpoint/get-pipeline-retrievals",
+        "platform-apis/endpoint/post-feedback-retrieval"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "twitter": "https://twitter.com/neum_ai",
+    "github": "https://github.com/NeumTry",
+    "linkedin": "https://www.linkedin.com/company/neumai"
+  },
+  "openapi": "https://neum-v2-app.fly.dev/openapi.json",
+  "api": {
+    "baseUrl": "https://api.neum.ai"
+  }
+}
