@@ -135,7 +135,8 @@
       "pages": [
         "components/embed-connectors/OpenAIEmbed",
         "components/embed-connectors/AzureOpenAIEmbed",
-        "components/embed-connectors/ReplicateEmbed"
+        "components/embed-connectors/ReplicateEmbed",
+        "components/embed-connectors/HuggingFaceEmbed"
       ]
     },
     {
@@ -145,7 +146,9 @@
         "components/sink-connectors/QdrantSink",
         "components/sink-connectors/SingleStoreSink",
         "components/sink-connectors/SupabaseSink",
-        "components/sink-connectors/WeaviateSink"
+        "components/sink-connectors/WeaviateSink",
+        "components/sink-connectors/LanceDBSink",
+        "components/sink-connectors/MarqoSink"
       ]
     },
     {
