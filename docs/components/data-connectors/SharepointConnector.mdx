@@ -1,0 +1,99 @@
+---
+title: 'Sharepoint Connector'
+description: 'Retrieve data from a Sharepoint site'
+---
+
+Connect to an existing Microsoft Sharepoint site and extract all the documents associated to the site.
+
+## Prerequisites
+
+To access Sharepoint, you will need to create an application registration within your tenant's Azure Active Directory (or Azure Entrata ID). Throughout the setup process you will need to collect:
+
+- `Tenant ID`: ID of your Sharepoint tenant
+- `Client ID`: ID for the app registration you created
+- `Client Secret`: Secret for the application registration you created
+
+Set up process:
+
+- To create registration follow instructions [here](https://learn.microsoft.com/en-us/azure/active-directory/external-identities/customers/how-to-register-ciam-app?tabs=graphapi)
+- Once created, you will need to add the following API permissions. See instruction [here](https://learn.microsoft.com/en-us/azure/active-directory/external-identities/customers/how-to-register-ciam-app?tabs=graphapi#grant-api-access-to-your-application) You will need to enable the following permissions:
+  - Microsoft Graph > Sites.FullControl.All
+- Once added, you will need to grant admin consent for the application.
+
+<img
+  className="rounded-lg"
+  src="/images/Sharepoint-prereq.png"
+  alt="Sharepoint prereqs"
+/>
+
+- Next you will need to create a secret for the application. See instruction [here](https://learn.microsoft.com/en-us/azure/active-directory/external-identities/customers/how-to-register-ciam-app?tabs=graphapi#create-a-client-secret-1)
+
+- To get the `site_id` for your Sharepoint site, in a browser go to: `https://<Sharepoint domain>/sites/<Sharepoint Site Name>/_api/site/id`. Copy the GUID provided in the XML response.
+
+## Properties
+
+Required properties:
+- `tenant_id`: Sharepoint tenant ID
+- `site_id`: Sharepoint site ID
+- `client_id`: App Registration ID
+- `client_secret`: App Registration secret
+
+Available metadata
+- `name`: Name of the file
+- `createdDateTime`: Timestamp of file creation
+- `lastModifiedDateTime`: Time of last modification
+- `createdBy.user.email`: Email of the user who created the file
+- `createdBy.user.id`: ID of the user who created the file
+- `createdBy.user.displayName`: Display name of the user who created the file
+- `lastModifiedBy.user.email`: Email of the user who last modified the file
+- `lastModifiedBy.user.id`: ID of the user who last modified the file
+- `lastModifiedBy.user.displayName`: Display name of the user who last modified the file
+
+Compatible loaders:
+- AutoLoader
+- HTMLLoader
+- MarkdownLoader
+- NeumCSVLoader
+- NeumJSONLoader
+- PDFLoader
+
+## Usage
+
+<CodeGroup>
+```python Local Development
+from neumai.DataConnectors import SharepointConnector
+from neumai.Shared import Selector
+
+sharepoint_connector =  SharepointConnector(
+    tenant_id":"<SHAREPOINT TENANT ID>",
+    site_id = "<SHAREPOINT SITE ID>",    
+    client_id = "<APP REGISTRATION ID>",
+    client_secret = "<APP REGISTRATION SECRET>",
+    selector = Selector(
+        to_metadata=['name']
+    )
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "data_connector": {
+                "connector_name":"SharepointConnector",
+                "connector_information":{
+                    "tenant_id":"<SHAREPOINT TENANT ID>",
+                    "site_id":"<SHAREPOINT SITE ID>",
+                    "client_id":"<APP REGISTRATION ID>",
+                    "client_secret":"<APP REGISTRATION SECRET>",
+                    "selector": {
+                        to_metadata=['name']
+                    }
+                },
+            }
+        }
+    ]
+}
+```
+
+</CodeGroup>

@@ -1,0 +1,37 @@
+---
+title: 'ReplicateEmbed'
+description: 'ReplicateEmbed provides an interface to generate embeddings using models from the Replicate platform, integrated within the Neum AI framework for document processing.'
+---
+
+The `ReplicateEmbed` class serves as a connector to the Replicate platform, leveraging its models to generate embeddings for text data encapsulated in Neum AI documents.
+
+## Properties
+
+Required properties:
+- `api_key`: The API key needed to authenticate with Replicate's services.
+- `replicate_model`: The specific model identifier used on Replicate to generate embeddings.
+
+<CodeGroup>
+```python Local Development
+from neumai.EmbedConnectors import ReplicateEmbed
+
+replicate_embed = ReplicateEmbed(
+    api_key = "your-replicate-api-key",
+    replicate_model = "model-id-on-replicate"
+)
+```
+
+```json Cloud
+{
+    # Add source connectors
+    "embed": {
+        "embed_name":"ReplicateEmbed",
+        "embed_information":{
+            "api_key": "your-replicate-api-key",
+            "replicate_model": "model-id-on-replicate"
+        }
+    }
+    # Add sink connector
+}
+```
+</CodeGroup>

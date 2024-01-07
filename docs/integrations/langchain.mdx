@@ -1,0 +1,23 @@
+---
+title: Langchain
+description: 'Leverage Langchain components with Neum AI'
+---
+
+<Warning>These capabilities are currently in beta. Please contact [founders@tryneum.com](mailto:founders@tryneum.com) with any questions or asks. <br/><br/> Only supported for local development. Not supported for Neum cloud.</Warning>
+
+## Document Loaders
+
+Langchain offers a variety of [document loaders](https://python.langchain.com/docs/modules/data_connection/document_loaders) for many sources. Langchain loaders have a similar `load` method to Neum data connectors. The output of the method is a Langchain Document vs a Neum Document. We offer helpers to transform documents.
+
+```python
+!pip install neumai-tools
+
+from neumai_tools.InteropHelpers.DocumentTransformer import document_transformer_langchain
+from langchain.document_loaders import TextLoader
+
+loader = TextLoader("./index.md")
+documents = loader.load()
+
+neum_documents = [document_transformer_langchain(document) for documents in documents]
+
+```

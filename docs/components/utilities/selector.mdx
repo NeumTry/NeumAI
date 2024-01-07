@@ -1,0 +1,18 @@
+---
+title: 'Selector'
+description: 'Metadata selector'
+---
+
+When using `Data Connectors` and `Loaders` you can provide a `Selector` to extract content and metadata. Metadata available is configured in each `Data Connector` and `Loader` and avialable by querying the `availableMetadata` and `availableContent` properties. The selected metadata within the `Selector` will be appended to the `NeumDocument` and `NeumVector` accordingly and stored as part of the vector in the vector database.
+
+As part of the retrieval process, you can use the selected metadata as filters. The `Pipeline` objects provides a `available_metadata` property to query what metadata was selected as part of a pipeline configuration.
+
+## Usage
+
+```python Selector
+from neumai.Shared.Selector  import Selector
+selector = Selector(
+    to_embed = ["content"...],
+    to_metadata = ["property"...]
+)
+```

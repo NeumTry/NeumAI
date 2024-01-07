@@ -1,0 +1,37 @@
+---
+title: 'HTMLLoader'
+description: 'HTMLLoader is designed to efficiently load and parse HTML files into NeumDocument objects for further processing within the Neum Ai ecosystem.'
+---
+
+The `HTMLLoader` class is tailored for ingesting HTML files, converting the data within into structured `NeumDocument` objects. This class utilizes the `UnstructuredHTMLLoader` to facilitate the loading and parsing process.
+
+## Properties
+
+Required properties:
+- None
+
+Optional properties:
+- None
+
+<CodeGroup>
+```python Local Development
+from neumai.Loaders import HTMLLoader
+
+# Create an HTMLLoader instance
+html_loader = HTMLLoader()
+```
+
+```json Cloud
+{
+    "sources":[
+        {   
+            # Add a data connector
+            "loader": {
+                "loader_name":"HTMLLoader",
+                "loader_information": {}
+            }
+        }
+    ]
+}
+```
+</CodeGroup>

@@ -1,0 +1,36 @@
+---
+title: 'PDFLoader'
+description: 'The PDFLoader class is designed to load and parse PDF files, transforming them into NeumDocument objects for further processing within the Neum AI platform.'
+---
+
+The `PDFLoader` class is part of the Neum AI data processing pipeline and is responsible for extracting text content from PDF files. It uses the `PyPDFLoader` to handle the PDF parsing and converts the data into `NeumDocument` objects.
+
+## Properties
+
+Required properties:
+- None
+
+Optional properties:
+- None
+
+<CodeGroup>
+```python Local Development
+from neumai.Loaders import PDFLoader
+
+pdf_loader = PDFLoader()
+```
+
+```json Cloud
+{
+    "sources":[
+        {   
+            # Add a data connector
+            "loader": {
+                "loader_name":"PDFLoader",
+                "loader_information": {}
+            }
+        }
+    ]
+}
+```
+</CodeGroup>

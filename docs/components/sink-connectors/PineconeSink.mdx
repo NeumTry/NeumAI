@@ -1,0 +1,46 @@
+---
+
+title: 'PineconeSink'
+description: 'PineconeSink enables seamless integration with Pinecone’s vector database, supporting vector storage and similarity search for advanced data retrieval.'
+
+---
+
+The `PineconeSink` class is a connector for Pinecone, a vector database that excels in managing and querying high-dimensional data. It allows for efficient storage and similarity searches of vector data.
+
+## Properties
+
+Required properties:
+- `api_key`: The API key for Pinecone services.
+- `environment`: The environment parameter for Pinecone.
+- `index`: The name of the index in Pinecone where data will be stored.
+- `namespace`: A namespace within the Pinecone index to organize data. You can define the namespace to any string you want.
+
+<Note>Namespaces are only supported for paid tiers. If you are using a GCP Starter tier, then pass an empty string to the namespace.</Note>
+
+<CodeGroup>
+```python Local Development
+from neumai.SinkConnectors import PineconeSink
+
+# Setup the PineconeSink with required credentials and index information
+pinecone_sink = PineconeSink(
+    api_key = "your-pinecone-api-key",
+    environment = "your-pinecone-environment",
+    index = "your-pinecone-index",
+    namespace = "namespace-string"
+)
+```
+
+```json Cloud
+{
+    "sink": {
+        "sink_name":"PineconeSink",
+        "sink_information":{
+            "api_key": "your-pinecone-api-key",
+            "environment": "your-pinecone-environment",
+            "index": "your-pinecone-index",
+            "namespace": "namespace-string"
+        }
+    }
+}
+```
+</CodeGroup>

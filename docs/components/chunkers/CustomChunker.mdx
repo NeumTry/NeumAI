@@ -1,0 +1,56 @@
+---
+title: 'CustomChunker'
+description: 'CustomChunker is a flexible class designed to chunk text according to user-provided code, allowing for personalized text segmentation strategies.'
+---
+
+<Warning>These capabilities are currently in beta. Please contact [founders@tryneum.com](mailto:founders@tryneum.com) with any questions or asks.</Warning>
+
+The `CustomChunker` class in the Neum AI framework chunks documents dynamically based on a user-defined code snippet. This class offers the flexibility to implement custom text chunking logic that can be tailored to specific use cases.
+
+## Properties
+
+Required properties:
+- `code`: A string of Python code that defines how the text should be chunked.
+
+Optional properties:
+- `batch_size`: The number of chunks to process in one go, with a default of 1000 if not specified.
+
+<CodeGroup>
+```python Local Development
+!pip install neumai-tools
+
+from neumai.Chunkers import CustomChunker
+from neumai.Shared import NeumDocument
+from neumai_tools import semantic_chunking
+
+# Define a custom code snippet for chunking
+custom_chunking_code = """
+def split_text_into_chunks(text) -> List[NeumDocument]:
+    # Custom logic to split text
+    return ["Chunk1", "Chunk2", ...]
+"""
+
+# Create a CustomChunker instance with the required code
+custom_chunker = CustomChunker(
+    code = custom_chunking_code,
+    batch_size = 1000
+)
+
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "chunker": {
+                "chunker_name":"CustomChunker",
+                "chunker_information":{
+                    "code": "def split_text_into_chunks(text) -> List[NeumDocument]: ...",
+                    "batch_size": 1000
+                }
+            }
+        }
+    ]
+}
+```
+</CodeGroup>

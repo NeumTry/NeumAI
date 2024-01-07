@@ -1,0 +1,22 @@
+---
+title: 'Neum Search Result'
+description: 'Data interface for `Neum Search`'
+---
+
+The `NeumVector` is the object used to organize data extracted for a given data source. It is analogous to similar constructs (i.e. `Document`) used in frameworks like Langchain and LlamaIndex.
+
+The goal of this interface is to abstract three properties:
+- `id` (str): This is a unique identifier for a given vector. The id is constructed throughout the pre-processing of the data and used as the vector id within the vector database. It is used at synchronization to ensure vectors are not being re-computed and duplicated.
+- `score` (float): This score is represents the similarity score calculated between the query and the retrieved value.
+- `metadata` (dict): This value contains the attached metadata for a retrieved vector. This can include values extracted from the data source or loader, as well as any calculated values. Metadata includes the `content` from the `NeumDocument`.
+
+## Usage
+
+```python NeumSearchResult
+from neumai.Shared.NeumSearchResult import NeumSearchResult
+neum_search_result = NeumSearchResult(
+    id = "abc", 
+    score = 0.8421,
+    metadata = {'text':'Hello', 'createdDate':'2023-01-01'}
+)
+```

@@ -1,0 +1,57 @@
+---
+title: Source Connector
+description: 'Connector to extract data from data sources'
+---
+
+## Overview
+
+<img
+  className="rounded-lg"
+  src="/images/Data_PreProcessing.png"
+  alt="Data PreProcessing"
+/>
+
+The `SourceConnector` is the central unit that takes care of extracting and pre-processing data ahead of embedding. Learn more about data [pre-processing with Neum AI](/local-development/data-preprocessing).
+
+The `SourceConnector` takes three arguements:
+- 1 `Data Connector`
+- 1 `Loader`
+- 1 `Chunker`
+
+Additionally a `custom_metadata` property is allowed. The metadata provided in this field will be added to every `NeumDocument` extracted by the `SourceConnector`.
+
+## Usage
+
+<CodeGroup>
+```python Local Development
+from neumai.Sources.SourceConnector import SourceConnector
+
+source_connector =  SourceConnector(
+    data_connector = <Data Connector>,
+    loader = <Loader>,
+    chunker = <Chunker>,
+    custom_metadata = {"key":"test"}
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            "data_connector": {
+                <Add Data Connector configuration>
+            },
+            "loader": {
+                <Add Loader configuration>
+            },
+            "chunker": {
+                <Add Chunker configuration>
+            },
+            "custom_metadata":{
+                "key":"test"
+            }
+        }
+    ]
+}
+```
+</CodeGroup>

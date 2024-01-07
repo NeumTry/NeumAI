@@ -1,0 +1,49 @@
+---
+title: 'CharacterChunker'
+description: 'This class is responsible for chunking text data into smaller pieces based on character count, with optional overlapping between chunks.'
+---
+
+The `CharacterChunker` class is designed to break down large text documents into smaller, more manageable chunks of text. This process is based on the number of characters, which can be defined by the user.
+
+## Properties
+
+Required properties:
+- None
+
+Optional properties:
+- `chunk_size`: The number of characters each chunk should contain.
+- `chunk_overlap`: The number of characters that can overlap between consecutive chunks.
+- `batch_size`: The number of chunks to process in one batch.
+- `separator`: The character used to separate chunks.
+
+<CodeGroup>
+```python Local Development
+from neumai.Chunkers import CharacterChunker
+
+character_chunker =  CharacterChunker(
+    chunk_size = 500,
+    chunk_overlap = 50,
+    batch_size = 1000,
+    separator = "\n"
+)
+```
+
+```json Cloud
+{
+    "sources":[
+        {
+            # Add Data Connector and Loader
+            "chunker": {
+                "chunker_name":"CharacterChunker",
+                "chunker_information":{
+                    "chunk_size": 500,
+                    "chunk_overlap": 50,
+                    "batch_size": 1000,
+                    "separators": "\n"
+                },
+            }
+        }
+    ]
+}
+```
+</CodeGroup>

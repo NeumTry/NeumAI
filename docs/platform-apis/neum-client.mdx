@@ -1,0 +1,71 @@
+---
+title: 'Neum Client'
+description: 'Interact with the Neum Cloud'
+---
+
+The `NeumClient` allows you to interact with the Neum AI Cloud through a python SDK. It supports the APIs listed below as methods in the client.
+
+## Initialize client
+<Note>You will need a Neum AI Cloud API Key to initialize the client. Go to [dashboard.neum.ai](dashboard.neum.ai) to create an account and get an API Key</Note>
+
+```python Initialize NeumClient
+from neumai.Client.NeumClient import NeumClient
+neumClient = NeumClient(api_key = <INSERT NEUM AI KEY>)
+```
+
+## Create pipeline
+
+Configure your pipeline first using the [Neum AI connectors](/connectors/introduction).
+
+```python Create pipeline
+from neumai.Pipelines import Pipeline
+pipeline = Pipeline(source=[...], embed=... , sink=...)
+pipeline_id = neumClient.create_pipeline(pipeline=pipeline)
+```
+
+## Get pipeline
+
+Retrieve the pipeline configuration and latest run information:
+
+```python Get pipelines
+print(neumClient.get_pipeline(pipeline_id=pipeline_id))
+```
+
+## Search pipeline
+
+Query the data indexed using the pipeline configuration:
+
+```python Create pipeline
+print(neumClient.search_pipeline(pipeline_id=pipeline_id, query="What is ....", num_of_results=3, track=False, requested_by="John Doe"))
+```
+
+We also support search against a specific file within a pipeline using the `search_file` method. Ex. if you ingested an S3 bucket with 10 files, you can pick one and only search against it.
+
+## Provide feedback on a retrieval
+
+Capture feedback for a given search result. (Must have enabled retrieval tracking.)
+
+```python Capture feedback
+provide_retrieval_feedback(pipeline_id=pipeline_id, retrieval_id=retrieval_id, status="Add feedback ex. Good or Bad")
+```
+
+## Get search retrievals for a pipeline
+
+Query the retrieval events against a pipeline (Must have enabled retrieval tracking.)
+
+```python Get retrievals for pipeline
+print(neumClient.get_retrievals_by_pipeline_id(pipeline_id=pipeline_id))
+```
+
+## Additional methods provided
+
+- `trigger_pipeline`: Trigger a pipeline to run
+- `get_pipelines`: Get a list of all pipelines created by a user
+- `get_pipeline_runs`: Get a list of all the runs for a given pipeline
+- `get_pipeline_run`: Get a specific run for a pipeline
+- `get_files`: Get that statuses for all files available within a pipeline
+- `get_file`: Get the status for a specific file within a pipeline
+- `get_retrievals_by_file_id`: Get retrieval events for a specific file within a pipeline. (Must have tracking enabled)
+- `get_retrievals_by_pipeline_id_user_id`: Get retrieval events for a user within a pipeline. (Must have tracking enabled and passed a `requested_by` parameter)
+- `get_retrievals_by_file_id_user_id`: Get retrieval events for a user within a file. (Must have tracking enabled and passed a `requested_by` parameter)
+- `get_retrievals_by_user_id`: Get retrieval events for a user across pipelines. (Must have tracking enabled and passed a `requested_by` parameter)

@@ -1,0 +1,68 @@
+---
+title: 'CSVLoader'
+description: 'The CSVLoader is dedicated to parsing CSV files and converting them into NeumDocument objects, with support for custom encoding and selective data extraction.'
+---
+
+The `CSVLoader` is a component of the Neum AI framework that processes CSV files, transforming them into `NeumDocument` objects. It allows for the specification of encoding, column selection, and other CSV reading parameters.
+
+## Properties
+
+Required properties:
+- None 
+
+Optional properties:
+- `id_key`: Specifies the column to use as the document ID.
+- `source_column`: Designates a specific column from which to extract the main content.
+- `encoding`: Sets the character encoding for reading the CSV file.
+- `csv_args`: Allows for additional arguments to be passed to the CSV reader.
+
+Available metadata:
+- `custom`: Metadata fields can be customized based on the contents of the CSV file. Simply pass a list of columns. (i.e. ["column1" , "column2"])
+
+Available content:
+- `custom`: Content is dynamically derived from the CSV file based on specified keys or entire row data. Simply pass a list of columns. (i.e. ["column1" , "column2"])
+
+<CodeGroup>
+```python Local Development
+from neumai.Shared import Selector
+from neumai.Loaders import CSVLoader
+
+csv_loader = CSVLoader(
+    loader_information={
+        "id_key": "id",
+        "encoding": "utf-8-sig",
+    },
+    selector=Selector(
+        to_embed=["text"],
+        to_metadata=["id", "category"]
+    )
+)
+
+```
+
+```json Cloud
+{
+    "sources":[
+        {   
+            # Add a data connector
+            "loader": {
+                "loader_name":"CSVLoader",
+                "loader_information":{
+                    "id_key": "id",
+                    "encoding": "utf-8-sig",
+                },
+                "selector": {
+                    "to_embed": [
+                        "text"
+                    ],
+                    "to_metadata": [
+                        "id",
+                        "category"
+                    ]
+                }
+            }
+        }
+    ]
+}
+```
+</CodeGroup>

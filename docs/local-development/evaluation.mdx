@@ -1,0 +1,81 @@
+---
+title: Evaluation with dataset
+description: 'Evaluate the performance of your pipelines against a dataset.'
+---
+
+<Warning>These capabilities are currently in beta. Please contact [founders@tryneum.com](mailto:founders@tryneum.com) with any questions or asks.</Warning>
+
+## Overview
+
+Configuring RAG pipelines requires iteration across different parameters ranging from pre-processing loaders and chunkers, to the actual embedding model being used. To assist in testing different configurations, Neum AI provides several tools to test, evaluate and compare pipelines. 
+
+<Note>To get started with evaluation, first make sure you have a [pipeline configured](/get-started/quickstart).</Note>
+
+## Datasets
+
+Datasets provide the ability to create a list of test to run against a pipeline. Datasets are made up of DatasetEntry objects which each represent a test. Each DatasetEntry objects contains a query, an expected output and an id.
+
+```python
+DatasetEntry(
+	id='1', 
+	query="What is Retrieval Augmented Generation (RAG)?", 
+	expected_output="The blog explains RAG as a method that helps in finding data quickly by performing searches in a 'natural way' and using that information to power more accurate AI applications"
+)
+```
+
+Datasets can be configured to run an evaluation. Evaluations supported include:
+- Cosine Evaluation: Compares the vector embeddings between the retrieved chunk and the expected output.
+- LLM Evaluation: Uses an LLM to check the quality and correctness of the retrieved information in answering the query at hand. (Requires you to set an OpenAI key as an enviornment variable: `OPENAI_API_KEY`)
+
+To create a dataset:
+
+```python
+!pip install neumai-tools
+
+from neumai_tools.DatasetEvaluation.Dataset import Dataset
+from neumai_tools.DatasetEvaluation.DatasetUtils import DatasetEntry
+from neumai_tools.DatasetEvaluation.Evaluation import CosineEvaluation
+
+dataset = Dataset(name="Test 1", dataset_entries=[
+    DatasetEntry(id='1', query="What is Retrieval Augmented Generation (RAG)?", expected_output="The blog explains RAG as a method that helps in finding data quickly by performing searches in a 'natural way' and using that information to power more accurate AI applications"),
+    DatasetEntry(id='2', query="How does the RAG system function?", expected_output="It describes the process where data is extracted, processed, embedded, and stored in a vector database for fast semantic search lookup. This data is then used by AI applications for providing accurate responses based on user inputs"),
+    DatasetEntry(id='3', query="What are the challenges in scaling RAG?", expected_output=" The blog discusses the challenges in ingesting and synchronizing large-scale text embeddings for RAG, including understanding the volume of data, ingestion time, search latency, cost, and the complexities of data embedding"),
+    DatasetEntry(id='4', query="What specific technologies or programming languages are used in the development of Neum AI's RAG system?", expected_output="Neum AI is written in Python.")
+], evaluation_type=CosineEvaluation)
+
+```
+
+## Run a test
+
+Once a dataset is created, we can run it against a pipeline. We also support the ability to run a dataset against a pipeline collection to compare the results from multiple pipelines at the same time.
+
+```python
+results = dataset.run_with_pipeline(pipeline=pipeline) # pipeline represents the configured pipeline you have created
+
+print(f'Dataset Result ID: {results.dataset_results_id}')
+for result in results.dataset_results:
+    print(f"For query: {result.dataset_entry.query} \n Expected Outcome: {result.dataset_entry.expected_output} \n Actual Result: {result.raw_result.metadata['text']} \n Score: {result.score}")
+```
+
+The result will include a score or an evaluation matrix depending on the type of evaluation being used.
+
+Output:
+
+```python
+Dataset Result ID: 1907ecf0-2ef2-47c6-a287-b08dd743c36c
+
+For query: What is Retrieval Augmented Generation (RAG)?
+Expected Outcome: The blog explains RAG as a method that helps in finding data quickly by performing searches in a 'natural way' and using that information to power more accurate AI applications
+Actual Result: As we’ve shared in other blogs in the past, getting a Retrieval Augmented Generation (RAG) application started is pretty straightforward. The problem comes when trying to scale it and making it production-ready. In this blog we will go into some technical and architectural details of how we do this at Neum AI, specifically on how we did this for a pipeline syncing 1 billion vectors.First off, can you explain what RAG is to a 5 year old? - Thanks ChatGPT
+Score: 0.8666629542920514
+
+For query: How does the RAG system function?
+Expected Outcome: It describes the process where data is extracted, processed, embedded, and stored in a vector database for fast semantic search lookup. This data is then used by AI applications for providing accurate responses based on user inputs
+Actual Result: RAG helps finding data quickly by performing search in a “natural way” and use that information/knowledge to power a more accurate AI application that needs such information!This is what a typical RAG system looks likeData is extracted, processed, embedded and stored in a vector database for fast semantic search lookup
+Score: 0.8942534447233399
+
+For query: What are the challenges in scaling RAG?
+Expected Outcome:  The blog discusses the challenges in ingesting and synchronizing large-scale text embeddings for RAG, including understanding the volume of data, ingestion time, search latency, cost, and the complexities of data embedding
+Actual Result: As we’ve shared in other blogs in the past, getting a Retrieval Augmented Generation (RAG) application started is pretty straightforward. The problem comes when trying to scale it and making it production-ready. In this blog we will go into some technical and architectural details of how we do this at Neum AI, specifically on how we did this for a pipeline syncing 1 billion vectors.First off, can you explain what RAG is to a 5 year old? - Thanks ChatGPT
+Score: 0.8438287364009266
+```

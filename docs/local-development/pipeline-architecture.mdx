@@ -1,0 +1,84 @@
+---
+title: Pipeline Architecture
+description: 'Learn the high level architecture for Neum AI pipelines'
+---
+
+## Overview
+
+<img
+  className="rounded-lg"
+  src="/images/Pipeline_Taxonomy.png"
+  alt="Pipeline Architecture"
+/>
+
+The Neum AI pipeline architecture is designed for robustness and high scale. Across each segment of the pipeline, `Generators` have been used to enable parallelization of tasks. Meaning, you can spin up workers to handle compartmentalized tasks like processing documents, generating embeddings and ingesting information into storage. This ensures that datasets are processed quickly and create robustness of the system in case of failures. 
+
+## Core components
+
+Neum AI pipelines are composed of three core components.
+
+<Steps>
+  <Step title="Source Connector">
+    The source component is in charge of connecting to any data services from where data will be extracted and doing the pre-processing of that data. The main pre-processing steps it will take include loading and chunking data. Learn more about [pre-processing with Neum AI](/local-development/data-preprocessing).
+  </Step>
+  <Step title="Embed Connector">
+    The embed component connects to embedding services and handles the transformation of data from text, image, etc. into vector embeddings. Vector embeddings is the format we will use to perform similarity search and power the retrieval process. Learn more about the [vector embeddings transformation with Neum AI](/local-development/dataflow).
+  </Step>
+  <Step title="Sink Connector">
+    The sink component connect to vector storage services and handles the ingestion of data into them. In addition, to ingestion, it also handles the retrieval of data from a given vector store. Learn more about [search and retrieval using Neum AI](/local-development/search).
+  </Step>
+</Steps>
+
+## Scaling pipelines
+
+The pipeline components are built to be scaled through parallelization. Each of the components leverage `Generators` to yield results. These results can be passed on to different workers to scale the processing of data. We recommend the usage of frameworks like [`Celery`](https://docs.celeryq.dev/en/stable/getting-started/introduction.html). Using `Celery`, we can set up mutliple different worker pools:
+
+### Pool 1 - Extract files / data
+
+This first pool takes care of connecting to the data source and extracting the data. This might require batching / pagination of results extracted that can be distributed to workers in the next pool for processing.
+
+Workers in this pool leverage methods in the `Source Conenctor` including:
+
+```python Extraction methods
+
+# Extract files / data from data source
+SourceConnector.list_files_<full | delta>
+
+```
+
+### Pool 2 - Process files / data
+
+The second pool takes care of pre-processing. As files / data is extracted from the data source, the first set of workers takes the files / data and prepares it for embedding. 
+
+Workers in this pool leverage methods in the `Source Conenctor` including:
+
+```python Pre-processing methods
+
+# Download files / data into local storage / memory
+SourceConnector.download_files
+
+# Pre-process data
+SourceConnector.load_data
+SourceConnector.chunk_data
+```
+
+Learn more about [pre-processing](/local-development/data-preprocessing).
+
+### Pool 3 - Embedding and ingestion
+
+The third pool takes the processed data and uses built-in services to Embed and Store the vector embeddings. This pool can be separated in two, but from our own testing we didn't see major improvements in latency from doing so.
+
+Workers in this pool leverage methods in the `Embed Conenctor` and `Sink Connector` including:
+
+```python Embed and Store methods
+
+# Embed data
+EmbedConnector.embed
+
+# Store vector embeddings
+SinkConnector.store
+```
+
+Learn more about [data flows](/local-development/dataflow).
+
+The configuration above is just an example of how the framework can be used to architect high scalability data pipelines. The main takeaway is the provided flexibility in the form of `Generators` and `yields` that allow you parallelize your workloads.

@@ -1,0 +1,30 @@
+---
+title: Search
+description: 'Learn about how data is organized and used for search'
+---
+
+## Overview
+
+<img
+  className="rounded-lg"
+  src="/images/Search.png"
+  alt="Dataflow"
+/>
+
+Once the ETL process has finished, the next step is to retrieve data through semantic search. The pipeline supports native capabilities to do semantic search. The pipeline supports natively:
+
+    - Metadata filtering (automatically enabled by the metadata configured on the source connector)
+    - Query embedding generation (automatically enabled by the embed connector )
+    - Similarity search (automatically enabled by the sink connector)
+
+This means that once you configure the pipeline, you can use its configuration to do semantic search.
+
+Alternatively, you can also query the vector store used as a sink direclty using the APIs provided by vector store itself.
+
+## Neum AI Cloud Search
+
+When using the Neum AI Search capabilities, you are able to leverage the existing pipeline configuration to query data including the sink configuration as well as the content and metadata configuration.  
+
+<Card title="Search pipeline" icon="magnifying-glass" href="/components/pipeline#search-a-pipeline">
+  Query the data associated to a pipeline.
+</Card>

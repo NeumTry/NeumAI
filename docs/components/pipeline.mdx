@@ -1,0 +1,86 @@
+---
+title: 'Pipeline'
+description: 'Pipeline object'
+---
+
+<img
+  className="rounded-lg"
+  src="/images/Pipeline_Taxonomy.png"
+  alt="Pipeline Architecture"
+/>
+
+Neum AI pipelines are configured from:
+
+- **Multiple source connectors**, each with their own pre-processing instructions.
+- **1 Embed connector** through which all the data extracted from the sources will pass
+- **1 Sink connector** to which all the embeds generated will be stored to.
+
+<Note>See the [full selection](/connectors/introduction) of sources, embeds and sinks below </Note>
+
+The pipeline can be thought about as the representation of an index that contains all the data from the specified sources.
+
+## Pipeline intialization
+
+```python Pipeline init
+from neumai.Pipelines.Pipeline import Pipeline
+pipeline = Pipeline(
+    id = "Pipeline identifier",
+    name = "Pipeline name",
+    sources = [<SourceConnector>,...],
+    embed = <EmbedConnector>,
+    sink = <SinkConnector>
+)
+```
+
+<Warning>If you have more than one source, ensure you design the metadata outputted by the source carefully. If the sources output different metadata properties depending on the sink this might lead to error or vectors in an index that don't share metadata properties. This can be challening at retrieval time.</Warning>
+
+## Running a pipeline
+
+This will trigger the extraction of data from the data sources, transformation using the defined pre-processing steps and the loading of data into the vector store defined.
+
+<Tabs>
+    <Tab title="Local">
+    ```python
+    pipeline.run()
+    ```
+    </Tab>
+    <Tab title="Cloud">
+    <Note>You will need a Neum AI API Key. Get one by going to [dashboard.neum.ai](https://dashboard.neum.ai) and creating an account.</Note>
+    ```python 
+    from neumai.Client.NeumClient import NeumClient
+    neumClient = NeumClient(api_key=<INSERT NEUM API KEY>)
+
+    # Deploy pipeline and run once
+    pipeline_id = neumClient.createPipeline(pipeline=pipeline)
+
+    # Manually trigger pipeline
+    neumClient.trigger(pipeline_id=pipeline_id)
+    ```
+    </Tab>
+</Tabs>
+
+## Search a pipeline
+
+This will query the pipeline's sink for documents stored in vector representation.
+
+<Tabs>
+    <Tab title="Local">
+    ```python
+    pipeline.search(query="Hello", number_of_results=3)
+    ```
+    </Tab>
+    <Tab title="Cloud">
+    <Note>You will need a Neum AI API Key. Get one by going to [dashboard.neum.ai](https://dashboard.neum.ai) and creating an account.</Note>
+    ```python 
+    from neumai.Client.NeumClient import NeumClient
+    neumClient = NeumClient(api_key=<INSERT NEUM API KEY>)
+
+    # Make sure you have deployed a pipeline to the Neum AI Cloud first.
+    pipeline_id = neumClient.searchPipeline(
+        pipeline_id=pipeline_id, 
+        query="Hello", 
+        number_of_results=3
+    )
+    ```
+    </Tab>
+</Tabs>
