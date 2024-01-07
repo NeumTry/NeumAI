@@ -1,0 +1,26 @@
+---
+title: 'HuggingFaceEmbed'
+description: 'The HuggingFaceEmbed connector is designed to generate embeddings for text data using Hugging Face hosted emedding models.
+---
+
+Access the plethora of open-source models hosted through Hugging face using the `HuggingFaceEmbed` connector. 
+
+<Note>Looking for embedding models in HuggingFace? Here is a great place to start: [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)</Note>
+
+## Properties
+
+Required properties:
+- model: HuggingFace model ID or a URL to a deployed Inference Endpoint.
+- token: HuggingFace token.
+
+<CodeGroup>
+```python Local Development
+from neumai.EmbedConnectors import HuggingFaceEmbed
+
+azure_openai_embed = HuggingFaceEmbed(
+    model = "model_id_or_url",
+    token = "huggingface_token"
+)
+
+```
+</CodeGroup>

@@ -1,0 +1,45 @@
+---
+
+title: 'LanceDBSink'
+description: 'LanceDBSink enables seamless integration with LanceDB vector database, supporting vector storage and similarity search for advanced data retrieval.'
+
+---
+
+The `LanceDBSink` class is a connector for LanceDB, an open-source, serverless vector database built for seamless integration and scale.
+
+## Properties
+
+Required properties:
+
+- uri: URI for the LanceDB database.
+- table_name: Name of the LanceDB table to be used.
+
+Optional properties:
+
+- api_key: If provided, connect to LanceDB cloud; otherwise, connect to a database on file system or cloud storage.
+region: Region for the use of LanceDB cloud.
+- create_index: Boolean to decide whether to create an index for ANN search or use flat search.
+- metric: The distance metric to use (default is 'cosine').
+- num_partitions: The number of partitions of the index.
+- num_sub_vectors: The number of sub-vectors created during Product Quantization (PQ).
+- accelerator: Specifies the accelerator to use for the index creation process (e.g., GPU or MPS).
+
+<Note>Index creation is only required when dealing with 100k+ vectors. Below that threshold, set create_index to `false`. For more information on index creation and configuring partitions and sub vectors see: [LanceDB documentation](https://lancedb.github.io/lancedb/ann_indexes/#creating-an-ivf_pq-index)</Note>
+
+<CodeGroup>
+```python Local Development
+from neumai.SinkConnectors import LanceDBSink
+
+# Setup the LanceDBSink with required credentials and index information
+lancedb_sink = LanceDBSink(
+    uri = "lancedb_uri",
+    table_name = "test_table",
+    # if using LanceDB Cloud add 
+    # api_key = "lancedb_cloud_api_key",
+    # if using for more thatn 100k vectors then add:
+    # create_index = True
+    # ensure that your vector dimensions (ex. 1536 for OpenAI text-ada-002) is divisible by num_sub_vectors (default 96)
+    # ensure that num_partitions is less than the number of vectors you are adding (default to 256)
+)
+```
+</CodeGroup>
