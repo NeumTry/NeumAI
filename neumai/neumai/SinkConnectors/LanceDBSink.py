@@ -160,6 +160,12 @@ class LanceDBSink(SinkConnector):
             )
         return matches
     
+
+    def get_representative_vector(self) -> list:
+        db = self._get_db_connection()
+        tbl = db.open_table(self.table_name)
+        return list(tbl.to_pandas()['vector'].mean())
+    
     
     def info(self) -> NeumSinkInfo:
         try:

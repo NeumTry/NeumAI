@@ -64,7 +64,7 @@ class MarqoSink(SinkConnector):
         marqo_client,
         embedding_dim,
         similarity: str = 'cosinesimil',
-        recreate_index: bool = False,
+        recreate_index: bool = True,
         ):
         '''
         Create a new index
@@ -223,6 +223,53 @@ class MarqoSink(SinkConnector):
                 )
             )
         return matches
+
+    
+    def _get_embeddings_from_ids(self, ids):
+        marqo_client = marqo.Client(
+            url=self.url, 
+            api_key=self.api_key,
+        )
+        embeddings = []
+        for i in ids:
+            doc = marqo_client.index(self.index_name).get_document(
+                document_id=i,
+                expose_facets=True)
+            tensor = doc['_tensor_facets'][0]['_embedding']
+            embeddings.append(tensor)
+        return embeddings
+    
+    def get_representative_vector(self) -> list:
+        """
+        This methods calculates the representative vector for a 
+        particular index (collection of vectors). Currently, this 
+        is simply using the mean of all the vectors in the index.
+
+        Returns:
+            list: Returns the representative vector as a list of floats
+        """
+        import numpy as np
+
+        marqo_client = marqo.Client(
+            url=self.url, 
+            api_key=self.api_key,
+        )
+
+        # In Neum, we have one vector per document for marqo, so max number of vectors
+        # would be same as number of documents
+        max_results = marqo_client.index(self.index_name).get_stats()['numberOfDocuments']
+
+        vector_dimension = marqo_client.index(
+            self.index_name
+            ).get_settings()['index_defaults']['model_properties']['dimensions']
+        
+        dummy_vector = [1.0 for _ in range(vector_dimension)]
+        ids = [i.id for i in self.search(
+            vector=dummy_vector, number_of_results=max_results)]
+        embeddings = self._get_embeddings_from_ids(ids)
+
+        return list(np.mean(embeddings, 0))
+
     
     def info(self) -> NeumSinkInfo:
         url = self.url
