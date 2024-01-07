@@ -17,7 +17,7 @@ class HuggingFaceEmbed(EmbedConnector):
     
     @property
     def required_properties(self) -> List[str]:
-        return ["token"]
+        return ["model","token"]
 
     @property
     def optional_properties(self) -> List[str]:

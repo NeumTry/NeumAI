@@ -1,0 +1,33 @@
+---
+
+title: 'MarqoSink'
+description: 'MarqoSink enables seamless integration with Marqo's vector database, supporting vector storage and similarity search for advanced data retrieval.'
+
+---
+
+The `MarqoSink` class is a connector for Marqo, a vector database provider that enables multimodal vector search.
+
+## Properties
+
+Required properties:
+
+- url: URL for accessing the Marqo service.
+- index_name: Name of the index in Marqo where the data will be stored.
+
+Optional properties:
+
+- api_key: API key required for authenticating with the Marqo cloud service.
+
+<CodeGroup>
+```python Local Development
+from neumai.SinkConnectors import MarqoSink
+
+# Setup the PineconeSink with required credentials and index information
+marqo_sink = MarqoSink(
+    url = "marqo_url",
+    index_name = "test_index",
+    # If using Marqo cloud then add:
+    # api_key = "marqo_cloud_api_key"
+)
+```
+</CodeGroup>
