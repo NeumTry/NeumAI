@@ -38,6 +38,10 @@ class OpenAIConnectionException(Exception):
     """Raised if establishing a connection to OpenAI fails"""
     pass
 
+class HuggingFaceConnectonException(Exception):
+    """Raised if establishing a connection to HuggingFace fails"""
+    pass
+
 class PineconeConnectionException(Exception):
     """Raised if establishing a connection to Pinecone fails"""
     pass

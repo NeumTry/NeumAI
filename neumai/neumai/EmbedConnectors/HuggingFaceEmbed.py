@@ -1,6 +1,7 @@
 from typing import List, Tuple
 from neumai.EmbedConnectors.EmbedConnector import EmbedConnector
 from neumai.Shared.NeumDocument import NeumDocument
+from neumai.Shared.Exceptions import HuggingFaceConnectonException
 from huggingface_hub import InferenceClient
 from pydantic import Field
 
@@ -25,6 +26,10 @@ class HuggingFaceEmbed(EmbedConnector):
     
     def validation(self) -> bool:
         """config_validation connector setup"""
+        try:
+            InferenceClient(model=self.model, token=self.token)
+        except Exception as e:
+            raise HuggingFaceConnectonException(f"HuggingFace couldn't be initialized. See exception: {e}")
         return True 
     
     def embed(self, documents:List[NeumDocument]) -> Tuple[List, dict]:
