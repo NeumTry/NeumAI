@@ -1,5 +1,6 @@
 from typing import List
-from scipy.spatial.distance import cosine
+from numpy import dot
+from numpy.linalg import norm
 from pydantic import BaseModel, Field
 from neumai.Pipelines.Pipeline import Pipeline
 from neumai.Shared.NeumSearch import NeumSearchResult
@@ -59,10 +60,9 @@ class PipelineCollection(BaseModel):
         for pipe in self.pipelines:
             pipe_representative = pipe.sink.get_representative_vector()
             query_vector = pipe.embed.embed_query(query=query)
-            distance_from_representative = cosine(pipe_representative, query_vector)
 
-            # Similarity score, hence subtracted distance from 1
-            pipe_to_similarity[pipe.id] = 1 - distance_from_representative
+            # calculating similarity score
+            pipe_to_similarity[pipe.id] = dot(pipe_representative, query_vector)/(norm(pipe_representative)*norm(query_vector))
 
         # We want to sort by decreasing oeder of similarity score
         # The more similar the query to a given representative vector
@@ -79,4 +79,3 @@ class PipelineCollection(BaseModel):
                     break
         search_results.append(results)
         return search_results
-        # raise NotImplementedError("In the works. Contact founders@tryneum.com for information")
